@@ -1,0 +1,59 @@
+# ==========================================
+# 1. BẢO MẬT & BIẾN MÔI TRƯỜNG (QUAN TRỌNG)
+# ==========================================
+# Chặn các file chứa mật khẩu, secret key
+.env
+.env.local
+.env.*.local
+*.local
+
+# Chặn file cấu hình Backend trong thư mục src (tránh lộ pass Database)
+**/src/main/resources/application.properties
+**/src/main/resources/Application.yml
+**/src/main/resources/application.yml
+
+# ==========================================
+# 2. FRONT_END (ReactJS/Vite)
+# ==========================================
+Front_end/my-project/node_modules/
+Front_end/my-project/dist/
+Front_end/my-project/dist-ssr/
+Front_end/my-project/.vite/
+# Logs của npm/yarn
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ==========================================
+# 3. BACK_END (Java/Spring Boot/Maven)
+# ==========================================
+ProJectBackWeb/ProJectBackWeb/target/
+ProJectBackWeb/ProJectBackWeb/.mvn/
+ProJectBackWeb/ProJectBackWeb/bin/
+# Các file thực thi của Maven
+**/mvnw
+**/mvnw.cmd
+**/*.class
+
+# ==========================================
+# 4. DOCKER & DATABASE
+# ==========================================
+# Chặn dữ liệu database thực tế (để tránh push file nặng lên git)
+sql_data/
+docker/data/
+# Nếu init.sql chứa dữ liệu nhạy cảm thì cũng nên chặn
+# init.sql
+
+# ==========================================
+# 5. CẤU HÌNH IDE & HỆ ĐIỀU HÀNH
+# ==========================================
+.idea/
+.vscode/
+*.iws
+*.iml
+*.ipr
+.classpath
+.project
+.settings
+.DS_Store
+Thumbs.db

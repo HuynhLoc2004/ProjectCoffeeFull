@@ -1,0 +1,9 @@
+# Chặn thư viện ở máy thật
+my-project/node_modules
+
+# Chặn bản build cũ ở máy thật
+my-project/dist
+
+# Các file rác khác (nếu có)
+.git
+.DS_Store

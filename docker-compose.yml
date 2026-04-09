@@ -1,0 +1,130 @@
+version: "3.8"
+
+services:
+  db:
+    image: mcr.microsoft.com/azure-sql-edge:latest
+    container_name: sql_server_db
+    user: root
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=${DB_PASSWORD}
+      - MSSQL_PID=Developer
+      - TZ=Asia/Ho_Chi_Minh
+    ports:
+      - "1434:1433"
+    networks:
+      - drink_network
+    volumes:
+      - sql_data:/var/opt/mssql
+      - ./init.sql:/init.sql
+    healthcheck:
+      # Sử dụng biến môi trường cho mật khẩu trong lệnh check health
+      test:
+        [
+          "CMD-SHELL",
+          "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P '${DB_PASSWORD}' -Q 'SELECT 1' || exit 1",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    entrypoint:
+      - /bin/bash
+      - -c
+      - |
+        /opt/mssql/bin/sqlservr &
+        until /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "${DB_PASSWORD}" -Q "SELECT 1" &>/dev/null; do
+          sleep 2
+        done
+        DB_EXISTS=$$(/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "${DB_PASSWORD}" -Q "SET NOCOUNT ON; SELECT name FROM sys.databases WHERE name = 'project_drink'" -h -1 | xargs)
+        if [ "$$DB_EXISTS" != "project_drink" ]; then
+          /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "${DB_PASSWORD}" -Q "CREATE DATABASE project_drink"
+          /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "${DB_PASSWORD}" -d project_drink -i /init.sql -V 1
+        fi
+        wait
+
+  redis:
+    image: redis:alpine
+    container_name: redis_cache
+    command: redis-server --appendonly yes
+    ports:
+      - "6379:6379"
+    networks:
+      - drink_network
+    volumes:
+      - redis_data:/data
+
+  backend:
+    build: ./ProJectBackWeb
+    container_name: spring_backend
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    ports:
+      - "8080:8080"
+    environment:
+      - TZ=Asia/Ho_Chi_Minh
+      - DB_HOST=db
+      - DB_PORT=1433
+      - DB_NAME=project_drink
+      - DB_USERNAME=sa
+      - DB_PASSWORD=${DB_PASSWORD}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+
+      # PayOS
+      - PAYOS_CLIENT_ID=${PAYOS_CLIENT_ID}
+      - PAYOS_API_KEY=${PAYOS_API_KEY}
+      - PAYOS_CHECKSUM_KEY=${PAYOS_CHECKSUM_KEY}
+      - PAYOS_CREATE_URL=https://api-merchant.payos.vn/v2/payment-requests
+      - PAYOS_RETURNURL=http://localhost:3000
+      - PAYOS_CANCELURL=http://localhost:3000
+
+      # Mail
+      - MAIL_HOST=smtp.gmail.com
+      - MAIL_PORT=587
+      - MAIL_SYSTEM=${MAIL_SYSTEM}
+      - MAIL_MAILADMIN=huynhtanlocpp09@gmail.com
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+
+      # Cloudinary
+      - CLOUDINARY_NAME=djkif9ubs
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
+
+      # AI Gemini
+      - SPRING_AI_GOOGLE_GENAI_API_KEY=${GEMINI_API_KEY}
+      - SPRING_AI_GOOGLE_GENAI_CHAT_OPTIONS_MODEL=gemini-3-flash-preview
+      - SPRING_AI_GOOGLE_GENAI_CHAT_BASE_URL=https://generativelanguage.googleapis.com
+      - SPRING_AI_GOOGLE_GENAI_CHAT_COMPLETIONS_PATH=/v1beta/openai/chat/completions
+
+      # Security & JWT
+      - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - JWT_SECRET_KEY=${JWT_SECRET}
+      - JWT_EXPIRYTIME=5
+      - JWT_REFRESH_TIME=10080
+      - GOOGLE_RETURNURL=http://localhost:3000
+    networks:
+      - drink_network
+
+  frontend:
+    build: ./Front_end
+    container_name: react_frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8080/api
+    networks:
+      - drink_network
+
+volumes:
+  sql_data:
+  redis_data:
+
+networks:
+  drink_network:
+    driver: bridge
