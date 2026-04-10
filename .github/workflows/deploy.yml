@@ -3,10 +3,9 @@ name: Build and Deploy Docker Image
 on:
   push:
     branches:
-      - main # Hoặc 'master' tùy nhánh của Lộc
+      - main
 
 jobs:
-  # GIAI ĐOẠN 1: Đóng gói và đẩy lên Docker Hub
   build-and-push:
     runs-on: ubuntu-latest
     steps:
@@ -31,15 +30,13 @@ jobs:
       - name: Build and Push Backend
         uses: docker/build-push-action@v4
         with:
-          context: .
-          file: ./Dockerfile
+          context: ./ProJectBackWeb
           push: true
           tags: huynhtanloc2004/coffee-backend:latest
 
-  # GIAI ĐOẠN 2: Ra lệnh cho VPS kéo Image về chạy
   deploy:
     runs-on: ubuntu-latest
-    needs: build-and-push # Đợi build xong mới deploy
+    needs: build-and-push
     steps:
       - name: Executing remote ssh commands to deploy
         uses: appleboy/ssh-action@master
@@ -48,14 +45,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
-            # 1. Vào đúng thư mục chứa docker-compose trên server
             cd /root/deploy
-
-            # 2. Đăng nhập Docker Hub ngay trên Server (để pull được image)
             echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
-
-            # 3. Kéo bản mới nhất về (nó sẽ bốc bản Lộc vừa push ở trên)
             docker compose pull
-
-            # 4. Khởi động lại với cấu hình mới
             docker compose up -d
