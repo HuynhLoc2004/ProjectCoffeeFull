@@ -53,7 +53,7 @@ services:
       - redis_data:/data
 
   backend:
-    build: ./ProJectBackWeb
+    image: huynhtanloc2004/coffee-backend:latest
     container_name: spring_backend
     depends_on:
       db:
@@ -109,13 +109,12 @@ services:
       - drink_network
 
   frontend:
-    build:
-      context: ./Front_end
-      args:
-        - VITE_API_URL=http://103.28.32.228:8080
+    # Thay vì 'build', mình dùng 'image' để lấy từ kho của Lộc
+    image: huynhtanloc2004/coffee-frontend:latest
     container_name: react_frontend
     ports:
       - "80:80"
+    # depends_on vẫn giữ để nó đợi backend bật lên trước
     depends_on:
       - backend
     networks:
