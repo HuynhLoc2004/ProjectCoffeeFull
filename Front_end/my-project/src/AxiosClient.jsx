@@ -2,7 +2,7 @@ import axios from "axios";
 import { getAccessToken } from "./ManagerAccessToken/ManagerAccessToken";
 
 const axiosClient = axios.create({
-  baseURL: "http://localhost:8080/",
+  baseURL: import.meta.env.VITE_API_URL,
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",

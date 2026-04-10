@@ -18,7 +18,6 @@ services:
       - sql_data:/var/opt/mssql
       - ./init.sql:/init.sql
     healthcheck:
-      # Sử dụng biến môi trường cho mật khẩu trong lệnh check health
       test:
         [
           "CMD-SHELL",
@@ -78,8 +77,8 @@ services:
       - PAYOS_API_KEY=${PAYOS_API_KEY}
       - PAYOS_CHECKSUM_KEY=${PAYOS_CHECKSUM_KEY}
       - PAYOS_CREATE_URL=https://api-merchant.payos.vn/v2/payment-requests
-      - PAYOS_RETURNURL=http://localhost:3000
-      - PAYOS_CANCELURL=http://localhost:3000
+      - PAYOS_RETURNURL=http://103.28.32.228
+      - PAYOS_CANCELURL=http://103.28.32.228
 
       # Mail
       - MAIL_HOST=smtp.gmail.com
@@ -105,19 +104,20 @@ services:
       - JWT_SECRET_KEY=${JWT_SECRET}
       - JWT_EXPIRYTIME=5
       - JWT_REFRESH_TIME=10080
-      - GOOGLE_RETURNURL=http://localhost:3000
+      - GOOGLE_RETURNURL=http://103.28.32.228
     networks:
       - drink_network
 
   frontend:
-    build: ./Front_end
+    build:
+      context: ./Front_end
+      args:
+        - VITE_API_URL=http://103.28.32.228:8080
     container_name: react_frontend
     ports:
-      - "3000:80"
+      - "80:80"
     depends_on:
       - backend
-    environment:
-      - VITE_API_BASE_URL=http://localhost:8080/api
     networks:
       - drink_network
 

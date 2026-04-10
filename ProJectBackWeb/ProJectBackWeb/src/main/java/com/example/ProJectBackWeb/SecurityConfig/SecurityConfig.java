@@ -154,7 +154,8 @@ public class SecurityConfig implements WebMvcConfigurer {
                  .allowedOrigins("http://localhost:5173" ,
                          "http://localhost:3000",
                          "http://localhost",
-                         "http://localhost:80")
+                         "http://localhost:80" , 
+                         "http://103.28.32.228")
                  .allowedHeaders("*")
                  .allowCredentials(true);
     }
@@ -165,7 +166,8 @@ public class SecurityConfig implements WebMvcConfigurer {
                 "http://localhost:5173",
                 "http://localhost:3000",  // ← thêm vào
                 "http://localhost",       // ← thêm vào
-                "http://localhost:80"     // ← thêm vào
+                "http://localhost:80",
+                "http://103.28.32.228"     // ← thêm vào
         ));
         config.setAllowCredentials(true);
         config.setAllowedHeaders(List.of("*"));
