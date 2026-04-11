@@ -17,7 +17,7 @@ import java.text.ParseException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/api/admin")
 public class AuthenAdminController {
     private final AuthenAdminService authenAdminService;
     public AuthenAdminController(AuthenAdminService authenAdminService) {

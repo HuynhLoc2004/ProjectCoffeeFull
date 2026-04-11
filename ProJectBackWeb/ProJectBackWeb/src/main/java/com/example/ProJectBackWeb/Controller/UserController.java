@@ -25,7 +25,7 @@ import java.util.List;
 @Data
 @Builder
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 public class UserController {
     private final UserService userService;
     public UserController(UserService userService) {

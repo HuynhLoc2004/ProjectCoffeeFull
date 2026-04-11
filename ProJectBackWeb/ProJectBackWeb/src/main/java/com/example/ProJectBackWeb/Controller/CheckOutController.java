@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import vn.payos.model.webhooks.Webhook;
 
 @RestController
-@RequestMapping("/payos")
+@RequestMapping("/api/payos")
 public class    CheckOutController {
     private final CheckOutService checkOutService;
 

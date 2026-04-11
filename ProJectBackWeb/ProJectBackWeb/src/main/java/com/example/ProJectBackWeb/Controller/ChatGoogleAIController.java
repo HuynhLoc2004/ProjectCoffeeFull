@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 
 @RestController
-@RequestMapping("/ai")
+@RequestMapping("/api/ai")
 public class ChatGoogleAIController {
     private final ChatGoogleAIService chatClaudeAIService;
 

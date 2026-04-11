@@ -17,7 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @RestController
-@RequestMapping("/image")
+@RequestMapping("/api/image")
 public class ImageController {
     private final ImageService imageService;
     public ImageController(ImageService imageService) {

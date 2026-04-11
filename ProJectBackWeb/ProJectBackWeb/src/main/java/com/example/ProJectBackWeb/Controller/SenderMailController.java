@@ -15,7 +15,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/email")
+@RequestMapping("/api/email")
 @Slf4j
 public class SenderMailController {
     private final SenderMailService senderMailService;

@@ -27,7 +27,7 @@ import java.text.ParseException;
 import java.util.Map;
 @Slf4j
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
 

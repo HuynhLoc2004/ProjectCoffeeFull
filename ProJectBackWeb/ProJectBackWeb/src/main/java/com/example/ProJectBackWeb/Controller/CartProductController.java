@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @RestController
-@RequestMapping("/cartproduct")
+@RequestMapping("/api/cartproduct")
 public class CartProductController {
     private final CartproductService cartproductService;
 
