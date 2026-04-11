@@ -23,7 +23,6 @@ public class OrderDTO {
     private String fullname;
     private String mail;
     private Long quantity;
-
     private String address;
     private List<OrderDetailsDTO> orderDetailsDTOS =  new ArrayList<>();
     public OrderDTO(Long id, Double totalPrice, String status, LocalDateTime createdAt, String fullname, String mail, Long quantity ,String address ) {

@@ -67,7 +67,7 @@ public interface OrdersRepository extends JpaRepository<OrderEntity , Long> {
             "od.id, od.totalPrice  , od.status, od.createdAt, u.fullname , u.email, count(odt.id) , od.address_order ) " +
             "FROM OrderEntity od JOIN od.orderDetailEntities odt JOIN od.userEntity u " +
             "WHERE u.id != :Idadmin " +
-            "GROUP BY od.id , od.status, od.createdAt, u.fullname, u.email , od.totalPrice , u.picture , od.address_order")
+            "GROUP BY od.id , od.status, od.createdAt, u.fullname, u.email , od.totalPrice  , od.address_order")
     public List<OrderDTO> getOrders(
                                     @Param("Idadmin") Long idAdmin);
 
