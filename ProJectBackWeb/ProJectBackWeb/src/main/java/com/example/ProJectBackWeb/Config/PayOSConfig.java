@@ -1,4 +1,4 @@
-package com.example.ProJectBackWeb.SecurityConfig;
+package com.example.ProJectBackWeb.Config;
 
 
 import org.springframework.beans.factory.annotation.Value;

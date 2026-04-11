@@ -1,4 +1,4 @@
-package com.example.ProJectBackWeb.SecurityConfig;
+package com.example.ProJectBackWeb.Config;
 
 import com.example.ProJectBackWeb.Custom.JwtDecodeCustom;
 import com.example.ProJectBackWeb.EnumStatus.HttpStatusEnum;

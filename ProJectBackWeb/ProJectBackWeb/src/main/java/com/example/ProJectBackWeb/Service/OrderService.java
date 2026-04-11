@@ -74,6 +74,7 @@ public class OrderService {
 
         OrderEntity orderEntity = new OrderEntity();
         orderEntity.setCreatedAt(LocalDateTime.now());
+        orderEntity.setAddress(ordersRequest.getAddress());
         orderEntity.setExpiredAt(LocalDateTime.now().plusMinutes(6));
         orderEntity.setStatus(OrderStatus.PENDING.toString());
         orderEntity.setTotalPrice(ordersRequest.getTotalPrice());

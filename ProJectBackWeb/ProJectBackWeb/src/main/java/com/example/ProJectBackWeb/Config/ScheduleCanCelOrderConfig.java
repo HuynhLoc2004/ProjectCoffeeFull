@@ -1,4 +1,4 @@
-package com.example.ProJectBackWeb.SecurityConfig;
+package com.example.ProJectBackWeb.Config;
 
 import com.example.ProJectBackWeb.EntityModel.OrderEntity;
 import com.example.ProJectBackWeb.EntityModel.OrderSHistoryEntity;

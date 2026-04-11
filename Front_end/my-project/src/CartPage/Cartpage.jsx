@@ -36,45 +36,13 @@ const Cartpage = () => {
   const [accesstoken, setAccesstoken] = useState(getAccessToken());
 
   const handleCheckout = () => {
-    axiosClient
-      .post(
-        "/order/create",
-        {
-          totalPrice: cart.totalPrice,
-          createOrder: Date.now(),
-          cartProductEntities: cart.cartProductEntities,
-          type_order: "ORDER_CART",
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${getAccessToken()}`,
-          },
-        },
-      )
-      .then((res) => {
-        if (res.data.statusCode == 201) {
-          const order_id = res.data.result;
-
-          axiosClient
-            .get(`/payos/createQr?order_id=${order_id}`, {
-              headers: {
-                Authorization: `Bearer ${getAccessToken()}`,
-              },
-            })
-            .then((res) => {
-              if (res.data.statusCode == 200) {
-                window.location.href = res.data.result.checkoutUrl;
-              }
-            })
-            .catch((err) => {
-              console.log(getAccessToken());
-              console.log(err);
-            });
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    // Chuyển hướng sang trang CheckoutPage cùng với dữ liệu giỏ hàng
+    navigate("/checkout", { 
+      state: { 
+        cartData: cart,
+        type: "CART"
+      } 
+    });
   };
 
   useEffect(() => {

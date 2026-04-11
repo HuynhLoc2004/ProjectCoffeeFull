@@ -42,11 +42,11 @@ public class OrderEntity {
     @OrderBy(value = "totalPrice desc")
     private List<OrderDetailsEntity> orderDetailEntities = new ArrayList<>();
 
-
+    @Column(name = "address_order" , nullable = false , columnDefinition = "NVARCHAR(MAX)")
+    private String address;
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference
     @JoinColumn(name = "user_id")
     private UserEntity userEntity;
-
 
 }

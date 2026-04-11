@@ -1,4 +1,4 @@
-package com.example.ProJectBackWeb.SecurityConfig;
+package com.example.ProJectBackWeb.Config;
 
 import com.example.ProJectBackWeb.Custom.LocalDateAdapterCustom;
 import com.google.gson.Gson;
