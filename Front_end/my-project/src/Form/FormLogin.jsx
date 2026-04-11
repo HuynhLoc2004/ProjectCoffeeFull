@@ -3,16 +3,10 @@ import { VscAccount } from "react-icons/vsc";
 import { TbLockPassword } from "react-icons/tb";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa6";
-import {
-  Link,
-  useNavigate,
-  useParams,
-} from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import axiosClient from "../AxiosClient";
-import {
-  setAccessToken,
-} from "../ManagerAccessToken/ManagerAccessToken";
+import { setAccessToken } from "../ManagerAccessToken/ManagerAccessToken";
 import { unlogout } from "../ManagerLogout/ManagerLogout";
 
 const FormLogin = () => {
@@ -89,7 +83,7 @@ const FormLogin = () => {
       >
         <div className="bg-white/10 backdrop-blur-2xl border border-white/20 p-10 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
           <div className="text-center mb-8">
-            <motion.h1 
+            <motion.h1
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
@@ -97,11 +91,13 @@ const FormLogin = () => {
             >
               Chào mừng trở lại!
             </motion.h1>
-            <p className="text-gray-300 font-medium">Đăng nhập để tiếp tục hành trình cà phê của bạn</p>
+            <p className="text-gray-300 font-medium">
+              Đăng nhập để tiếp tục hành trình cà phê của bạn
+            </p>
           </div>
 
           <div className="space-y-6">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
@@ -117,7 +113,7 @@ const FormLogin = () => {
               />
             </motion.div>
 
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4 }}
@@ -133,13 +129,17 @@ const FormLogin = () => {
               />
             </motion.div>
 
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
               className="flex justify-between items-center px-2"
             >
-              <Link to="/ForgotPassword" title="Quên mật khẩu?" className="text-xs text-[#D4A373] hover:underline font-bold">
+              <Link
+                to="/ForgotPassword"
+                title="Quên mật khẩu?"
+                className="text-xs text-[#D4A373] hover:underline font-bold"
+              >
                 Quên mật khẩu?
               </Link>
             </motion.div>
@@ -161,7 +161,9 @@ const FormLogin = () => {
                 <div className="w-full border-t border-white/10"></div>
               </div>
               <div className="relative flex justify-center text-xs">
-                <span className="px-4 bg-transparent text-white/40 font-bold uppercase tracking-widest">Hoặc đăng nhập với</span>
+                <span className="px-4 bg-transparent text-white/40 font-bold uppercase tracking-widest">
+                  Hoặc đăng nhập với
+                </span>
               </div>
             </div>
 
@@ -171,7 +173,8 @@ const FormLogin = () => {
                 whileTap={{ scale: 0.95 }}
                 className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl py-3 flex items-center justify-center gap-2 transition-all"
                 onClick={() => {
-                  window.location.href = "http://localhost:8080/oauth2/authorization/google";
+                  window.location.href =
+                    "http://coffeweb.duckdns.org/oauth2/authorization/google";
                 }}
               >
                 <FcGoogle className="text-xl" />
@@ -187,14 +190,17 @@ const FormLogin = () => {
               </motion.button>
             </div>
 
-            <motion.p 
+            <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.7 }}
               className="text-center text-gray-400 text-sm mt-8"
             >
               Chưa có tài khoản?{" "}
-              <Link to="/registry" className="text-[#D4A373] font-black hover:underline">
+              <Link
+                to="/registry"
+                className="text-[#D4A373] font-black hover:underline"
+              >
                 Đăng kí ngay
               </Link>
             </motion.p>
@@ -206,4 +212,3 @@ const FormLogin = () => {
 };
 
 export default FormLogin;
-

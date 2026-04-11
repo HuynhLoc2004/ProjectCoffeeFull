@@ -26,7 +26,7 @@ jobs:
           push: true
           tags: huynhtanloc2004/coffee-frontend:latest
           build-args: |
-            VITE_API_URL=http://103.28.32.228:8080
+            VITE_API_URL=http://coffeweb.duckdns.org:8080/api
 
       - name: Build and Push Backend
         uses: docker/build-push-action@v4

@@ -77,8 +77,8 @@ services:
       - PAYOS_API_KEY=${PAYOS_API_KEY}
       - PAYOS_CHECKSUM_KEY=${PAYOS_CHECKSUM_KEY}
       - PAYOS_CREATE_URL=https://api-merchant.payos.vn/v2/payment-requests
-      - PAYOS_RETURNURL=http://103.28.32.228
-      - PAYOS_CANCELURL=http://103.28.32.228
+      - PAYOS_RETURNURL=http://coffeweb.duckdns.org
+      - PAYOS_CANCELURL=http://coffeweb.duckdns.org
 
       # Mail
       - MAIL_HOST=smtp.gmail.com
@@ -104,7 +104,7 @@ services:
       - JWT_SECRET_KEY=${JWT_SECRET}
       - JWT_EXPIRYTIME=5
       - JWT_REFRESH_TIME=10080
-      - GOOGLE_RETURNURL=http://103.28.32.228
+      - GOOGLE_RETURNURL=http://coffeweb.duckdns.org
     networks:
       - drink_network
 
