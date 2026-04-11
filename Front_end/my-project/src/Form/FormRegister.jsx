@@ -75,7 +75,7 @@ const FormRegister = () => {
   ];
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[url('https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-fixed bg-center relative p-4 sm:p-6 md:p-8 overflow-x-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-[url('https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-fixed bg-center relative p-2 sm:p-6 md:p-8 overflow-x-hidden">
       {/* Background Overlay */}
       <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]"></div>
 
@@ -83,14 +83,14 @@ const FormRegister = () => {
         initial={{ opacity: 0, scale: 0.9, y: 40 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ type: "spring", duration: 0.8 }}
-        className="relative z-10 w-full max-w-xl bg-neutral-900/60 backdrop-blur-3xl border border-white/10 p-6 sm:p-10 md:p-12 rounded-[2rem] sm:rounded-[3rem] shadow-[0_25px_100px_rgba(0,0,0,0.6)]"
+        className="relative z-10 w-full max-w-xl bg-neutral-900/60 backdrop-blur-3xl border border-white/10 p-5 sm:p-10 md:p-12 rounded-[2rem] sm:rounded-[3rem] shadow-[0_25px_100px_rgba(0,0,0,0.6)]"
       >
-        <div className="text-center mb-8">
+        <div className="text-center mb-6 sm:mb-8">
           <motion.h1 
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-3 tracking-tighter uppercase"
+            className="text-2xl sm:text-4xl md:text-5xl font-black text-white mb-2 sm:mb-3 tracking-tighter uppercase"
           >
             Đăng Ký
           </motion.h1>
@@ -98,38 +98,38 @@ const FormRegister = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
-            className="text-neutral-400 text-sm sm:text-base font-medium"
+            className="text-neutral-400 text-[12px] sm:text-base font-medium"
           >
             Gia nhập cộng đồng yêu thích hương vị nguyên bản
           </motion.p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 w-full">
           {fields.map((field, i) => (
             <motion.div 
               key={i} 
               initial={{ opacity: 0, x: i % 2 === 0 ? -20 : 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.1 * i }}
-              className={`relative group ${field.span || ""}`}
+              className={`relative group w-full ${field.span || ""}`}
             >
               <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#D4A373]/70 group-focus-within:text-[#D4A373] transition-colors z-20">
                 <field.icon className="text-lg sm:text-xl" />
               </div>
               
               {field.type === "date" && (
-                <label className="absolute left-12 top-2 text-[10px] font-black text-[#D4A373]/50 uppercase pointer-events-none">
+                <label className="absolute left-12 top-2 text-[9px] font-black text-[#D4A373]/50 uppercase pointer-events-none z-20">
                   Ngày sinh
                 </label>
               )}
 
               <input
                 type={field.type}
-                className={`w-full bg-white/[0.03] border border-white/10 focus:border-[#D4A373] focus:bg-white/[0.05] rounded-xl sm:rounded-2xl ${field.type === 'date' ? 'pt-6 pb-2 pl-12' : 'py-4 pl-12'} pr-4 text-white text-sm sm:text-base placeholder:text-white/20 outline-none transition-all duration-300 ring-0 focus:ring-4 focus:ring-[#D4A373]/10`}
+                className={`w-full block box-border bg-white/[0.03] border border-white/10 focus:border-[#D4A373] focus:bg-white/[0.05] rounded-xl sm:rounded-2xl ${field.type === 'date' ? 'pt-6 pb-2 pl-12' : 'py-4 pl-12'} pr-4 text-white text-sm sm:text-base placeholder:text-white/20 outline-none transition-all duration-300 ring-0 focus:ring-4 focus:ring-[#D4A373]/10 min-w-0`}
                 placeholder={field.type === "date" ? "" : field.ph}
                 value={field.val}
                 onChange={(e) => field.set(e.target.value)}
-                style={{ colorScheme: 'dark' }}
+                style={{ colorScheme: 'dark', WebkitAppearance: 'none' }}
               />
               
               <div className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-transparent via-[#D4A373] to-transparent w-0 group-focus-within:w-full transition-all duration-500 opacity-50"></div>
