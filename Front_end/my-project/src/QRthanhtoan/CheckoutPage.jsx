@@ -8,7 +8,8 @@ import { getAccessToken } from "../ManagerAccessToken/ManagerAccessToken";
 
 const NAV_HEIGHT = 80;
 
-const CheckoutPage = () => {
+const 
+CheckoutPage = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
   const [address, setAddress] = useState("");
@@ -200,22 +201,22 @@ const CheckoutPage = () => {
                   cartData.cartProductEntities.map((item, idx) => (
                     <div key={idx} className="flex gap-4 items-center py-3 border-b border-white/10">
                       <div className="w-16 h-16 bg-white/10 rounded-xl overflow-hidden flex-shrink-0 border border-white/5">
-                        <img src={item.product.image} className="w-full h-full object-cover" alt={item.product.name} />
+                        <img src={item.productEntity?.img || item.productEntity?.image} className="w-full h-full object-cover" alt={item.productEntity?.name} />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-bold truncate text-sm">{item.product.name}</p>
+                        <p className="font-bold truncate text-sm">{item.productEntity?.name}</p>
                         <p className="text-xs text-white/60">x{item.quantity} • {item.size}</p>
                       </div>
-                      <p className="font-bold text-sm">{(item.product.price * item.quantity).toLocaleString()}đ</p>
+                      <p className="font-bold text-sm">{(item.totalPrice).toLocaleString()}đ</p>
                     </div>
                   ))
                 ) : (
                   <div className="flex gap-4 items-center py-3">
                     <div className="w-16 h-16 bg-white/10 rounded-xl overflow-hidden flex-shrink-0">
-                      <img src={product.image} className="w-full h-full object-cover" alt={product.name} />
+                      <img src={product?.img || product?.image} className="w-full h-full object-cover" alt={product?.name} />
                     </div>
                     <div className="flex-1 min-w-0">
-                        <p className="font-bold truncate text-sm">{product.name}</p>
+                        <p className="font-bold truncate text-sm">{product?.name}</p>
                         <p className="text-xs text-white/60">x{quantity} • {_size}</p>
                     </div>
                     <p className="font-bold text-sm">{(totalPrice).toLocaleString()}đ</p>

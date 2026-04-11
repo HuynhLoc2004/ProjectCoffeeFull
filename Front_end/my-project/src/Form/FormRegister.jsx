@@ -75,17 +75,17 @@ const FormRegister = () => {
           <p className="text-gray-300 font-medium">Trở thành thành viên của gia đình Coffe ngay</p>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {[
-            { icon: VscAccount, val: valueUseraccounnt, set: setValueUseraccount, ph: "Tài khoản", span: "col-span-2 md:col-span-1" },
-            { icon: TbLockPassword, val: password, set: setPassword, ph: "Mật khẩu", type: "password", span: "col-span-2 md:col-span-1" },
-            { icon: TfiEmail, val: email, set: setEmail, ph: "Email", span: "col-span-2 md:col-span-1" },
-            { icon: FaUserEdit, val: fullName, set: setFullName, ph: "Họ và tên", span: "col-span-2 md:col-span-1" },
-            { icon: CiPhone, val: phone, set: setPhone, ph: "Số điện thoại", span: "col-span-1" },
-            { icon: FaBirthdayCake, val: birthdate, set: setBirthdate, ph: "Ngày sinh", type: "date", span: "col-span-1" },
-            { icon: FaMapMarkerAlt, val: address, set: setAddress, ph: "Địa chỉ", span: "col-span-2" },
+            { icon: VscAccount, val: valueUseraccounnt, set: setValueUseraccount, ph: "Tài khoản" },
+            { icon: TbLockPassword, val: password, set: setPassword, ph: "Mật khẩu", type: "password" },
+            { icon: TfiEmail, val: email, set: setEmail, ph: "Email" },
+            { icon: FaUserEdit, val: fullName, set: setFullName, ph: "Họ và tên" },
+            { icon: CiPhone, val: phone, set: setPhone, ph: "Số điện thoại" },
+            { icon: FaBirthdayCake, val: birthdate, set: setBirthdate, ph: "Ngày sinh", type: "date" },
+            { icon: FaMapMarkerAlt, val: address, set: setAddress, ph: "Địa chỉ", span: "md:col-span-2" },
           ].map((field, i) => (
-            <div key={i} className={`relative group ${field.span}`}>
+            <div key={i} className={`relative group ${field.span || ""}`}>
               <field.icon className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50 text-xl" />
               <input
                 type={field.type || "text"}
