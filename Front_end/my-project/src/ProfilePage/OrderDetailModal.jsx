@@ -5,6 +5,8 @@ import {
   CiLocationOn,
   CiDeliveryTruck,
   CiReceipt,
+  CiPhone,
+  CiUser
 } from "react-icons/ci";
 import "./OrderDetailModal.css";
 
@@ -19,6 +21,22 @@ const OrderDetailModal = ({ isOpen, onClose, order }) => {
     if (!isOpen && e.propertyName === "opacity") {
       setShouldRender(false);
     }
+  };
+
+  const formatPrice = (price) => {
+    return (price || 0).toLocaleString("vi-VN") + "đ";
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    const date = new Date(dateString);
+    return date.toLocaleString("vi-VN", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   };
 
   if (!shouldRender) return null;
@@ -50,7 +68,7 @@ const OrderDetailModal = ({ isOpen, onClose, order }) => {
               <CiCalendar className="card-icon" />
               <div className="card-text">
                 <label>Ngày đặt</label>
-                <span>{order?.createdAtOrder || "N/A"}</span>
+                <span>{formatDate(order?.createdAtOrder)}</span>
               </div>
             </div>
             <div className="info-card">
@@ -58,29 +76,39 @@ const OrderDetailModal = ({ isOpen, onClose, order }) => {
               <div className="card-text">
                 <label>Trạng thái</label>
                 <span
-                  className={`status-pill ${order?.status?.toLowerCase()?.replace(/\s+/g, "-")}`}
+                  className={`status-pill ${order?.statusOrder?.toLowerCase()?.replace(/\s+/g, "-")}`}
                 >
-                  {order?.statusOrder || "Chưa xác định"}
+                  {order?.statusOrder || "Đang xử lý"}
                 </span>
               </div>
             </div>
           </div>
 
+          {/* Thông tin khách hàng & Địa chỉ */}
           <div className="detail-section">
             <div className="section-title">
               <CiLocationOn />
-              <h4>Địa chỉ nhận hàng</h4>
+              <h4>Thông tin nhận hàng</h4>
             </div>
             <div className="address-box">
-              <p className="recipient-name">
-                Người nhận: {order?.fullnameUser || "Người dùng"}
-              </p>
-              <p className="recipient-phone">
-                SĐT: {order?.phoneUser || "N/A"}
-              </p>
-              <p className="recipient-address">
-                {order?.adresssUser || "Chưa cập nhật địa chỉ"}
-              </p>
+              <div className="info-row" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                <CiUser size={20} />
+                <p className="recipient-name">
+                  <strong>Người nhận:</strong> {order?.fullnameUser || "Người dùng"}
+                </p>
+              </div>
+              <div className="info-row" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                <CiPhone size={20} />
+                <p className="recipient-phone">
+                  <strong>SĐT:</strong> {order?.phoneUser || "Chưa cập nhật"}
+                </p>
+              </div>
+              <div className="info-row" style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                <CiLocationOn size={20} style={{ marginTop: '2px' }} />
+                <p className="recipient-address">
+                  <strong>Địa chỉ:</strong> {order?.address || "Chưa cập nhật địa chỉ"}
+                </p>
+              </div>
             </div>
           </div>
 
@@ -89,11 +117,11 @@ const OrderDetailModal = ({ isOpen, onClose, order }) => {
               <h4>Danh sách sản phẩm</h4>
             </div>
             <div className="product-list">
-              {order?.orderDetailsDTOS && order.orderDetailsDTOS.length > 0 ? (
-                order.orderDetailsDTOS.map((item, idx) => (
+              {order?.orderDetailsDTOList && order.orderDetailsDTOList.length > 0 ? (
+                order.orderDetailsDTOList.map((item, idx) => (
                   <div key={idx} className="product-item-detail">
                     <img
-                      src={item.pictureProduct}
+                      src={item.pictureProduct || "https://images.unsplash.com/photo-1541167760496-162955ed8a9f?q=80&w=200&auto=format&fit=crop"}
                       alt={item.nameproduct}
                       className="product-image-detail"
                     />
@@ -103,20 +131,25 @@ const OrderDetailModal = ({ isOpen, onClose, order }) => {
                         {item.nameproduct}
                       </div>
                       <div className="product-meta-detail">
-                        <span>Size: {item.size}</span>
+                        <div className="item-size">Size: {item.size}</div>
                         {item.toppingDTOs && item.toppingDTOs.length > 0 && (
-                          <span className="toppings-detail">
-                            {" "}
-                            - Toppings:{" "}
-                            {item.toppingDTOs
-                              .map((t) => t.nameTopping)
-                              .join(", ")}
-                          </span>
+                          <div className="item-toppings">
+                            <span className="topping-label">Toppings: </span>
+                            {item.toppingDTOs.map((t, tIdx) => (
+                              <span key={tIdx} className="topping-tag">
+                                {t.nameTopping} (+{formatPrice(t.price_topping)})
+                                {tIdx < item.toppingDTOs.length - 1 ? ", " : ""}
+                              </span>
+                            ))}
+                          </div>
                         )}
+                        <div className="item-date" style={{ fontSize: '11px', color: '#888', fontStyle: 'italic', marginTop: '4px' }}>
+                          Ngày tạo: {formatDate(item.creatAt)}
+                        </div>
                       </div>
                     </div>
                     <div className="product-price-detail">
-                      {item.totalPrice.toLocaleString()}đ
+                      {formatPrice(item.totalPrice)}
                     </div>
                   </div>
                 ))
@@ -131,9 +164,9 @@ const OrderDetailModal = ({ isOpen, onClose, order }) => {
 
         <div className="modal-footer">
           <div className="total-row">
-            <span>Tổng cộng:</span>
+            <span>Tổng cộng hóa đơn:</span>
             <span className="total-amount">
-              {order?.totalpriceOrder?.toLocaleString() || 0}đ
+              {formatPrice(order?.totalpriceOrder)}
             </span>
           </div>
         </div>
