@@ -89,13 +89,42 @@ const OrderDetailModal = ({ isOpen, onClose, order }) => {
               <h4>Danh sách sản phẩm</h4>
             </div>
             <div className="product-list">
-              {/* User will map their API data here */}
-              <div className="empty-product-state">
-                <p>Dữ liệu sản phẩm sẽ được render ở đây</p>
-                <p className="hint">
-                  (Bạn hãy map order.products hoặc dữ liệu chi tiết vào đây)
-                </p>
-              </div>
+              {order?.orderDetailsDTOS && order.orderDetailsDTOS.length > 0 ? (
+                order.orderDetailsDTOS.map((item, idx) => (
+                  <div key={idx} className="product-item-detail">
+                    <img
+                      src={item.pictureProduct}
+                      alt={item.nameproduct}
+                      className="product-image-detail"
+                    />
+                    <div className="product-info-detail">
+                      <div className="product-name-detail">
+                        <span className="quantity-badge">{item.quantity}x</span>
+                        {item.nameproduct}
+                      </div>
+                      <div className="product-meta-detail">
+                        <span>Size: {item.size}</span>
+                        {item.toppingDTOs && item.toppingDTOs.length > 0 && (
+                          <span className="toppings-detail">
+                            {" "}
+                            - Toppings:{" "}
+                            {item.toppingDTOs
+                              .map((t) => t.nameTopping)
+                              .join(", ")}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="product-price-detail">
+                      {item.totalPrice.toLocaleString()}đ
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="empty-product-state">
+                  <p>Không có sản phẩm nào trong đơn hàng này.</p>
+                </div>
+              )}
             </div>
           </div>
         </div>

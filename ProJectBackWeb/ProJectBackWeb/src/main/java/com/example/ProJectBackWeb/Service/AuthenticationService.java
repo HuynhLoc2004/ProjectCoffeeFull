@@ -83,7 +83,8 @@ public class AuthenticationService {
     protected int expirytime;
     @Value("${jwt.refresh_time}")
     protected int refresh_time;
-
+    @Value("${google.returnUrl}")
+    private String googleReturnUrl;
     public ResponseAuthentication authentication_login(UserRequestLogin userRequestLogin, HttpServletResponse httpServletResponse) throws ParseException {
         if (!userRepository.existsByAccount(userRequestLogin.getAccount_user())) {
             throw new Appexception(HttpStatusEnum.NOT_FOUND.getCode(), "User not found");
@@ -180,7 +181,7 @@ public class AuthenticationService {
                 }
             UserEntity userEntityQuery = userRepository.findUserByEmail(email);
                 if(userEntityQuery.getActive() == false){
-                    httpServletResponse.sendRedirect("http://localhost:5173/login/account%20is%20blocked");
+                    httpServletResponse.sendRedirect(googleReturnUrl + "/login/account%20is%20blocked");
                     return null;
                 }
             List<String> scope = new ArrayList<>();
