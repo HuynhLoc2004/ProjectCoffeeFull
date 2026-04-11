@@ -50,7 +50,6 @@ const CheckoutPage = () => {
     toppings,
     quantity,
     totalPrice,
-    orderCode,
     type,
   } = state;
 
@@ -64,26 +63,31 @@ const CheckoutPage = () => {
 
     setIsLoading(true);
 
+    const now = new Date();
+    const formattedDate = now.toISOString().replace("T", " ").slice(0, 19);
+
     const orderPayload = isCart
       ? {
           totalPrice: cartData.totalPrice,
-          createOrder: Date.now(),
+          createOrder: formattedDate,
           cartProductEntities: cartData.cartProductEntities,
           type_order: "ORDER_CART",
           address: address.trim(),
         }
       : {
           totalPrice: totalPrice,
-          createOrder: Date.now(),
+          createOrder: formattedDate,
           cartProductEntities: [
             {
-              product: product,
+              productEntity: product,
               size: _size,
-              toppings: toppings,
+              toppingEntityList: toppings,
               quantity: quantity,
+              totalPrice: totalPrice,
+              creatAt: formattedDate,
             },
           ],
-          type_order: "ORDER_NƠW",
+          type_order: "ORDER_NOW",
           address: address.trim(),
         };
 
@@ -243,21 +247,21 @@ const CheckoutPage = () => {
                     >
                       <div className="w-16 h-16 bg-white/10 rounded-xl overflow-hidden flex-shrink-0 border border-white/5">
                         <img
-                          src={item.product.image}
+                          src={item.productEntity?.img || item.product?.image}
                           className="w-full h-full object-cover"
-                          alt={item.product.name}
+                          alt={item.productEntity?.name || item.product?.name}
                         />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-bold truncate text-sm">
-                          {item.product.name}
+                          {item.productEntity?.name || item.product?.name}
                         </p>
                         <p className="text-xs text-white/60">
                           x{item.quantity} • {item.size}
                         </p>
                       </div>
                       <p className="font-bold text-sm">
-                        {(item.product.price * item.quantity).toLocaleString()}đ
+                        {item.totalPrice.toLocaleString()}đ
                       </p>
                     </div>
                   ))
@@ -265,7 +269,7 @@ const CheckoutPage = () => {
                   <div className="flex gap-4 items-center py-3">
                     <div className="w-16 h-16 bg-white/10 rounded-xl overflow-hidden flex-shrink-0">
                       <img
-                        src={product.image}
+                        src={product.img || product.image}
                         className="w-full h-full object-cover"
                         alt={product.name}
                       />

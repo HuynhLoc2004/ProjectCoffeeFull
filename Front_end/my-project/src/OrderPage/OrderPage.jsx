@@ -101,55 +101,16 @@ const OrderPage = () => {
   };
 
   const handleCheckout = (e) => {
-    const now = new Date();
-    const formattedDate = now.toISOString().replace("T", " ").slice(0, 19);
-
-    const cartProductEntities = [
-      {
-        productEntity: product,
-        size: _size,
-        toppingEntityList: toppings,
+    navigate("/checkout", {
+      state: {
+        product: product,
+        _size: _size,
+        toppings: toppings,
         quantity: quantity,
         totalPrice: totalPrice,
-        creatAt: formattedDate,
-      },
-    ];
-
-    const orderRequest = {
-      totalPrice: totalPrice,
-      type_order: "ORDER_NOW",
-      cartProductEntities: cartProductEntities,
-    };
-
-    axiosClient
-      .post("/order/create", orderRequest, {
-        headers: {
-          Authorization: `Bearer ${getAccessToken()}`,
-        },
-      })
-      .then((res) => {
-        if (res.data.statusCode == 201) {
-          const order_id = res.data.result;
-
-          axiosClient
-            .get(`/payos/createQr?order_id=${order_id}`, {
-              headers: {
-                Authorization: `Bearer ${getAccessToken()}`,
-              },
-            })
-            .then((res) => {
-              if (res.data.statusCode == 200) {
-                window.location.href = res.data.result.checkoutUrl;
-              }
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+        type: "ORDER_NOW"
+      }
+    });
   };
 
   const handleAddToCart = (e) => {
