@@ -121,6 +121,7 @@ public class MapperObject {
         dto.setTotalPrice(history.getTotalPrice());
         dto.setTimeOrderHistory(history.getTimeOrderHistory());
         dto.setStatus(history.getStatus());
+        dto.setAddress(history.getAddress());
         return dto;
     }
     public OrderDetailsDTO orderDetailsDTO(OrderDetailsEntity orderDetailsEntity){
@@ -129,6 +130,7 @@ public class MapperObject {
         orderDetailsDTO.setQuantity(orderDetailsEntity.getQuantity());
         orderDetailsDTO.setCreatAt(orderDetailsEntity.getCreatAt());
         orderDetailsDTO.setSize(orderDetailsEntity.getSize());
+        orderDetailsDTO.setPictureProduct(orderDetailsEntity.getProductEntity().getImg());
         orderDetailsDTO.setTotalPrice(orderDetailsEntity.getTotalPrice());
         orderDetailsDTO.setNameproduct(orderDetailsEntity.getProductEntity().getName());
         orderDetailsDTO.setToppingDTOs(orderDetailsEntity.getToppingEntityList().stream().map(item->{

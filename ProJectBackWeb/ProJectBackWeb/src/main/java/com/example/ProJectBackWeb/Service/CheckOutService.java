@@ -111,6 +111,7 @@ public class CheckOutService {
              LocalDateTime time = LocalDateTime.parse(data.getTransactionDateTime(), formatter);
              orderSHistoryEntity.setTimeOrderHistory(time);
              orderSHistoryEntity.setUserEntity(userEntity) ;
+             orderSHistoryEntity.setAddress(orderEntity.getAddress());
 
              this.orderSHistoryRepository.save(orderSHistoryEntity);
              if(orderEntity.getType_Order().equals(TypeOrderEnum.ORDER_CART.toString())){

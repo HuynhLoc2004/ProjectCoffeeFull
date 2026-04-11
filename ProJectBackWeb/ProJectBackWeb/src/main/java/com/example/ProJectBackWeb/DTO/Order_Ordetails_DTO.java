@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 public class Order_Ordetails_DTO {
     private Long order_id;
-    private String adresssUser;
+    private String address;
     private String fullnameUser;
     private String phoneUser;
     private String statusOrder;

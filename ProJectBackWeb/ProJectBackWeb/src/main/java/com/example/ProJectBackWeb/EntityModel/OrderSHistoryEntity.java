@@ -22,6 +22,8 @@ public class OrderSHistoryEntity {
     private Long id;
     @Column(name = "totalPrice"  , nullable = true)
     private Long totalPrice;
+    @Column(name = "address_order" , columnDefinition = "NVARCHAR(MAX)")
+    private String address;
     @Column(name = "time_order_history" , nullable = false)
     private LocalDateTime timeOrderHistory;
     @OneToOne(fetch = FetchType.LAZY)
@@ -29,6 +31,7 @@ public class OrderSHistoryEntity {
     @Column(name = "status" , nullable = false )
     private String status;
     @ManyToOne(fetch = FetchType.LAZY)
+
     @JoinColumn(
             name = "user_id"
     )

@@ -33,6 +33,6 @@ public class OrderDTO {
         this.fullname = fullname;
         this.mail = mail;
         this.quantity = quantity;
-        this.picture = "http://localhost:8080/image"+picture;
+        this.picture = picture;
     }
 }

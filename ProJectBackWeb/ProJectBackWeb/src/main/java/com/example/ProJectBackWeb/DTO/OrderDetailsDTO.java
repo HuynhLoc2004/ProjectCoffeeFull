@@ -24,6 +24,7 @@ public class OrderDetailsDTO {
     private Double totalPrice;
     private String size;
     private LocalDateTime creatAt;
+    private String pictureProduct;
     private String nameproduct;
     private List<ToppingDTO> toppingDTOs = new ArrayList<>();
 }

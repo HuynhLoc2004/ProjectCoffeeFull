@@ -111,7 +111,7 @@ public class OrderService {
         Order_Ordetails_DTO orderOrdetailsDto = new Order_Ordetails_DTO();
         orderOrdetailsDto.setOrderDetailsDTOList(orderDetailsDTOS);
         orderOrdetailsDto.setPhoneUser(order.getUserEntity().getPhone());
-        orderOrdetailsDto.setAdresssUser(order.getUserEntity().getAddress());
+        orderOrdetailsDto.setAddress(order.getAddress());
         orderOrdetailsDto.setCreatedAtOrder(order.getCreatedAt());
         orderOrdetailsDto.setStatusOrder(order.getStatus());
         orderOrdetailsDto.setFullnameUser(order.getUserEntity().getFullname());

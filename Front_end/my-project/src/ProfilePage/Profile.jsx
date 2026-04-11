@@ -137,13 +137,11 @@ const Profile = () => {
                 setAccesstoken(res.data.result.accessToken);
               })
               .catch((err) => {
-                console.log("đã chạy vào 120");
                 navigate("/login");
               });
           }
         })
         .catch((err) => {
-          console.log("đã chạy vào 126");
           navigate("/login");
         });
     }, 100);
@@ -519,8 +517,6 @@ const OrderHistory = ({ orders, onViewDetails }) => {
                     },
                   })
                   .then((res) => {
-                    console.log(orders.id);
-                    console.log(res);
                     if (res.data.statusCode == 200) {
                       onViewDetails(res.data.result);
                     }
