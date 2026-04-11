@@ -135,6 +135,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                             throw new RuntimeException(e);
                         }
                         if(responseAuthentication != null){
+                            log.info("host : " + this.googleReturnUrl);
                             res.sendRedirect(
                                     this.googleReturnUrl+"/authentication?info="+responseAuthentication.getAccessToken());
                         }
