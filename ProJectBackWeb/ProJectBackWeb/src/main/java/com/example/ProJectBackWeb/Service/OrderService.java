@@ -160,6 +160,7 @@ public class OrderService {
             OrderDetailsDTO orderDetailsDTO = new OrderDetailsDTO();
             orderDetailsDTO.setNameproduct(item.getProductEntity().getName());
             orderDetailsDTO.setSize(item.getSize());
+            orderDetailsDTO.setPictureProduct(item.getProductEntity().getImg());
             orderDetailsDTO.setCreatAt(item.getCreatAt());
             orderDetailsDTO.setQuantity(item.getQuantity());
             orderDetailsDTO.setTotalPrice(item.getTotalPrice());
@@ -175,6 +176,7 @@ public class OrderService {
                 orderEntity = this.ordersRepository.getOrder(orderId).orElseThrow();
         OrderDTO orderDTO = new OrderDTO();
         orderDTO.setId(orderId);
+        orderDTO.setAddress(orderEntity.getAddress());
         orderDTO.setOrderDetailsDTOS(orderDetailsDTOS);
         orderDTO.setStatus(orderEntity.getStatus());
         orderDTO.setTotalPrice(orderEntity.getTotalPrice());

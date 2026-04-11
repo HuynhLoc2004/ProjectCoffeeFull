@@ -23,10 +23,10 @@ public class OrderDTO {
     private String fullname;
     private String mail;
     private Long quantity;
-    private String picture;
+
     private String address;
     private List<OrderDetailsDTO> orderDetailsDTOS =  new ArrayList<>();
-    public OrderDTO(Long id, Double totalPrice, String status, LocalDateTime createdAt, String fullname, String mail, Long quantity, String picture ,String address ) {
+    public OrderDTO(Long id, Double totalPrice, String status, LocalDateTime createdAt, String fullname, String mail, Long quantity ,String address ) {
         this.id = id;
         this.totalPrice = totalPrice;
         this.status = status;
@@ -34,7 +34,6 @@ public class OrderDTO {
         this.fullname = fullname;
         this.mail = mail;
         this.quantity = quantity;
-        this.picture = picture;
         this.address = address;
     }
 }

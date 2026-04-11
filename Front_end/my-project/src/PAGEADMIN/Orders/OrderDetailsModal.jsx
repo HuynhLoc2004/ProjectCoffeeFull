@@ -11,7 +11,7 @@ import {
   Hash,
   MapPin,
   User,
-  Phone
+  Mail
 } from "lucide-react";
 
 const getStatusStyle = (status) => {
@@ -90,7 +90,7 @@ const OrderDetailsModal = ({ isOpen, onClose, order }) => {
                     <h2 className="text-xl font-black text-white tracking-tight">Chi tiết hoá đơn</h2>
                     <div className="flex items-center gap-2 mt-1">
                       <Hash className="w-3 h-3 text-neutral-500" />
-                      <span className="text-sm font-mono text-neutral-400 font-bold">{order.order_id || "N/A"}</span>
+                      <span className="text-sm font-mono text-neutral-400 font-bold">{order.id || "N/A"}</span>
                     </div>
                   </div>
                 </div>
@@ -110,17 +110,17 @@ const OrderDetailsModal = ({ isOpen, onClose, order }) => {
               <div className="grid grid-cols-3 gap-4">
                 <div className="p-5 rounded-[2rem] bg-neutral-900 border border-neutral-800 flex flex-col items-center justify-center text-center space-y-2">
                   <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">Trạng thái</p>
-                  <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase border ${getStatusStyle(order.statusOrder)}`}>
-                    {getStatusLabel(order.statusOrder)}
+                  <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase border ${getStatusStyle(order.status)}`}>
+                    {getStatusLabel(order.status)}
                   </div>
                 </div>
                 <div className="p-5 rounded-[2rem] bg-neutral-900 border border-neutral-800 flex flex-col items-center justify-center text-center space-y-1">
-                  <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">Thời gian</p>
-                  <p className="text-sm font-black text-white">{formatDate(order.createdAtOrder)}</p>
+                  <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">Thời gian đặt</p>
+                  <p className="text-sm font-black text-white">{formatDate(order.createdAt)}</p>
                 </div>
                 <div className="p-5 rounded-[2rem] bg-orange-500/5 border border-orange-500/10 flex flex-col items-center justify-center text-center space-y-1">
                   <p className="text-[10px] font-black text-orange-500/50 uppercase tracking-widest">Tổng tiền</p>
-                  <p className="text-xl font-black text-orange-500">{formatPrice(order.totalpriceOrder)}</p>
+                  <p className="text-xl font-black text-orange-500">{formatPrice(order.totalPrice)}</p>
                   <p className="text-[10px] text-orange-500/30 font-bold uppercase">VNĐ</p>
                 </div>
               </div>
@@ -134,13 +134,13 @@ const OrderDetailsModal = ({ isOpen, onClose, order }) => {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <p className="text-[10px] text-neutral-500 font-bold uppercase">Tên khách hàng</p>
-                    <p className="text-sm text-white font-black uppercase">{order.fullnameUser || "---"}</p>
+                    <p className="text-sm text-white font-black uppercase">{order.fullname || "---"}</p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-[10px] text-neutral-500 font-bold uppercase">Số điện thoại</p>
+                    <p className="text-[10px] text-neutral-500 font-bold uppercase">Email liên hệ</p>
                     <div className="flex items-center gap-2">
-                      <Phone className="w-3 h-3 text-orange-500" />
-                      <p className="text-sm text-white font-black">{order.phoneUser || "---"}</p>
+                      <Mail className="w-3 h-3 text-orange-500" />
+                      <p className="text-sm text-white font-black">{order.mail || "---"}</p>
                     </div>
                   </div>
                 </div>
@@ -157,12 +157,12 @@ const OrderDetailsModal = ({ isOpen, onClose, order }) => {
               <div className="space-y-4">
                 <div className="flex items-center gap-2 text-white font-black uppercase text-[10px] tracking-[0.2em] mb-2">
                   <ShoppingCart className="w-4 h-4 text-orange-500" />
-                  Danh sách sản phẩm
+                  Danh sách sản phẩm ({order.quantity || 0} loại)
                 </div>
 
                 <div className="space-y-3">
-                  {order.orderDetailsDTOList && order.orderDetailsDTOList.length > 0 ? (
-                    order.orderDetailsDTOList.map((item, idx) => (
+                  {order.orderDetailsDTOS && order.orderDetailsDTOS.length > 0 ? (
+                    order.orderDetailsDTOS.map((item, idx) => (
                       <div 
                         key={idx} 
                         className="p-5 rounded-3xl bg-neutral-900/50 border border-neutral-800 flex items-center justify-between group hover:border-neutral-700 transition-all"
@@ -198,10 +198,13 @@ const OrderDetailsModal = ({ isOpen, onClose, order }) => {
                               </span>
                               {item.toppingDTOs && item.toppingDTOs.length > 0 && item.toppingDTOs.map((t, tid) => (
                                 <span key={tid} className="px-2 py-0.5 rounded-lg bg-orange-500/10 text-[9px] font-black text-orange-400 uppercase border border-orange-500/10">
-                                  + {t.nameTopping || t.name}
+                                  + {t.nameTopping} ({formatPrice(t.price_topping)})
                                 </span>
                               ))}
                             </div>
+                            <p className="text-[9px] text-neutral-600 font-bold italic mt-1">
+                              Ngày tạo: {formatDate(item.creatAt)}
+                            </p>
                           </div>
                         </div>
                         <div className="text-right">
@@ -229,7 +232,7 @@ const OrderDetailsModal = ({ isOpen, onClose, order }) => {
                   </div>
                   <div>
                     <p className="text-[10px] text-neutral-500 font-black uppercase tracking-widest">Tổng thanh toán</p>
-                    <p className="text-xl font-black text-white leading-none">{formatPrice(order.totalpriceOrder)}</p>
+                    <p className="text-xl font-black text-white leading-none">{formatPrice(order.totalPrice)}</p>
                   </div>
                 </div>
                 <button 
