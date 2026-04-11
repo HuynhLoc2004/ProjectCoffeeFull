@@ -25,7 +25,7 @@ public class OrderDTO {
     private Long quantity;
     private String address;
     private List<OrderDetailsDTO> orderDetailsDTOS =  new ArrayList<>();
-    public OrderDTO(Long id, Double totalPrice, String status, LocalDateTime createdAt, String fullname, String mail, Long quantity ,String address ) {
+    public OrderDTO(Long id, Double totalPrice, String status, LocalDateTime createdAt, String fullname, String mail, Long      quantity ,String address ) {
         this.id = id;
         this.totalPrice = totalPrice;
         this.status = status;
