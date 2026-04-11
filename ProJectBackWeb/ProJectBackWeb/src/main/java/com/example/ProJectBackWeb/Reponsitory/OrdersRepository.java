@@ -64,10 +64,10 @@ public interface OrdersRepository extends JpaRepository<OrderEntity , Long> {
     List<ProductBestSelDTO> getTopProductBest(@Param("status") String status , Pageable pageable ,@Param("year") Integer year);
 
     @Query(value = "SELECT new com.example.ProJectBackWeb.DTO.OrderDTO(" +
-            "od.id, od.totalPrice  , od.status, od.createdAt, u.fullname , u.email, count(odt.id) , u.picture ) " +
+            "od.id, od.totalPrice  , od.status, od.createdAt, u.fullname , u.email, count(odt.id) , u.picture , od.address_order ) " +
             "FROM OrderEntity od JOIN od.orderDetailEntities odt JOIN od.userEntity u " +
             "WHERE u.id != :Idadmin " +
-            "GROUP BY od.id , od.status, od.createdAt, u.fullname, u.email , od.totalPrice , u.picture")
+            "GROUP BY od.id , od.status, od.createdAt, u.fullname, u.email , od.totalPrice , u.picture , od.address_order")
     public List<OrderDTO> getOrders(
                                     @Param("Idadmin") Long idAdmin);
 

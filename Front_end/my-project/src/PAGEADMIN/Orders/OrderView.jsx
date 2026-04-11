@@ -13,6 +13,10 @@ import {
   XCircle,
   Loader2,
   PackageSearch,
+  MapPin,
+  Mail,
+  User,
+  Hash
 } from "lucide-react";
 import axiosClient from "../../AxiosClient";
 import OrderDetailsModal from "./OrderDetailsModal";
@@ -24,7 +28,7 @@ const getStatusStyle = (status) => {
     case "CANCEL":
       return "bg-red-500/10 text-red-500 border-red-500/20";
     default:
-      return "bg-neutral-500/10 text-neutral-500 border-neutral-500/20";
+      return "bg-orange-500/10 text-orange-500 border-orange-500/20";
   }
 };
 
@@ -60,7 +64,7 @@ const formatPrice = (price) => {
 const formatDate = (dateString) => {
   if (!dateString) return "---";
   const date = new Date(dateString);
-  return date.toLocaleDateString("vi-VN", {
+  return date.toLocaleString("vi-VN", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
@@ -129,13 +133,13 @@ const OrderView = () => {
             <thead>
               <tr className="border-b border-neutral-800 bg-white/[0.02]">
                 <th className="px-6 py-5 font-semibold text-neutral-400 text-sm">
-                  Mã đơn
+                  Thông tin đơn
                 </th>
                 <th className="px-6 py-5 font-semibold text-neutral-400 text-sm">
                   Khách hàng
                 </th>
                 <th className="px-6 py-5 font-semibold text-neutral-400 text-sm">
-                  Ngày đặt
+                  Địa chỉ giao hàng
                 </th>
                 <th className="px-6 py-5 font-semibold text-neutral-400 text-sm">
                   Tổng tiền
@@ -205,37 +209,59 @@ const OrderView = () => {
                       className="group hover:bg-white/[0.02] transition-colors border-b border-neutral-800/50 last:border-0"
                     >
                       <td className="px-6 py-5">
-                        <span className="font-mono font-bold text-orange-500 text-sm tracking-tight">
-                          #{order.id}
-                        </span>
-                        <p className="text-[10px] text-neutral-500 mt-1 font-medium">
-                          Số lượng: {order.quantity}
-                        </p>
+                        <div className="flex items-center gap-4">
+                          {/* Order Image/Icon */}
+                          <div className="w-12 h-12 rounded-xl bg-neutral-800 border border-neutral-700 overflow-hidden shrink-0 flex items-center justify-center">
+                            {order.picture ? (
+                              <img 
+                                src={order.picture} 
+                                alt={order.fullname} 
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <Hash className="w-6 h-6 text-neutral-600" />
+                            )}
+                          </div>
+                          <div>
+                            <span className="font-mono font-bold text-orange-500 text-sm tracking-tight">
+                              #{order.id}
+                            </span>
+                            <div className="flex flex-col mt-1">
+                              <span className="text-[10px] text-neutral-500 font-bold uppercase">
+                                {formatDate(order.createdAt)}
+                              </span>
+                              <span className="text-[10px] text-orange-500/80 font-black mt-0.5">
+                                SỐ LƯỢNG: {order.quantity}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
                       </td>
                       <td className="px-6 py-5">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500/20 to-orange-500/5 text-orange-500 flex items-center justify-center text-sm font-bold border border-orange-500/10 shadow-inner">
+                          <div className="w-9 h-9 rounded-full bg-neutral-800 border border-neutral-700 flex items-center justify-center text-[10px] font-black text-neutral-400">
                             {(order.fullname || "U").charAt(0).toUpperCase()}
                           </div>
                           <div>
-                            <p className="text-sm font-semibold text-neutral-200">
+                            <p className="text-sm font-bold text-white uppercase tracking-tight">
                               {order.fullname}
                             </p>
-                            <p className="text-[11px] text-neutral-500 mt-0.5">
+                            <p className="text-[10px] text-neutral-500 flex items-center gap-1 mt-0.5">
+                              <Mail className="w-3 h-3" />
                               {order.mail}
                             </p>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-5">
-                        <div className="text-sm text-neutral-400 font-medium">
-                          {formatDate(order.createdAt).split(" ")[0]}
-                        </div>
-                        <div className="text-[10px] text-neutral-600">
-                          {formatDate(order.createdAt).split(" ")[1]}
+                        <div className="flex items-start gap-2 max-w-[200px]">
+                          <MapPin className="w-3.5 h-3.5 text-neutral-500 mt-0.5 shrink-0" />
+                          <p className="text-[11px] text-neutral-400 font-medium leading-relaxed line-clamp-2">
+                            {order.address || "---"}
+                          </p>
                         </div>
                       </td>
-                      <td className="px-6 py-5 font-bold text-sm text-white">
+                      <td className="px-6 py-5 font-black text-sm text-white">
                         {formatPrice(order.totalPrice)}
                       </td>
                       <td className="px-6 py-5">
@@ -254,14 +280,13 @@ const OrderView = () => {
                                 withCredentials: true,
                               })
                               .then((res) => {
-                                console.log(res.data.result);
                                 handleOpenModal(res.data.result);
                               })
                               .catch((err) => {
-                                console.log("không call được api", err);
+                                console.log("Không thể tải chi tiết đơn hàng", err);
                               });
                           }}
-                          className="p-2.5 hover:bg-orange-500/10 rounded-xl transition-all text-neutral-500 hover:text-orange-500 active:scale-90"
+                          className="p-2.5 bg-neutral-800 hover:bg-orange-500/10 rounded-xl transition-all text-neutral-400 hover:text-orange-500 active:scale-90 border border-neutral-700 hover:border-orange-500/20 shadow-sm"
                           title="Xem chi tiết"
                         >
                           <Eye className="w-5 h-5" />
