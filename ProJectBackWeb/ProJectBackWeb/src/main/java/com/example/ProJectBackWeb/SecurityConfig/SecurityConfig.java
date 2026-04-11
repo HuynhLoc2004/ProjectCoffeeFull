@@ -155,7 +155,8 @@ public class SecurityConfig implements WebMvcConfigurer {
                          "http://localhost:3000",
                          "http://localhost",
                          "http://localhost:80" , 
-                         "http://103.28.32.228")
+                         "http://103.28.32.228" ,
+                         "http://coffeweb.duckdns.org")
                  .allowedHeaders("*")
                  .allowCredentials(true);
     }
@@ -164,10 +165,11 @@ public class SecurityConfig implements WebMvcConfigurer {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of(
                 "http://localhost:5173",
-                "http://localhost:3000",  // ← thêm vào
-                "http://localhost",       // ← thêm vào
+                "http://localhost:3000",  
+                "http://localhost",      
                 "http://localhost:80",
-                "http://103.28.32.228"     // ← thêm vào
+                "http://103.28.32.228" ,
+                "http://coffeweb.duckdns.org"   
         ));
         config.setAllowCredentials(true);
         config.setAllowedHeaders(List.of("*"));
