@@ -39,7 +39,7 @@ import java.util.List;
 @EnableMethodSecurity(prePostEnabled = true)
 @EnableWebSecurity
 public class SecurityConfig implements WebMvcConfigurer {
-    private final String[] ENDPOINT = {"/product/**" , "/image/**" };
+    private final String[] ENDPOINT = {"/api/product/**" , "/api/image/**" };
     private final JwtDecodeCustom jwtDecodeCustom;
     private final AuthenticationService authenticationService;
     private final RedisTemplate<String , String> redisTemplate;
