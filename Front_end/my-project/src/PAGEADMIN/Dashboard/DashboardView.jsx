@@ -97,7 +97,6 @@ const DashboardView = () => {
     "Tháng 12",
   ];
 
-  console.log(productBestOfYear);
   const dataRevenue = monthNames.map((name, index) => {
     const monthNumber = index + 1;
     const profitData = profits.find((p) => parseInt(p.month) === monthNumber);

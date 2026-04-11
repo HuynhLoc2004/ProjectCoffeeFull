@@ -66,7 +66,6 @@ const Profile = () => {
           },
         })
         .then((res) => {
-          console.log(res.data.result.picture);
           setInfoUser({
             fullname: res.data.result.fullname,
             picture: res.data.result.picture,
@@ -116,7 +115,6 @@ const Profile = () => {
 
   useEffect(() => {
     setTimeout(() => {
-      console.log(getAccessToken());
       axiosClient
         .get("/user/profile", {
           headers: {
@@ -339,7 +337,6 @@ const ProfileInfo = ({
                       },
                     )
                     .then((res) => {
-                      console.log(res);
                       if (res.data.statusCode == 204) {
                         setIsEditing(!isEditing);
                         setEmail("");

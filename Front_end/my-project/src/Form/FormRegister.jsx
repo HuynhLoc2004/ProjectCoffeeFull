@@ -17,6 +17,7 @@ const FormRegister = () => {
   const [birthdate, setBirthdate] = useState("");
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   
   const navigate = useNavigate();
   
@@ -30,6 +31,7 @@ const FormRegister = () => {
       return;
     }
     
+    setIsLoading(true);
     const DataRegistry = {
       account: valueUseraccounnt.trim(),
       password: password,
@@ -52,63 +54,112 @@ const FormRegister = () => {
           }
           return; 
         }
-        toast.success("Đăng kí tài khoản thành công!");
+        toast.success("Đăng ký tài khoản thành công!");
         navigate("/login");
       })
       .catch((err) => {
         toast.error("Có lỗi xảy ra, vui lòng thử lại sau!");
         console.error(err);
-      });
+      })
+      .finally(() => setIsLoading(false));
   };
 
+  const fields = [
+    { icon: VscAccount, val: valueUseraccounnt, set: setValueUseraccount, ph: "Tài khoản", type: "text" },
+    { icon: TbLockPassword, val: password, set: setPassword, ph: "Mật khẩu", type: "password" },
+    { icon: TfiEmail, val: email, set: setEmail, ph: "Email", type: "email" },
+    { icon: FaUserEdit, val: fullName, set: setFullName, ph: "Họ và tên", type: "text" },
+    { icon: CiPhone, val: phone, set: setPhone, ph: "Số điện thoại", type: "tel" },
+    { icon: FaBirthdayCake, val: birthdate, set: setBirthdate, ph: "Ngày sinh", type: "date" },
+    { icon: FaMapMarkerAlt, val: address, set: setAddress, ph: "Địa chỉ", type: "text", span: "md:col-span-2" },
+  ];
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[url('https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center relative p-4">
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+    <div className="min-h-screen flex items-center justify-center bg-[url('https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-fixed bg-center relative p-4 sm:p-6 md:p-8 overflow-x-hidden">
+      {/* Background Overlay */}
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]"></div>
 
       <motion.div 
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="relative z-10 w-full max-w-lg bg-white/10 backdrop-blur-2xl border border-white/20 p-8 md:p-12 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)]"
+        initial={{ opacity: 0, scale: 0.9, y: 40 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ type: "spring", duration: 0.8 }}
+        className="relative z-10 w-full max-w-xl bg-neutral-900/60 backdrop-blur-3xl border border-white/10 p-6 sm:p-10 md:p-12 rounded-[2rem] sm:rounded-[3rem] shadow-[0_25px_100px_rgba(0,0,0,0.6)]"
       >
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-black text-white mb-2 tracking-tighter">Tạo tài khoản</h1>
-          <p className="text-gray-300 font-medium">Trở thành thành viên của gia đình Coffe ngay</p>
+          <motion.h1 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-3 tracking-tighter uppercase"
+          >
+            Đăng Ký
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="text-neutral-400 text-sm sm:text-base font-medium"
+          >
+            Gia nhập cộng đồng yêu thích hương vị nguyên bản
+          </motion.p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {[
-            { icon: VscAccount, val: valueUseraccounnt, set: setValueUseraccount, ph: "Tài khoản" },
-            { icon: TbLockPassword, val: password, set: setPassword, ph: "Mật khẩu", type: "password" },
-            { icon: TfiEmail, val: email, set: setEmail, ph: "Email" },
-            { icon: FaUserEdit, val: fullName, set: setFullName, ph: "Họ và tên" },
-            { icon: CiPhone, val: phone, set: setPhone, ph: "Số điện thoại" },
-            { icon: FaBirthdayCake, val: birthdate, set: setBirthdate, ph: "Ngày sinh", type: "date" },
-            { icon: FaMapMarkerAlt, val: address, set: setAddress, ph: "Địa chỉ", span: "md:col-span-2" },
-          ].map((field, i) => (
-            <div key={i} className={`relative group ${field.span || ""}`}>
-              <field.icon className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50 text-xl" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+          {fields.map((field, i) => (
+            <motion.div 
+              key={i} 
+              initial={{ opacity: 0, x: i % 2 === 0 ? -20 : 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.1 * i }}
+              className={`relative group ${field.span || ""}`}
+            >
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#D4A373]/70 group-focus-within:text-[#D4A373] transition-colors z-20">
+                <field.icon className="text-lg sm:text-xl" />
+              </div>
+              
+              {field.type === "date" && (
+                <label className="absolute left-12 top-2 text-[10px] font-black text-[#D4A373]/50 uppercase pointer-events-none">
+                  Ngày sinh
+                </label>
+              )}
+
               <input
-                type={field.type || "text"}
-                className="w-full bg-white/5 border border-white/10 focus:border-[#D4A373]/50 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-white/40 outline-none transition-all"
-                placeholder={field.ph}
+                type={field.type}
+                className={`w-full bg-white/[0.03] border border-white/10 focus:border-[#D4A373] focus:bg-white/[0.05] rounded-xl sm:rounded-2xl ${field.type === 'date' ? 'pt-6 pb-2 pl-12' : 'py-4 pl-12'} pr-4 text-white text-sm sm:text-base placeholder:text-white/20 outline-none transition-all duration-300 ring-0 focus:ring-4 focus:ring-[#D4A373]/10`}
+                placeholder={field.type === "date" ? "" : field.ph}
                 value={field.val}
                 onChange={(e) => field.set(e.target.value)}
+                style={{ colorScheme: 'dark' }}
               />
-            </div>
+              
+              <div className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-transparent via-[#D4A373] to-transparent w-0 group-focus-within:w-full transition-all duration-500 opacity-50"></div>
+            </motion.div>
           ))}
         </div>
 
-        <div className="flex gap-4 mt-8">
-          <Link to="/" className="w-1/3">
-            <button className="w-full py-4 rounded-2xl bg-white/10 text-white font-black hover:bg-white/20 transition-all">Thoát</button>
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-8">
+          <Link to="/" className="w-full sm:w-1/3 order-2 sm:order-1">
+            <button className="w-full py-4 rounded-xl sm:rounded-2xl bg-white/5 text-white text-sm font-black hover:bg-white/10 border border-white/5 transition-all uppercase tracking-widest active:scale-95">
+              Hủy
+            </button>
           </Link>
-          <button onClick={handleValidForm} className="w-2/3 py-4 rounded-2xl bg-[#D4A373] text-white font-black hover:bg-[#c29263] transition-all shadow-lg">ĐĂNG KÝ</button>
+          <button 
+            disabled={isLoading}
+            onClick={handleValidForm} 
+            className="w-full sm:w-2/3 order-1 sm:order-2 py-4 rounded-xl sm:rounded-2xl bg-gradient-to-r from-[#D4A373] to-[#b88c5d] text-white text-sm font-black hover:shadow-[0_10px_30px_rgba(212,163,115,0.3)] hover:-translate-y-0.5 transition-all uppercase tracking-widest active:scale-95 disabled:opacity-50"
+          >
+            {isLoading ? "Đang xử lý..." : "Bắt đầu ngay"}
+          </button>
         </div>
 
-        <p className="text-center text-gray-400 text-sm mt-8">
-          Đã có tài khoản? <Link to="/login" className="text-[#D4A373] font-black hover:underline">Đăng nhập</Link>
+        <p className="text-center text-neutral-500 text-[12px] sm:text-sm mt-8">
+          Thành viên cũ? <Link to="/login" className="text-[#D4A373] font-black hover:text-[#e4b383] transition-colors decoration-2 hover:underline">Quay lại đăng nhập</Link>
         </p>
       </motion.div>
+      
+      {/* Decorative Floating Elements */}
+      <div className="absolute top-10 right-10 w-32 h-32 bg-[#D4A373]/10 blur-[100px] rounded-full animate-pulse"></div>
+      <div className="absolute bottom-10 left-10 w-48 h-48 bg-[#D4A373]/10 blur-[120px] rounded-full animate-pulse delay-700"></div>
     </div>
   );
 };

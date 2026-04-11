@@ -63,7 +63,6 @@ const AdminPage = () => {
         withCredentials: true,
       })
       .then((res) => {
-        console.log(res);
         setCheckingAuth(!checkingAuth);
       })
       .catch((err) => {
@@ -100,7 +99,6 @@ const AdminPage = () => {
       })
       .then((res) => {
         if (res.data.statusCode == 200) {
-          console.log("log out thành công");
           clearAccessToken();
           logout();
           localStorage.setItem("page_before", "/admin");
