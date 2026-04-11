@@ -178,6 +178,9 @@ public class OrderService {
         orderDTO.setId(orderId);
         orderDTO.setAddress(orderEntity.getAddress());
         orderDTO.setOrderDetailsDTOS(orderDetailsDTOS);
+        orderDTO.setCreatedAt(orderEntity.getCreatedAt());
+        orderDTO.setFullname(orderEntity.getUserEntity().getFullname());
+        orderDTO.setMail(orderEntity.getUserEntity().getEmail());
         orderDTO.setStatus(orderEntity.getStatus());
         orderDTO.setTotalPrice(orderEntity.getTotalPrice());
         orderDTO.setQuantity((long) orderDTO.getOrderDetailsDTOS().size());
