@@ -66,7 +66,7 @@ const AdminPage = () => {
         setCheckingAuth(!checkingAuth);
       })
       .catch((err) => {
-        if (err.status == 401) {
+        if (err.status == 401 || err.status == 403 || err.response?.status == 403 || err.response?.status == 401) {
           navigate("/admin-login");
         }
       });
