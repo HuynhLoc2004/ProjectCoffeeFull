@@ -21,8 +21,8 @@ public class    MailSenderconfig {
         JavaMailSenderImpl sender = new JavaMailSenderImpl();
         sender.setHost(host);
         sender.setPort(port);
-        sender.setUsername(systemmail);
-        sender.setPassword(password);
+        sender.setUsername(systemmail.trim());
+        sender.setPassword(password.trim());
 
 
         sender.getJavaMailProperties().put("mail.smtp.auth", "true");
