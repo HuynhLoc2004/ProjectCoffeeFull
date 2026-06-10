@@ -27,6 +27,15 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.jwt.*;
+import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
+import org.springframework.security.oauth2.core.OAuth2TokenValidator;
+import org.springframework.security.oauth2.client.jwt.JwtDecoderFactory;
+import org.springframework.security.oauth2.client.jwt.NimbusJwtDecoderFactory;
+import java.time.Duration;
+
 import java.text.ParseException;
 import java.util.List;
 
@@ -48,6 +57,17 @@ public class SecurityConfig implements WebMvcConfigurer {
 
     @Value("${google.returnUrl}")
     private String googleReturnUrl;
+
+    @Bean
+    public JwtDecoderFactory<ClientRegistration> jwtDecoderFactory() {
+        DefaultJwtDecoderFactory factory = new DefaultJwtDecoderFactory();
+        factory.setJwtValidatorFactory(registration -> {
+            // Cho phép độ lệch giờ lên đến 60 phút để tránh lỗi iat invalid
+            OAuth2TokenValidator<Jwt> withClockSkew = new JwtTimestampValidator(Duration.ofMinutes(60));
+            return new DelegatingOAuth2TokenValidator<>(withClockSkew);
+        });
+        return factory;
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http , JwtAuthenticationConverter authenticationConverter  , BearerTokenResolver bearerTokenResolver) throws Exception {
