@@ -7,52 +7,85 @@ on:
 
 jobs:
   # GIAI ĐOẠN 1: Đóng gói và đẩy lên Docker Hub
+
   build-and-push:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
+
         uses: actions/checkout@v3
 
       - name: Login to Docker Hub
+
         uses: docker/login-action@v2
+
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
+
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # --- GIỮ LẠI BƯỚC NÀY ĐỂ FIX LỖI TIMEOUT 443 ---
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-      # -----------------------------------------------
-
       - name: Build and Push Frontend
+
         uses: docker/build-push-action@v4
+
         with:
           context: ./Front_end
+
           push: true
+
           tags: huynhtanloc2004/coffee-frontend:latest
+
           build-args: |
-            VITE_API_URL=http://coffeweb.duckdns.org/api  # Giữ nguyên thiếu chữ E của Lộc nha
+
+            VITE_API_URL=http://coffeweb.duckdns.org/api
 
       - name: Build and Push Backend
+
         uses: docker/build-push-action@v4
+
         with:
           context: ./ProJectBackWeb
+
           push: true
+
           tags: huynhtanloc2004/coffee-backend:latest
 
   # GIAI ĐOẠN 2: SSH vào VPS để chạy hàng
+
   deploy:
     runs-on: ubuntu-latest
+
     needs: build-and-push
+
     steps:
       - name: Executing remote ssh commands to deploy
+
         uses: appleboy/ssh-action@master
+
         with:
           host: ${{ secrets.SSH_HOST }}
+
           username: ${{ secrets.SSH_USER }}
+
           password: ${{ secrets.SSH_PASSWORD }}
+
           script: |
+
+            # 1. Chui vào thư mục Lộc vừa tạo trên VPS
+
             cd /root/deploy
+
+
+
+            # 2. Login Docker để có quyền kéo hàng về
+
             echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+
+
+            # 3. Dùng dấu gạch ngang 'docker-compose' vì VPS Lộc dùng bản cũ
+
             docker-compose pull
-            docker-compose up -d --force-recreate
+
+            docker-compose up -d
