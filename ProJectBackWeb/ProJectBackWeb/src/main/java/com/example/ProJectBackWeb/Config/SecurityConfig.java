@@ -114,7 +114,7 @@ public class SecurityConfig implements WebMvcConfigurer {
             response.getWriter().write("{\"error\":\"Unauthorized\"}");
         }));
 
-//        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.oauth2Login(oauth2Login -> oauth2Login.successHandler((req , res , authentication)->{
             OAuth2AuthenticationToken oAuth2AuthenticationToken = (OAuth2AuthenticationToken) authentication;
