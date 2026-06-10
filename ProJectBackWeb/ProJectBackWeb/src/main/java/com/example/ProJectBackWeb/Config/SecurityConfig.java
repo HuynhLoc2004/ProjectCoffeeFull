@@ -1,6 +1,7 @@
 package com.example.ProJectBackWeb.Config;
 
 import com.example.ProJectBackWeb.Custom.JwtDecodeCustom;
+import com.example.ProJectBackWeb.ResponseData.ResponseAuthentication;
 import com.example.ProJectBackWeb.Service.AuthenticationService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -157,7 +158,6 @@ public class SecurityConfig implements WebMvcConfigurer {
     public BearerTokenResolver bearerTokenResolver(){
         return request -> {
             String authHeader = request.getHeader("Authorization");
-            // Kiểm tra header hợp lệ và bắt đầu bằng "Bearer "
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
                 String token = authHeader.substring(7).trim();
                 return token.isEmpty() ? null : token;
@@ -179,7 +179,6 @@ public class SecurityConfig implements WebMvcConfigurer {
         JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
         jwtGrantedAuthoritiesConverter.setAuthoritiesClaimName("scope");
         jwtGrantedAuthoritiesConverter.setAuthorityPrefix("");
-
         JwtAuthenticationConverter jwtauthenticationConverter = new JwtAuthenticationConverter();
         jwtauthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
         return jwtauthenticationConverter;
