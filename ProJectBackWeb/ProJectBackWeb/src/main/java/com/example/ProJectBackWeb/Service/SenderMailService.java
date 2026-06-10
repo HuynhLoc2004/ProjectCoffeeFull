@@ -45,7 +45,7 @@
         private final EvaluateRepository evaluateRepository;
         @Value("${mail.mailadmin}")
         private String adminMail;
-;        public SenderMailService(RedisTemplate<String, String> redisTemplate, ObjectMapper objectMapper, OtpEmailRepository otpEmailRepository, MailSender mailSender, JavaMailSender javaMailSender, UserRepository userRepository, EvaluateRepository evaluateRepository) {
+        public SenderMailService(RedisTemplate<String, String> redisTemplate, ObjectMapper objectMapper, OtpEmailRepository otpEmailRepository, JavaMailSender javaMailSender, UserRepository userRepository, EvaluateRepository evaluateRepository) {
             this.redisTemplate = redisTemplate;
             this.objectMapper = objectMapper;
             this.otpEmailRepository = otpEmailRepository;
