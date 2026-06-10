@@ -19,7 +19,12 @@ public class MailSenderconfig {
             @Value("${mail.system:}") String systemmail,
             @Value("${mail.password:}") String password)
     {
-        log.info("Cấu hình JavaMailSender với email hệ thống: [{}]", systemmail);
+        if (systemmail == null || systemmail.isEmpty()) {
+            log.error("CẢNH BÁO: Email hệ thống (mail.system) đang bị TRỐNG!");
+        } else {
+            log.info("Khởi tạo Mail Service với Email: [{}]", systemmail);
+        }
+
         JavaMailSenderImpl sender = new JavaMailSenderImpl();
         sender.setHost(host);
         sender.setPort(port);
@@ -27,12 +32,13 @@ public class MailSenderconfig {
         sender.setPassword(password.trim());
 
         Properties props = sender.getJavaMailProperties();
+        props.put("mail.transport.protocol", "smtp");
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
         props.put("mail.smtp.starttls.required", "true");
+        props.put("mail.smtp.ssl.trust", "smtp.gmail.com");
         props.put("mail.smtp.ssl.protocols", "TLSv1.2");
-        props.put("mail.smtp.from", systemmail.trim());
-        props.put("mail.debug", "false");
+        props.put("mail.debug", "true"); // Bật debug để xem log chi tiết quá trình bắt tay với Gmail
 
         return sender;
     }
