@@ -1,5 +1,5 @@
 import React from "react";
-import axios from "axios";
+import axiosClient from "../../AxiosClient";
 
 const OrderForm = ({ product, size, toppings, quantity }) => {
   const handleOrder = async () => {
@@ -11,7 +11,7 @@ const OrderForm = ({ product, size, toppings, quantity }) => {
     };
 
     // CALL API BACKEND
-    await axios.post("http://localhost:8080/api/orders", payload);
+    await axiosClient.post("/order/create", payload);
     alert("Đặt hàng thành công ☕🧋");
   };
 

@@ -149,8 +149,8 @@ public class AuthenticationService {
                     userEntity.setAddress("");
                     userEntity.setCreateAt(LocalDateTime.now());
                     userEntity.addRole(roleRepository.findRoleByName("USER"));
-                    this.redisTemplate.opsForValue().set("userEntity"+userEntity.getId() , objectMapper.writeValueAsString(userEntity)  , 60 , TimeUnit.MINUTES);
                     userRepository.save(userEntity);
+                    this.redisTemplate.opsForValue().set("userEntity"+userEntity.getId() , objectMapper.writeValueAsString(userEntity)  , 60 , TimeUnit.MINUTES);
 
 
                     UserEntity userEntityQuery = userRepository.findUserByEmail(email);
@@ -164,7 +164,7 @@ public class AuthenticationService {
 
                     String jwt_access = Jwts.builder()
                                .setHeaderParam("typ", "JWT")
-                            .setSubject(userEntityQuery.getAccount())
+                            .setSubject(userEntityQuery.getEmail())
                             .setId(UUID.randomUUID().toString())
                             .claim("scope", scope)
                             .claim("userId" ,userEntityQuery.getId())
@@ -194,7 +194,7 @@ public class AuthenticationService {
 
             String jwt_access = Jwts.builder()
                     .setHeaderParams(Map.of("typ" , "JWT"))
-                    .setSubject(userEntityQuery.getAccount())
+                    .setSubject(userEntityQuery.getAccount() != null ? userEntityQuery.getAccount() : userEntityQuery.getEmail())
                     .setId(UUID.randomUUID().toString())
                     .claim("scope", scope)
                     .claim("userId" ,userEntityQuery.getId())
