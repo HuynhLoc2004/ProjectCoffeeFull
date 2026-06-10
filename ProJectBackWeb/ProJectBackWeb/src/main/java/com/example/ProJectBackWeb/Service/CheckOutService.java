@@ -73,7 +73,7 @@ public class CheckOutService {
                 CreatePaymentLinkRequest.builder()
                         .orderCode(orderEntity.getId())
                         .amount(orderEntity.getTotalPrice().longValue())
-                        .description("Thanh toan #" + orderEntity.getId())
+                        .description("DH" + orderEntity.getId())
                         .returnUrl(returnUrl + "/payment-success")
                         .cancelUrl(cancelUrl + "/payment-cancel")
                         .expiredAt((System.currentTimeMillis() / 1000) + (30 * 60)) // Hết hạn sau 30 phút
