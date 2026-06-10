@@ -33,7 +33,7 @@ import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
 import org.springframework.security.oauth2.core.OAuth2TokenValidator;
 import org.springframework.security.oauth2.client.jwt.JwtDecoderFactory;
-import org.springframework.security.oauth2.client.jwt.NimbusJwtDecoderFactory;
+import org.springframework.security.oauth2.client.oidc.authentication.OidcIdTokenDecoderFactory;
 import java.time.Duration;
 
 import java.text.ParseException;
@@ -62,6 +62,7 @@ public class SecurityConfig implements WebMvcConfigurer {
     public JwtDecoderFactory<ClientRegistration> jwtDecoderFactory() {
         OidcIdTokenDecoderFactory factory = new OidcIdTokenDecoderFactory();
         factory.setJwtValidatorFactory(registration -> {
+            // Cho phép độ lệch giờ lên đến 60 phút để tránh lỗi iat invalid
             OAuth2TokenValidator<Jwt> withClockSkew = new JwtTimestampValidator(Duration.ofMinutes(60));
             return new DelegatingOAuth2TokenValidator<>(withClockSkew);
         });

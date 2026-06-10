@@ -63,7 +63,8 @@
         @PreAuthorize("hasAuthority('UPDATE') or hasAuthority('FULL')")
         @Transactional
         public Boolean SenderOtpEmail_ChangePassword(EmailRequest emailRequest , JwtAuthenticationToken jwtAuthenticationToken) throws JsonProcessingException {
-            Long userId = jwtAuthenticationToken.getToken().getClaim("userId");
+            Number userIdNum = (Number) jwtAuthenticationToken.getToken().getClaim("userId");
+            Long userId = userIdNum.longValue();
             String userEntityJson = this.redisTemplate.opsForValue().get("userEntity"+userId);
             if(userEntityJson == null){
                UserEntity userEntity = this.userRepository.findUserFullInfoById(userId.intValue()).orElseThrow();

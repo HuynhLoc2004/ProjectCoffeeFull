@@ -14,13 +14,10 @@ import com.example.ProJectBackWeb.Reponsitory.UserRepository;
 import com.example.ProJectBackWeb.RequestData.OrdersRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nimbusds.oauth2.sdk.auth.JWTAuthentication;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.annotation.Order;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.jaxb.SpringDataJaxb;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
@@ -67,7 +64,7 @@ public class OrderService {
     @Transactional
     public Long CreateOrders(JwtAuthenticationToken jwtAuthenticationToken, OrdersRequest ordersRequest) throws JsonProcessingException {
 
-        Number userIdNum = jwtAuthenticationToken.getToken().getClaim("userId");
+        Number userIdNum = (Number) jwtAuthenticationToken.getToken().getClaim("userId");
         UserEntity userEntity = userRepository.findById(userIdNum.intValue()).orElseThrow();
         List<OrderDetailsEntity> orderDetailsEntities = new ArrayList<>();
 
@@ -102,7 +99,7 @@ public class OrderService {
     }
 
     public Order_Ordetails_DTO getOrder(JwtAuthenticationToken jwtAuthenticationToken, Long orderId) {
-        Number userIdNum = jwtAuthenticationToken.getToken().getClaim("userId");
+        Number userIdNum = (Number) jwtAuthenticationToken.getToken().getClaim("userId");
         OrderEntity order = this.ordersRepository.findOrderByIdOfUser(userIdNum.longValue(), orderId).orElseThrow();
         List<OrderDetailsDTO> orderDetailsDTOS = new ArrayList<>();
         for (OrderDetailsEntity orderDetails : order.getOrderDetailEntities()) {
@@ -146,7 +143,8 @@ public class OrderService {
     public List<OrderDTO> getOrders(JwtAuthenticationToken
                                      jwtAuthenticationToken) {
 
-        Long idAdmin = jwtAuthenticationToken.getToken().getClaim("userId");
+        Number idAdminNum = (Number) jwtAuthenticationToken.getToken().getClaim("userId");
+        Long idAdmin = idAdminNum.longValue();
         return this.ordersRepository.getOrders(idAdmin) == null ? null : this.ordersRepository.getOrders(idAdmin);
     }
 
