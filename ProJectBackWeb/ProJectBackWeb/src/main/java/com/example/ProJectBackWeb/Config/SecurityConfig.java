@@ -39,7 +39,7 @@ import java.util.List;
 @EnableMethodSecurity(prePostEnabled = true)
 @EnableWebSecurity
 public class SecurityConfig implements WebMvcConfigurer {
-    private final String[] ENDPOINT = {"/api/product/**"};
+    private final String[] ENDPOINT = {"/api/product/**", "/api/products/**"};
     private final JwtDecodeCustom jwtDecodeCustom;
     private final AuthenticationService authenticationService;
     private final RedisTemplate<String , String> redisTemplate;
@@ -60,7 +60,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**"
                         ).permitAll()//
-                        .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
+                        .requestMatchers("/oauth2/**").permitAll()
                         .requestMatchers(HttpMethod.GET , ENDPOINT).permitAll()
                         .requestMatchers(HttpMethod.POST , "/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/user/registry").permitAll()
