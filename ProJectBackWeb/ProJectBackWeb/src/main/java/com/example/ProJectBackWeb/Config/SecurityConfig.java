@@ -60,9 +60,8 @@ public class SecurityConfig implements WebMvcConfigurer {
 
     @Bean
     public JwtDecoderFactory<ClientRegistration> jwtDecoderFactory() {
-        DefaultJwtDecoderFactory factory = new DefaultJwtDecoderFactory();
+        OidcIdTokenDecoderFactory factory = new OidcIdTokenDecoderFactory();
         factory.setJwtValidatorFactory(registration -> {
-            // Cho phép độ lệch giờ lên đến 60 phút để tránh lỗi iat invalid
             OAuth2TokenValidator<Jwt> withClockSkew = new JwtTimestampValidator(Duration.ofMinutes(60));
             return new DelegatingOAuth2TokenValidator<>(withClockSkew);
         });

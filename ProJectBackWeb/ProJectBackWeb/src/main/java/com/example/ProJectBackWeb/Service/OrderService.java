@@ -94,7 +94,7 @@ public class OrderService {
         orderEntity.setOrderDetailEntities(orderDetailsEntities);
         orderEntity.setUserEntity(userEntity);
         this.ordersRepository.save(orderEntity);
-        this.redisTemplate.opsForValue().set("OrderEntity" + userId.intValue() + orderEntity.getId()
+        this.redisTemplate.opsForValue().set("OrderEntity" + userEntity.getId() + orderEntity.getId()
                 , objectMapper.writeValueAsString(orderEntity), 5, TimeUnit.MINUTES
         );
 
@@ -102,8 +102,8 @@ public class OrderService {
     }
 
     public Order_Ordetails_DTO getOrder(JwtAuthenticationToken jwtAuthenticationToken, Long orderId) {
-        Long user_id = jwtAuthenticationToken.getToken().getClaim("userId");
-        OrderEntity order = this.ordersRepository.findOrderByIdOfUser(user_id, orderId).orElseThrow();
+        Number userIdNum = jwtAuthenticationToken.getToken().getClaim("userId");
+        OrderEntity order = this.ordersRepository.findOrderByIdOfUser(userIdNum.longValue(), orderId).orElseThrow();
         List<OrderDetailsDTO> orderDetailsDTOS = new ArrayList<>();
         for (OrderDetailsEntity orderDetails : order.getOrderDetailEntities()) {
             orderDetailsDTOS.add(this.mapperObject.orderDetailsDTO(orderDetails));
