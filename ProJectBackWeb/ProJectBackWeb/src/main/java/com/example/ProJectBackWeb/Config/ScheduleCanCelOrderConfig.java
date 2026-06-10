@@ -42,7 +42,7 @@ public class ScheduleCanCelOrderConfig {
         for (OrderEntity orderEntity : orderEntities) {
             UserEntity userEntity = orderEntity.getUserEntity();
             orderEntity.setStatus(OrderStatus.CANCELLED.toString());
-            //
+
             OrderSHistoryEntity orderSHistoryEntity = new OrderSHistoryEntity();
             orderSHistoryEntity.setUserEntity(orderEntity.getUserEntity());
             orderSHistoryEntity.setOrderEntity(orderEntity);
@@ -51,10 +51,11 @@ public class ScheduleCanCelOrderConfig {
             orderSHistoryEntity.setTotalPrice(totalPriceHistory);
             orderSHistoryEntity.setTimeOrderHistory(now);
 
+            orderSHistoryEntity.setAddress(orderEntity.getAddress());
+
             this.orderSHistoryRepository.save(orderSHistoryEntity);
 
             this.redisTemplate.delete("OrderEntity" + orderEntity.getUserEntity().getId() + orderEntity.getId());
-
         }
 
     }
