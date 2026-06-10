@@ -59,7 +59,7 @@ public class CheckOutService {
             long order_id
     ) throws JsonProcessingException {
 
-        Number userIdNum = jwtAuthenticationToken.getToken().getClaim("userId");
+        Number userIdNum = (Number) jwtAuthenticationToken.getToken().getClaim("userId");
         long userId = userIdNum.longValue();
 
         OrderEntity orderEntity = this.ordersRepository.findById(order_id)

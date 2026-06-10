@@ -144,7 +144,7 @@
         @Transactional
         public Boolean Verify_OTP_CHANGE_PASSWORD(OTPemailRequest otPemailRequest , JwtAuthenticationToken jwtAuthenticationToken) throws JsonProcessingException {
             log.info("đã chạy vào verify changePassword");
-            Number userIdNum = jwtAuthenticationToken.getToken().getClaim("userId");
+            Number userIdNum = (Number) jwtAuthenticationToken.getToken().getClaim("userId");
             Long userId = userIdNum.longValue();
             String userEntityJson  = this.redisTemplate.opsForValue().get("userEntity"+userId);
             if(userEntityJson == null){
