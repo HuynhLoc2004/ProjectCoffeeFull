@@ -67,8 +67,8 @@ public class OrderService {
     @Transactional
     public Long CreateOrders(JwtAuthenticationToken jwtAuthenticationToken, OrdersRequest ordersRequest) throws JsonProcessingException {
 
-        Long userId = jwtAuthenticationToken.getToken().getClaim("userId");
-        UserEntity userEntity = userRepository.findById(userId.intValue()).orElseThrow();
+        Number userIdNum = jwtAuthenticationToken.getToken().getClaim("userId");
+        UserEntity userEntity = userRepository.findById(userIdNum.intValue()).orElseThrow();
         List<OrderDetailsEntity> orderDetailsEntities = new ArrayList<>();
 
 

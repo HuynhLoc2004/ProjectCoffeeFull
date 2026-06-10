@@ -143,7 +143,8 @@
         @Transactional
         public Boolean Verify_OTP_CHANGE_PASSWORD(OTPemailRequest otPemailRequest , JwtAuthenticationToken jwtAuthenticationToken) throws JsonProcessingException {
             log.info("đã chạy vào verify changePassword");
-            Long userId = jwtAuthenticationToken.getToken().getClaim("userId");
+            Number userIdNum = jwtAuthenticationToken.getToken().getClaim("userId");
+            Long userId = userIdNum.longValue();
             String userEntityJson  = this.redisTemplate.opsForValue().get("userEntity"+userId);
             if(userEntityJson == null){
                 UserEntity userEntity = this.userRepository.findUserFullInfoById(userId.intValue()).orElseThrow();
@@ -197,7 +198,8 @@
     @Transactional
         public Boolean sendEmailEvaluate(JwtAuthenticationToken jwtAuthenticationToken , EvaluatedRequest
                                           evaluatedRequest){
-            Long iduser = jwtAuthenticationToken.getToken().getClaim("userId");
+            Number iduserNum = jwtAuthenticationToken.getToken().getClaim("userId");
+            Long iduser = iduserNum.longValue();
             UserEntity userEntity = this.userRepository.findById(iduser.intValue()).orElseThrow(()->{
                 throw new Appexception(HttpStatusEnum.NOT_FOUND.getCode(), "không tìm được user cần tìm "
                         );

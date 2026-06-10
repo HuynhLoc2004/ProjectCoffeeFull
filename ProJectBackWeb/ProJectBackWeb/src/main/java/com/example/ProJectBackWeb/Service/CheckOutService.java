@@ -59,26 +59,23 @@ public class CheckOutService {
             long order_id
     ) throws JsonProcessingException {
 
-        Long userId = jwtAuthenticationToken.getToken().getClaim("userId");
+        Number userIdNum = jwtAuthenticationToken.getToken().getClaim("userId");
+        long userId = userIdNum.longValue();
 
+        OrderEntity orderEntity = this.ordersRepository.findById(order_id)
+                .orElseThrow(() -> new RuntimeException("Order không tồn tại"));
 
-        String orderJson = redisTemplate.opsForValue()
-                .get("OrderEntity" + userId.intValue() + order_id);
-
-        if (orderJson == null) {
-            throw new RuntimeException("Order không tồn tại");
+        if (orderEntity.getUserEntity().getId() != (int)userId) {
+            throw new RuntimeException("Bạn không có quyền thanh toán đơn hàng này");
         }
-
-        OrderEntity orderEntity =
-                objectMapper.readValue(orderJson, OrderEntity.class);
 
         CreatePaymentLinkRequest request =
                 CreatePaymentLinkRequest.builder()
                         .orderCode(orderEntity.getId())
                         .amount(orderEntity.getTotalPrice().longValue())
-                        .description("mã: " + orderEntity.getId())
-                        .returnUrl(returnUrl+"/payment-success")
-                        .cancelUrl(cancelUrl+"/payment-cancel")
+                        .description("Thanh toan don hang " + orderEntity.getId())
+                        .returnUrl(returnUrl + "/payment-success")
+                        .cancelUrl(cancelUrl + "/payment-cancel")
                         .expiredAt(System.currentTimeMillis() / 1000 + 300)
                         .build();
 
