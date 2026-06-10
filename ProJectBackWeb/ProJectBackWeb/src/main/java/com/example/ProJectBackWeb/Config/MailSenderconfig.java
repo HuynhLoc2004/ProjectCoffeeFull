@@ -27,6 +27,8 @@ public class    MailSenderconfig {
 
         sender.getJavaMailProperties().put("mail.smtp.auth", "true");
         sender.getJavaMailProperties().put("mail.smtp.starttls.enable", "true");
+        sender.getJavaMailProperties().put("mail.smtp.starttls.required", "true");
+        sender.getJavaMailProperties().put("mail.smtp.ssl.protocols", "TLSv1.2");
         sender.getJavaMailProperties().put("mail.debug", "false");
 
         return sender;
