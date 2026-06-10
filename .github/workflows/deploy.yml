@@ -19,6 +19,11 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      # --- GIỮ LẠI BƯỚC NÀY ĐỂ FIX LỖI TIMEOUT 443 ---
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      # -----------------------------------------------
+
       - name: Build and Push Frontend
         uses: docker/build-push-action@v4
         with:
@@ -26,7 +31,7 @@ jobs:
           push: true
           tags: huynhtanloc2004/coffee-frontend:latest
           build-args: |
-            VITE_API_URL=http://coffeweb.duckdns.org/api
+            VITE_API_URL=http://coffeweb.duckdns.org/api  # Giữ nguyên thiếu chữ E của Lộc nha
 
       - name: Build and Push Backend
         uses: docker/build-push-action@v4
@@ -47,12 +52,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
-            # 1. Chui vào thư mục Lộc vừa tạo trên VPS
             cd /root/deploy
-
-            # 2. Login Docker để có quyền kéo hàng về
             echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
-
-            # 3. Dùng dấu gạch ngang 'docker-compose' vì VPS Lộc dùng bản cũ
             docker-compose pull
-            docker-compose up -d
+            docker-compose up -d --force-recreate
