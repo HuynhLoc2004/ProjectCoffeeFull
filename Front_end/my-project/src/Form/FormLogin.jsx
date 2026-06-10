@@ -173,8 +173,7 @@ const FormLogin = () => {
                 whileTap={{ scale: 0.95 }}
                 className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl py-3 flex items-center justify-center gap-2 transition-all"
                 onClick={() => {
-                  window.location.href =
-                    "http://coffeweb.duckdns.org/oauth2/authorization/google";
+                  window.location.href = "/oauth2/authorization/google";
                 }}
               >
                 <FcGoogle className="text-xl" />
