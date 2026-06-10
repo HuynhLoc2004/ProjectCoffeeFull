@@ -115,19 +115,27 @@ public class SecurityConfig implements WebMvcConfigurer {
 
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        http.oauth2Login(oauth2Login -> oauth2Login.successHandler((req , res , authentication)->{
+        http.oauth2Login(oauth2Login -> oauth2Login
+                .successHandler((req , res , authentication)->{
             OAuth2AuthenticationToken oAuth2AuthenticationToken = (OAuth2AuthenticationToken) authentication;
             ResponseAuthentication responseAuthentication;
             try {
                 responseAuthentication = this.authenticationService.authentication_google(oAuth2AuthenticationToken , res);
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
+            } catch (Exception e) {
+                log.error("Lỗi xử lý Google Login: ", e);
+                res.sendRedirect(this.googleReturnUrl + "/login?error=processing_error");
+                return;
             }
             if(responseAuthentication != null){
-                log.info("host : " + this.googleReturnUrl);
+                log.info("Google login success, redirecting to: " + this.googleReturnUrl);
                 res.sendRedirect(this.googleReturnUrl + "/authentication?info=" + responseAuthentication.getAccessToken());
             }
-        }));
+        })
+                .failureHandler((req, res, exception) -> {
+                    log.error("Google login failed: " + exception.getMessage());
+                    res.sendRedirect(this.googleReturnUrl + "/login?error=" + exception.getMessage());
+                })
+        );
 
         http.cors(Customizer.withDefaults());
         return http.build();
