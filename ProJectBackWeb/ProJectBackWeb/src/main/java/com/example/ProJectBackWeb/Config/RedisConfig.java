@@ -27,7 +27,6 @@ public class RedisConfig {
     public RedisTemplate<String , String> redisTemplate (LettuceConnectionFactory lettuceConnectionFactory){
         RedisTemplate<String , String> redisTemplate  = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(lettuceConnectionFactory);
-
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
         redisTemplate.setHashKeySerializer(new StringRedisSerializer());
