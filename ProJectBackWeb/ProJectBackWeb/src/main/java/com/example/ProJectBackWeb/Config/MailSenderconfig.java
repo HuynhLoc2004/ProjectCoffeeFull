@@ -19,10 +19,13 @@ public class MailSenderconfig {
             @Value("${mail.system:}") String systemmail,
             @Value("${mail.password:}") String password)
     {
-        if (systemmail == null || systemmail.trim().isEmpty()) {
-            log.error("CẢNH BÁO: Email hệ thống (mail.system) chưa được cấu hình! Vui lòng kiểm tra biến môi trường MAIL_SYSTEM.");
-        } else {
-            log.info("Khởi tạo Mail Service với Email: [{}]", systemmail);
+        // Kiểm tra xem biến môi trường có được nạp không
+        if (systemmail == null || systemmail.trim().isEmpty() || systemmail.contains("${")) {
+            log.error("LỖI CẤU HÌNH: Email hệ thống (MAIL_SYSTEM) chưa được nạp! Giá trị hiện tại: [{}]", systemmail);
+        }
+        
+        if (password == null || password.trim().isEmpty() || password.contains("${")) {
+            log.error("LỖI CẤU HÌNH: Mật khẩu mail (MAIL_PASSWORD) chưa được nạp!");
         }
 
         JavaMailSenderImpl sender = new JavaMailSenderImpl();
@@ -38,8 +41,9 @@ public class MailSenderconfig {
         props.put("mail.smtp.starttls.required", "true");
         props.put("mail.smtp.ssl.trust", host);
         props.put("mail.smtp.ssl.protocols", "TLSv1.2 TLSv1.3");
-        props.put("mail.debug", "true"); 
+        props.put("mail.debug", "true"); // Giữ cái này để xem log chi tiết trong console
 
+        log.info("Đã khởi tạo Mail Service thành công cho: {}", systemmail);
         return sender;
     }
 }
