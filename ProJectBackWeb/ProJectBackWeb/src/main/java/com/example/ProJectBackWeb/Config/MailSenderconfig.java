@@ -16,23 +16,19 @@ public class MailSenderconfig {
     public JavaMailSender javaMailSender (
             @Value("${mail.host:smtp.gmail.com}") String host,
             @Value("${mail.port:587}") int port,
-            @Value("${mail.system:}") String systemmail,
-            @Value("${mail.password:}") String password)
+            @Value("${mail.system:huynhloc27102004@gmail.com}") String systemmail,
+            @Value("${mail.password:hgkcvvunvjcipcvj}") String password)
     {
-        // Kiểm tra xem biến môi trường có được nạp không
-        if (systemmail == null || systemmail.trim().isEmpty() || systemmail.contains("${")) {
-            log.error("LỖI CẤU HÌNH: Email hệ thống (MAIL_SYSTEM) chưa được nạp! Giá trị hiện tại: [{}]", systemmail);
-        }
-        
-        if (password == null || password.trim().isEmpty() || password.contains("${")) {
-            log.error("LỖI CẤU HÌNH: Mật khẩu mail (MAIL_PASSWORD) chưa được nạp!");
-        }
+        log.info("--- ĐANG KHỞI TẠO MAIL SERVICE ---");
+        log.info("Host: {}, Port: {}", host, port);
+        log.info("Email gửi: {}", systemmail);
 
         JavaMailSenderImpl sender = new JavaMailSenderImpl();
         sender.setHost(host);
         sender.setPort(port);
-        sender.setUsername(systemmail != null ? systemmail.trim() : "");
-        sender.setPassword(password != null ? password.trim() : "");
+        sender.setUsername(systemmail.trim());
+        sender.setPassword(password.trim());
+        sender.setDefaultEncoding("UTF-8");
 
         Properties props = sender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
@@ -41,9 +37,15 @@ public class MailSenderconfig {
         props.put("mail.smtp.starttls.required", "true");
         props.put("mail.smtp.ssl.trust", host);
         props.put("mail.smtp.ssl.protocols", "TLSv1.2 TLSv1.3");
-        props.put("mail.debug", "true"); // Giữ cái này để xem log chi tiết trong console
+        
+        // Thêm timeout để tránh treo app khi mạng lag
+        props.put("mail.smtp.connectiontimeout", "10000");
+        props.put("mail.smtp.timeout", "10000");
+        props.put("mail.smtp.writetimeout", "10000");
+        
+        props.put("mail.debug", "true"); 
 
-        log.info("Đã khởi tạo Mail Service thành công cho: {}", systemmail);
+        log.info("--- MAIL SERVICE ĐÃ SẴN SÀNG ---");
         return sender;
     }
 }
