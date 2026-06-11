@@ -60,4 +60,7 @@ public class CartProductEntity {
     public void increTotalPrice(Double totalPrice){
         this.totalPrice += totalPrice;
     }
+    private void decreTotalPrice(Double totalPrice){
+        this.totalPrice -= totalPrice;
+    }
 }

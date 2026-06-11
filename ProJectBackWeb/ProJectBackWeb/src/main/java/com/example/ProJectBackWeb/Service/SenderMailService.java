@@ -45,6 +45,10 @@
         private final EvaluateRepository evaluateRepository;
         @Value("${mail.mailadmin}")
         private String adminMail;
+
+        @Value("${mail.system:}")
+        private String systemMail;
+
         public SenderMailService(RedisTemplate<String, String> redisTemplate, ObjectMapper objectMapper, OtpEmailRepository otpEmailRepository, JavaMailSender javaMailSender, UserRepository userRepository, EvaluateRepository evaluateRepository) {
             this.redisTemplate = redisTemplate;
             this.objectMapper = objectMapper;
@@ -72,6 +76,7 @@
                     OTPEmailEntity otpEmailEntity = new OTPEmailEntity();
                     String otp = this.CreateOtp();
                     SimpleMailMessage simpleMailMessage =  new SimpleMailMessage();
+                    simpleMailMessage.setFrom(systemMail);
                     simpleMailMessage.setTo(emailRequest.getEmail());
                     simpleMailMessage.setSubject("Mã OTP xác thực");
                     simpleMailMessage.setText("""
@@ -84,7 +89,12 @@
                     otpEmailEntity.setEmail(emailRequest.getEmail());
                     otpEmailEntity.setTypeOtp(TypeOTpEmailEnums.CHANGE_PASSWORD.toString());
                     this.otpEmailRepository.save(otpEmailEntity);
-                    this.javaMailSender.send(simpleMailMessage);
+                    try {
+                        this.javaMailSender.send(simpleMailMessage);
+                    } catch (Exception e) {
+                        log.error("Lỗi khi gửi mail Change Password: {}", e.getMessage());
+                        throw new Appexception(HttpStatusEnum.INTERNAL_SERVER_ERROR.getCode(), "Không thể gửi email xác thực");
+                    }
                     this.redisTemplate.opsForValue().set("OTP_CHANGE_PASSWORD"+emailRequest.getEmail() , objectMapper.writeValueAsString(otpEmailEntity) , 5 , TimeUnit.MINUTES);
                     return true;
                 }else{
@@ -96,6 +106,7 @@
                 OTPEmailEntity otpEmailEntity = new OTPEmailEntity();
                 String otp = this.CreateOtp();
                 SimpleMailMessage simpleMailMessage =  new SimpleMailMessage();
+                simpleMailMessage.setFrom(systemMail);
                 simpleMailMessage.setTo(emailRequest.getEmail());
                 simpleMailMessage.setSubject("Mã OTP xác thực");
                 simpleMailMessage.setText("""
@@ -108,7 +119,12 @@
                 otpEmailEntity.setEmail(emailRequest.getEmail());
                 otpEmailEntity.setTypeOtp(TypeOTpEmailEnums.CHANGE_PASSWORD.toString());
                 this.otpEmailRepository.save(otpEmailEntity);
-                this.javaMailSender.send(simpleMailMessage);
+                try {
+                    this.javaMailSender.send(simpleMailMessage);
+                } catch (Exception e) {
+                    log.error("Lỗi khi gửi mail Change Password: {}", e.getMessage());
+                    throw new Appexception(HttpStatusEnum.INTERNAL_SERVER_ERROR.getCode(), "Không thể gửi email xác thực");
+                }
                 this.redisTemplate.opsForValue().set("OTP_CHANGE_PASSWORD"+emailRequest.getEmail() , objectMapper.writeValueAsString(otpEmailEntity) , 5 , TimeUnit.MINUTES);
                 return true;
             }else{
@@ -121,6 +137,7 @@
                 OTPEmailEntity otpEmailEntity = new OTPEmailEntity();
                 String otp = this.CreateOtp();
                 SimpleMailMessage simpleMailMessage =  new SimpleMailMessage();
+                simpleMailMessage.setFrom(systemMail);
                 simpleMailMessage.setTo(emailRequest.getEmail());
                 simpleMailMessage.setSubject("Mã OTP xác thực");
                 simpleMailMessage.setText("""
@@ -135,7 +152,12 @@
                 otpEmailEntity.setEmail(emailRequest.getEmail());
                 otpEmailEntity.setTypeOtp(TypeOTpEmailEnums.RESET_PASSWORD.toString());
                 this.otpEmailRepository.save(otpEmailEntity);
-                this.javaMailSender.send(simpleMailMessage);
+                try {
+                    this.javaMailSender.send(simpleMailMessage);
+                } catch (Exception e) {
+                    log.error("Lỗi khi gửi mail Forgot Password: {}", e.getMessage());
+                    throw new Appexception(HttpStatusEnum.INTERNAL_SERVER_ERROR.getCode(), "Không thể gửi email xác thực");
+                }
                 this.redisTemplate.opsForValue().set("OTP_RESET_PASSWORD"+emailRequest.getEmail() , objectMapper.writeValueAsString(otpEmailEntity) , 5 , TimeUnit.MINUTES);
                 return true;
             }
