@@ -303,7 +303,7 @@ public class AuthenticationService {
           String refreshToken = this.redisTemplate.opsForValue().get("refreshtoken_"+jwtAuthenticationToken.getToken().getId());
           if(refreshToken == null ){
              if(this.invalidRefreshTokenRepository.countByJti(jwtAuthenticationToken.getToken().getId()) > 0){
-                  throw new Appexception(HttpStatusEnum.UNAUTHORIZED.getCode(),  "Invalid Token");
+                  throw new Appexception(HttpStatusEnum.UNAUTHORIZED.getCode(),  "Invalid Token!!!");
              }
           }
 
