@@ -76,7 +76,7 @@ public class CheckOutService {
                         .description("DH" + orderEntity.getId())
                         .returnUrl(returnUrl + "/payment-success")
                         .cancelUrl(cancelUrl + "/payment-cancel")
-                        .expiredAt((System.currentTimeMillis() / 1000) + (30 * 60)) // Hết hạn sau 30 phút
+                        .expiredAt((System.currentTimeMillis() / 1000) + (30 * 60)) 
                         .build();
 
         try {
