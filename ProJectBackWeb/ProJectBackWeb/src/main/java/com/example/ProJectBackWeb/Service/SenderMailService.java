@@ -44,7 +44,7 @@
         @Value("${mail.mailadmin}")
         private String adminMail;
 
-        @Value("${mail.system:}")
+        @Value("${mail.system:huynhloc27102004@gmail.com}")
         private String systemMail;
 
         public SenderMailService(RedisTemplate<String, String> redisTemplate, ObjectMapper objectMapper, OtpEmailRepository otpEmailRepository, JavaMailSender javaMailSender, UserRepository userRepository, EvaluateRepository evaluateRepository) {
@@ -72,8 +72,8 @@
                 this.javaMailSender.send(simpleMailMessage);
                 log.info("Đã gửi mail [{}] thành công!", type);
             } catch (Exception e) {
-                log.error("LỖI GỬI MAIL [{}]: {}. Chi tiết: ", type, e.getMessage(), e);
-                throw new Appexception(HttpStatusEnum.INTERNAL_SERVER_ERROR.getCode(), "Không thể gửi email xác thực: " + e.getMessage());
+                log.error("LỖI GỬI MAIL [{}]: {}. To: {}, From: {}", type, e.getMessage(), to, systemMail, e);
+                throw new Appexception(HttpStatusEnum.INTERNAL_SERVER_ERROR.getCode(), "Không thể gửi email xác thực đến " + to + ": " + e.getMessage());
             }
         }
 

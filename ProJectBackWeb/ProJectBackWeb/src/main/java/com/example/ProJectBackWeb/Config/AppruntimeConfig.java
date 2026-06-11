@@ -1,4 +1,4 @@
-package com.example.ProJectBackWeb.SecurityConfig;
+package com.example.ProJectBackWeb.Config;
 
 import com.example.ProJectBackWeb.EntityModel.*;
 import com.example.ProJectBackWeb.Reponsitory.*;
