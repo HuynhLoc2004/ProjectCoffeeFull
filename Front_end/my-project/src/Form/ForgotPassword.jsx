@@ -124,7 +124,7 @@ const ForgotPassword = () => {
     setError("");
 
     try {
-      const res = await axiosClient.post("/user/forgot-password", {
+      const res = await axiosClient.post("/api/user/forgot-password", {
         email: email,
         newPassword: newPassword,
       });

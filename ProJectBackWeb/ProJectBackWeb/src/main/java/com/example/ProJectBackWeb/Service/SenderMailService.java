@@ -76,12 +76,19 @@
             simpleMailMessage.setText(content);
             
             try {
-                log.info("Đang gửi mail [{}] đến: {} từ: {}", type, to, systemMail);
+                log.info("--- BẮT ĐẦU TIẾN TRÌNH GỬI MAIL ---");
+                log.info("Type: {}, To: {}, Subject: {}", type, to, subject);
+                log.info("Sử dụng System Mail: {}", systemMail);
+                
                 this.javaMailSender.send(simpleMailMessage);
-                log.info("Đã gửi mail [{}] thành công!", type);
+                
+                log.info("--- GỬI MAIL THÀNH CÔNG ---");
             } catch (Exception e) {
-                log.error("LỖI GỬI MAIL [{}]: {}. To: {}, From: {}", type, e.getMessage(), to, systemMail, e);
-                throw new Appexception(HttpStatusEnum.INTERNAL_SERVER_ERROR.getCode(), "Không thể gửi email xác thực đến " + to + ": " + e.getMessage());
+                log.error("!!! LỖI GỬI MAIL NGHIÊM TRỌNG !!!");
+                log.error("Type: {}, To: {}", type, to);
+                log.error("Lỗi: {}", e.getMessage());
+                log.error("Chi tiết lỗi:", e);
+                throw new Appexception(HttpStatusEnum.INTERNAL_SERVER_ERROR.getCode(), "Hệ thống gặp sự cố khi gửi mail đến " + to + ". Vui lòng thử lại sau.");
             }
         }
 

@@ -16,7 +16,7 @@ const ContactPage = () => {
 
   useEffect(() => {
     if (getAccessToken()) {
-      axiosClient.get("/auth/info", { headers: { Authorization: `Bearer ${getAccessToken()}` } })
+      axiosClient.get("/api/auth/info", { headers: { Authorization: `Bearer ${getAccessToken()}` } })
         .then((res) => setInfoUser({ fullname: res.data.result.fullname, picture: res.data.result.picture }))
         .catch(() => {});
     }
@@ -26,7 +26,7 @@ const ContactPage = () => {
     e.preventDefault();
     if (!formData.email || !formData.textForm) return toast.warning("Vui lòng điền đầy đủ!");
     setLoading(true);
-    axiosClient.post("/email/sendEvaluate", { ...formData, localDateTime: new Date().toISOString() })
+    axiosClient.post("/api/email/sendEvaluate", { ...formData, localDateTime: new Date().toISOString() })
       .then(() => { toast.success("Cảm ơn bạn đã đóng góp!"); setFormData({ email: "", textForm: "" }); })
       .catch(() => toast.error("Có lỗi xảy ra!"))
       .finally(() => setLoading(false));
