@@ -71,7 +71,7 @@ const ChangePassWordPage = () => {
     try {
       const trimmedEmail = email.trim();
       const res = await axiosClient.post(
-        "/email/send-OTP-ChangePassword",
+        "/api/email/send-OTP-ChangePassword",
         { email: trimmedEmail },
         {
           headers: {
@@ -87,7 +87,7 @@ const ChangePassWordPage = () => {
       console.error("Lỗi gửi OTP:", err);
       if (err.response?.status === 401) {
         try {
-          const refreshRes = await axiosClient.get("/auth/refresh_token", {
+          const refreshRes = await axiosClient.get("/api/auth/refresh_token", {
             withCredentials: true,
           });
 
@@ -95,7 +95,7 @@ const ChangePassWordPage = () => {
           setAccessToken(newToken);
 
           await axiosClient.post(
-            "/email/send-OTP-ChangePassword",
+            "/api/email/send-OTP-ChangePassword",
             { email: email.trim() },
             {
               headers: {
@@ -135,7 +135,7 @@ const ChangePassWordPage = () => {
 
     try {
       const data = await axiosClient.post(
-        "/email/verify-OTP-ChangePassword",
+        "/api/email/verify-OTP-ChangePassword",
         {
           otpEmail: otpEmail,
         },
@@ -165,7 +165,7 @@ const ChangePassWordPage = () => {
 
     try {
       const res = await axiosClient.post(
-        "/user/change-password",
+        "/api/user/change-password",
         {
           newPassword: newPassword,
         },

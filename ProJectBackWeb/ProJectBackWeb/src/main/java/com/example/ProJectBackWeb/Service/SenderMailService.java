@@ -47,6 +47,14 @@
         @Value("${mail.system:huynhloc27102004@gmail.com}")
         private String systemMail;
 
+        @jakarta.annotation.PostConstruct
+        public void init() {
+            log.info("--- KIỂM TRA CẤU HÌNH MAIL KHI KHỞI CHẠY ---");
+            log.info("System Mail: {}", systemMail);
+            log.info("Admin Mail: {}", adminMail);
+            log.info("------------------------------------------");
+        }
+
         public SenderMailService(RedisTemplate<String, String> redisTemplate, ObjectMapper objectMapper, OtpEmailRepository otpEmailRepository, JavaMailSender javaMailSender, UserRepository userRepository, EvaluateRepository evaluateRepository) {
             this.redisTemplate = redisTemplate;
             this.objectMapper = objectMapper;
