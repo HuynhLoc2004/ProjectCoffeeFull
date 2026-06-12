@@ -60,7 +60,7 @@ const ChangePassWordPage = () => {
   };
 
   const sendOtp = async () => {
-    if (!email) {
+    if (!email || !email.trim()) {
       setError("Vui lòng nhập email");
       return;
     }
@@ -69,24 +69,22 @@ const ChangePassWordPage = () => {
     setError("");
 
     try {
+      const trimmedEmail = email.trim();
       const res = await axiosClient.post(
         "/email/send-OTP-ChangePassword",
-        { email: email },
+        { email: trimmedEmail },
         {
           headers: {
             Authorization: `Bearer ${getAccessToken()}`,
           },
         },
       );
-      if (res.data.statusCode === 400) {
-        setError(res.data.message);
-        return;
-      }
-
-      setMessage("Mã OTP đã được gửi về email");
+      
+      setMessage("Mã OTP đã được gửi về email của bạn");
       setCountdown(60);
       changeStep(2);
     } catch (err) {
+      console.error("Lỗi gửi OTP:", err);
       if (err.response?.status === 401) {
         try {
           const refreshRes = await axiosClient.get("/auth/refresh_token", {
@@ -94,12 +92,11 @@ const ChangePassWordPage = () => {
           });
 
           const newToken = refreshRes.data.result.accessToken;
-
           setAccessToken(newToken);
 
           await axiosClient.post(
             "/email/send-OTP-ChangePassword",
-            { email: email },
+            { email: email.trim() },
             {
               headers: {
                 Authorization: `Bearer ${newToken}`,
@@ -107,17 +104,21 @@ const ChangePassWordPage = () => {
             },
           );
 
-          setMessage("Mã OTP đã được gửi về email");
+          setMessage("Mã OTP đã được gửi về email của bạn");
           setCountdown(60);
           changeStep(2);
+          return;
         } catch (refreshErr) {
           localStorage.setItem(
             "page_before",
             window.location.pathname + window.location.search,
           );
           navigate("/login");
+          return;
         }
       }
+      const errorMsg = err.response?.data?.message || "Không thể gửi OTP. Vui lòng thử lại sau.";
+      setError(errorMsg);
     } finally {
       setIsLoading(false);
     }

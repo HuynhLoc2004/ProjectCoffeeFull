@@ -60,7 +60,7 @@ const ForgotPassword = () => {
   };
 
   const sendOtp = async () => {
-    if (!email) {
+    if (!email || !email.trim()) {
       setError("Vui lòng nhập email");
       return;
     }
@@ -69,15 +69,18 @@ const ForgotPassword = () => {
     setError("");
 
     try {
+      const trimmedEmail = email.trim();
       const res = await axiosClient.post("/email/send-OTP-forgotPassword", {
-        email: email,
+        email: trimmedEmail,
       });
 
-      setMessage("Mã OTP đã được gửi về email");
+      setMessage("Mã OTP đã được gửi về email của bạn");
       setCountdown(60);
       changeStep(2);
     } catch (err) {
-      console.log(err);
+      console.error("Lỗi gửi OTP:", err);
+      const errorMsg = err.response?.data?.message || "Không thể gửi OTP. Vui lòng thử lại sau.";
+      setError(errorMsg);
     } finally {
       setIsLoading(false);
     }

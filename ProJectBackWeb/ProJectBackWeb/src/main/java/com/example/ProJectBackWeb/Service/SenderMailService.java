@@ -77,7 +77,6 @@
             }
         }
 
-        @PreAuthorize("hasAuthority('UPDATE') or hasAuthority('FULL')")
         @Transactional
         public Boolean SenderOtpEmail_ChangePassword(EmailRequest emailRequest , JwtAuthenticationToken jwtAuthenticationToken) throws JsonProcessingException {
             Number userIdNum = (Number) jwtAuthenticationToken.getToken().getClaim("userId");
@@ -91,22 +90,23 @@
                 userEntity = objectMapper.readValue(userEntityJson , UserEntity.class);
             }
 
-            if(userEntity.getEmail().equals(emailRequest.getEmail())){
+            String requestEmail = emailRequest.getEmail().trim().toLowerCase();
+            if(userEntity.getEmail().equalsIgnoreCase(requestEmail)){
                 String otp = this.CreateOtp();
                 String content = "Mã OTP của bạn là: " + otp + "\n" +
                                  "Có hiệu lực trong 5 phút.\n" +
                                  "Không chia sẻ mã này cho bất kỳ ai.";
                 
-                this.sendMailHelper(emailRequest.getEmail(), "Mã OTP xác thực", content, "Change Password");
+                this.sendMailHelper(requestEmail, "Mã OTP xác thực", content, "Change Password");
 
                 OTPEmailEntity otpEmailEntity = new OTPEmailEntity();
                 otpEmailEntity.setOtpEmail(passwordEncoder.encode(otp));
                 otpEmailEntity.setExpiryTime(LocalDateTime.now().plusMinutes(5));
-                otpEmailEntity.setEmail(emailRequest.getEmail());
+                otpEmailEntity.setEmail(requestEmail);
                 otpEmailEntity.setTypeOtp(TypeOTpEmailEnums.CHANGE_PASSWORD.toString());
                 this.otpEmailRepository.save(otpEmailEntity);
                 
-                this.redisTemplate.opsForValue().set("OTP_CHANGE_PASSWORD"+emailRequest.getEmail() , objectMapper.writeValueAsString(otpEmailEntity) , 5 , TimeUnit.MINUTES);
+                this.redisTemplate.opsForValue().set("OTP_CHANGE_PASSWORD"+requestEmail , objectMapper.writeValueAsString(otpEmailEntity) , 5 , TimeUnit.MINUTES);
                 return true;
             } else {
                 throw new Appexception(HttpStatusEnum.BAD_REQUEST.getCode(), "email không khớp");
@@ -115,21 +115,32 @@
 
         @Transactional
         public Boolean SenderOtpEmail_Forgotpassword(EmailRequest emailRequest) throws JsonProcessingException {
+            if (emailRequest.getEmail() == null || emailRequest.getEmail().trim().isEmpty()) {
+                throw new Appexception(HttpStatusEnum.BAD_REQUEST.getCode(), "Email không được để trống");
+            }
+            
+            String requestEmail = emailRequest.getEmail().trim().toLowerCase();
+            
+            // Kiểm tra email có tồn tại trong hệ thống không
+            if (!userRepository.existsByEmail(requestEmail)) {
+                throw new Appexception(HttpStatusEnum.NOT_FOUND.getCode(), "Email không tồn tại trong hệ thống");
+            }
+
             String otp = this.CreateOtp();
             String content = "Mã OTP của bạn là: " + otp + "\n" +
                              "Có hiệu lực trong 5 phút.\n" +
                              "Không chia sẻ mã này cho bất kỳ ai.";
             
-            this.sendMailHelper(emailRequest.getEmail(), "Mã OTP xác thực", content, "Forgot Password");
+            this.sendMailHelper(requestEmail, "Mã OTP xác thực", content, "Forgot Password");
 
             OTPEmailEntity otpEmailEntity = new OTPEmailEntity();
             otpEmailEntity.setOtpEmail(passwordEncoder.encode(otp));
             otpEmailEntity.setExpiryTime(LocalDateTime.now().plusMinutes(5));
-            otpEmailEntity.setEmail(emailRequest.getEmail());
+            otpEmailEntity.setEmail(requestEmail);
             otpEmailEntity.setTypeOtp(TypeOTpEmailEnums.RESET_PASSWORD.toString());
             this.otpEmailRepository.save(otpEmailEntity);
             
-            this.redisTemplate.opsForValue().set("OTP_RESET_PASSWORD"+emailRequest.getEmail() , objectMapper.writeValueAsString(otpEmailEntity) , 5 , TimeUnit.MINUTES);
+            this.redisTemplate.opsForValue().set("OTP_RESET_PASSWORD"+requestEmail , objectMapper.writeValueAsString(otpEmailEntity) , 5 , TimeUnit.MINUTES);
             return true;
         }
 
@@ -147,14 +158,15 @@
                 userEntity = objectMapper.readValue(userEntityJson , UserEntity.class);
             }
 
-            String OTPEntityJson = this.redisTemplate.opsForValue().get("OTP_CHANGE_PASSWORD"+userEntity.getEmail());
+            String email = userEntity.getEmail().trim().toLowerCase();
+            String OTPEntityJson = this.redisTemplate.opsForValue().get("OTP_CHANGE_PASSWORD"+email);
             if(OTPEntityJson == null){
                 throw new Appexception(HttpStatusEnum.BAD_REQUEST.getCode(), "OTP hết hạn hoặc chưa tồn tại" , false);
             }
             
             OTPEmailEntity otpEmailEntity  = objectMapper.readValue(OTPEntityJson ,  OTPEmailEntity.class);
-            if(passwordEncoder.matches(otPemailRequest.getOtpEmail() , otpEmailEntity.getOtpEmail())){
-                this.redisTemplate.delete("OTP_CHANGE_PASSWORD"+otpEmailEntity.getEmail());
+            if(passwordEncoder.matches(otPemailRequest.getOtpEmail().trim() , otpEmailEntity.getOtpEmail())){
+                this.redisTemplate.delete("OTP_CHANGE_PASSWORD"+email);
                 log.info("otp hợp lệ");
                 return true;
             } else {
@@ -165,13 +177,14 @@
 
         @Transactional
         public Boolean Verify_OTP_Forgot_PASSWORD(OTPResetpassWordRequest  otpResetpassWordRequest) throws JsonProcessingException {
-             String OTPEntityJson = this.redisTemplate.opsForValue().get("OTP_RESET_PASSWORD"+otpResetpassWordRequest.getEmail());
+             String email = otpResetpassWordRequest.getEmail().trim().toLowerCase();
+             String OTPEntityJson = this.redisTemplate.opsForValue().get("OTP_RESET_PASSWORD"+email);
                 if(OTPEntityJson == null){
                     throw new Appexception(HttpStatusEnum.BAD_REQUEST.getCode(), "OTP hết hạn hoặc chưa tồn tại" , false);
                 }
                 OTPEmailEntity otpEmailEntity  = objectMapper.readValue(OTPEntityJson ,  OTPEmailEntity.class);
-                if(passwordEncoder.matches( otpResetpassWordRequest.getOtpEmail() , otpEmailEntity.getOtpEmail())){
-                    this.redisTemplate.delete("OTP_RESET_PASSWORD"+otpResetpassWordRequest.getEmail());
+                if(passwordEncoder.matches( otpResetpassWordRequest.getOtpEmail().trim() , otpEmailEntity.getOtpEmail())){
+                    this.redisTemplate.delete("OTP_RESET_PASSWORD"+email);
                     return true; 
                 }else{
                     throw new Appexception(HttpStatusEnum.BAD_REQUEST.getCode(), "OTP không hợp lệ" , false);
