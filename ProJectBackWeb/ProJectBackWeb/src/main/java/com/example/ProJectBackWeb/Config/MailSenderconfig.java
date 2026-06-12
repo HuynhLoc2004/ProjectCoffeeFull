@@ -12,22 +12,27 @@ import java.util.Properties;
 @Slf4j
 @Configuration
 public class MailSenderconfig {
+    
+    // Đọc chính xác từ các biến môi trường của .env, xóa bỏ khoảng trắng thừa
     @Bean
-    public JavaMailSender javaMailSender (
-            @Value("${mail.host:smtp.gmail.com}") String host,
-            @Value("${mail.port:587}") int port,
-            @Value("${mail.system:huynhloc27102004@gmail.com}") String systemmail,
-            @Value("${mail.password:gekbwjyizhtldydi}") String password)
+    public JavaMailSender javaMailSender(
+            @Value("${MAIL_HOST:smtp.gmail.com}") String host,
+            @Value("${MAIL_PORT:587}") int port,
+            @Value("${MAIL_SYSTEM:huynhloc27102004@gmail.com}") String systemmail,
+            @Value("${MAIL_PASSWORD:gekbwjyizhtldydi}") String password) 
     {
-        log.info("--- ĐANG KHỞI TẠO MAIL SERVICE ---");
-        log.info("Host: {}, Port: {}", host, port);
-        log.info("Email gửi: {}", systemmail);
+        log.info("--- [THE COFFEE CHILL] KHỞI TẠO MAIL SERVICE ---");
+        log.info("SMTP Host: {}, Port: {}", host, port);
+        log.info("Email hệ thống gửi: {}", systemmail.trim());
 
         JavaMailSenderImpl sender = new JavaMailSenderImpl();
-        sender.setHost(host);
+        sender.setHost(host.trim());
         sender.setPort(port);
         sender.setUsername(systemmail.trim());
-        sender.setPassword(password.trim());
+        
+        // Loại bỏ triệt để mọi khoảng trắng vô tình lọt vào mật khẩu
+        String cleanPassword = password.trim().replaceAll("\\s+", "");
+        sender.setPassword(cleanPassword);
         sender.setDefaultEncoding("UTF-8");
 
         Properties props = sender.getJavaMailProperties();
@@ -36,17 +41,20 @@ public class MailSenderconfig {
         props.put("mail.smtp.starttls.enable", "true");
         props.put("mail.smtp.starttls.required", "true");
         props.put("mail.smtp.ssl.trust", "smtp.gmail.com");
+        
+        // Đồng bộ chuẩn TLS bắt buộc của Google
         props.put("mail.smtp.ssl.protocols", "TLSv1.2 TLSv1.3");
         
-        // Cấu hình bổ sung để tránh bị chặn hoặc timeout
+        // Khử triệt để lỗi treo kết nối (Timeout)
         props.put("mail.smtp.connectiontimeout", "15000");
         props.put("mail.smtp.timeout", "15000");
         props.put("mail.smtp.writetimeout", "15000");
         props.put("mail.smtp.quitwait", "false");
         
+        // Giữ debug để quan sát quá trình bắt tay (handshake) với Google
         props.put("mail.debug", "true"); 
 
-        log.info("--- MAIL SERVICE ĐÃ SẴN SÀNG ---");
+        log.info("--- MAIL SERVICE ĐÃ KHỞI TẠO THÀNH CÔNG ---");
         return sender;
     }
 }
