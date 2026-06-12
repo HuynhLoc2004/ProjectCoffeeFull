@@ -17,13 +17,11 @@ public class MailSenderconfig {
             @Value("${mail.host:smtp.gmail.com}") String host,
             @Value("${mail.port:587}") int port,
             @Value("${mail.system:huynhloc27102004@gmail.com}") String systemmail,
-            @Value("${mail.password:eghojbmywvlmzwqr}") String password)
+            @Value("${mail.password:gekbwjyizhtldydi}") String password)
     {
         log.info("--- ĐANG KHỞI TẠO MAIL SERVICE ---");
         log.info("Host: {}, Port: {}", host, port);
         log.info("Email gửi: {}", systemmail);
-        // Không log mật khẩu vì lý do bảo mật, nhưng có thể log độ dài để kiểm tra
-        log.info("Password length: {}", password != null ? password.length() : 0);
 
         JavaMailSenderImpl sender = new JavaMailSenderImpl();
         sender.setHost(host);
