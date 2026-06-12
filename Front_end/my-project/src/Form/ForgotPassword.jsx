@@ -70,7 +70,7 @@ const ForgotPassword = () => {
 
     try {
       const trimmedEmail = email.trim();
-      const res = await axiosClient.post("/api/email/send-OTP-forgotPassword", {
+      const res = await axiosClient.post("/email/send-OTP-forgotPassword", {
         email: trimmedEmail,
       });
 
@@ -96,7 +96,7 @@ const ForgotPassword = () => {
     setError("");
 
     try {
-      const data = await axiosClient.post("/api/email/verify-OTP-forgotPassword", {
+      const data = await axiosClient.post("/email/verify-OTP-forgotPassword", {
         otpEmail: otpEmail,
         email: email,
       });
@@ -124,7 +124,7 @@ const ForgotPassword = () => {
     setError("");
 
     try {
-      const res = await axiosClient.post("/api/user/forgot-password", {
+      const res = await axiosClient.post("/user/forgot-password", {
         email: email,
         newPassword: newPassword,
       });
