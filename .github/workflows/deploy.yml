@@ -5,6 +5,9 @@ on:
     branches:
       - main
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   # GIAI ĐOẠN 1: Đóng gói và đẩy lên Docker Hub
 
@@ -22,7 +25,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and Push Frontend
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./Front_end
           push: true
@@ -31,7 +34,7 @@ jobs:
             VITE_API_URL=http://coffeweb.duckdns.org/api
 
       - name: Build and Push Backend
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./ProJectBackWeb
           push: true
