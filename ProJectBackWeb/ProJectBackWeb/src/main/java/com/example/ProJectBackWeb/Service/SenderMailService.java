@@ -44,7 +44,7 @@
         @Value("${mail.mailadmin}")
         private String adminMail;
 
-        @Value("${mail.system:huynhloc27102004@gmail.com}")
+        @Value("${mail.system:huynhtanlocpp09@gmail.com}")
         private String systemMail;
 
         @jakarta.annotation.PostConstruct

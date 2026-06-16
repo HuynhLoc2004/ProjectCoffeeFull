@@ -15,10 +15,10 @@ public class MailSenderconfig {
     
     @Bean
     public JavaMailSender javaMailSender(
-            @Value("${MAIL_HOST:smtp.gmail.com}") String host,
-            @Value("${MAIL_PORT:587}") int port,
-            @Value("${MAIL_SYSTEM:huynhloc27102004@gmail.com}") String systemmail,
-            @Value("${MAIL_PASSWORD:gekbwjyizhtldydi}") String password) 
+            @Value("${mail.host:smtp.gmail.com}") String host,
+            @Value("${mail.port:587}") int port,
+            @Value("${mail.system:huynhtanlocpp09@gmail.com}") String systemmail,
+            @Value("${mail.password:pzwmekvbagjfkosm}") String password) 
     {
 
         log.info("SMTP Host: {}, Port: {}", host, port);
