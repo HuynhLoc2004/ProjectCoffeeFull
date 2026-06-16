@@ -124,73 +124,79 @@ const ProductPage = () => {
           </motion.p>
         </section>
 
-        {/* 🍂 FILTER */}
-        <section className="flex justify-center gap-6 flex-wrap mb-24 px-4">
-          {categories.map((item, idx) => (
-            <motion.button
-              key={item.key}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 * idx }}
-              onClick={() => setOption(item.key)}
-              className={`
-                px-8 py-3 rounded-2xl text-sm font-bold tracking-wide
-                transition-all duration-500
-                ${
-                  option === item.key
-                    ? "bg-[#3b2a20] text-white shadow-[0_15px_30px_rgba(59,42,32,0.3)] scale-110"
-                    : "bg-white text-[#3b2a20] hover:bg-[#d6a46c] hover:text-white shadow-sm"
-                }
-              `}
-            >
-              {item.label}
-            </motion.button>
-          ))}
+        {/* 🍂 FILTER - Made Sticky */}
+        <section className="sticky top-20 z-40 bg-[#faf7f2]/80 backdrop-blur-md py-6 mb-16 shadow-sm border-b border-gray-100">
+          <div className="flex justify-center gap-4 md:gap-8 flex-wrap max-w-[1400px] mx-auto px-4">
+            {categories.map((item, idx) => (
+              <motion.button
+                key={item.key}
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 * idx }}
+                onClick={() => setOption(item.key)}
+                className={`
+                  px-6 py-2.5 rounded-full text-sm font-bold tracking-wide
+                  transition-all duration-300 border-2
+                  ${
+                    option === item.key
+                      ? "bg-[#3b2a20] border-[#3b2a20] text-white shadow-lg scale-105"
+                      : "bg-white border-transparent text-[#3b2a20] hover:border-[#d6a46c] hover:text-[#d6a46c] shadow-sm"
+                  }
+                `}
+              >
+                {item.label}
+              </motion.button>
+            ))}
+          </div>
         </section>
 
         {/* 🧾 PRODUCTS */}
         <section className="max-w-[1400px] mx-auto px-4 pb-32">
           <AnimatePresence mode="wait">
-            {/* ALL (Hiển thị từng mục dạng Băng chuyền) */}
+            {/* ALL (Hiển thị từng mục dạng Grid Section) */}
             {option === "" && (
               <motion.div
                 key="all"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="flex flex-col gap-36"
+                className="flex flex-col gap-24"
               >
                 {Object.entries(urlApi).map(([key, api]) => {
                   const categoryInfo = categories.find((c) => c.key === key);
                   return (
-                    <div key={key} className="flex flex-col">
+                    <div key={key} className="flex flex-col gap-12">
                       {/* Tiêu đề & Giới thiệu cho mỗi loại */}
-                      <div className="flex flex-col items-center text-center px-4 mb-4">
-                        <motion.div
-                          initial={{ opacity: 0, y: 10 }}
-                          whileInView={{ opacity: 1, y: 0 }}
-                          viewport={{ once: true }}
-                          className="flex items-center gap-4 mb-2"
-                        >
-                          <div className="h-[2px] w-12 bg-[#d6a46c]/40" />
-                          <h2 className="text-4xl font-serif text-[#3b2a20]">
+                      <div className="flex flex-col md:flex-row md:items-end justify-between border-b-2 border-[#d6a46c]/20 pb-6 mb-4">
+                        <div className="flex flex-col gap-2">
+                          <motion.h2 
+                            initial={{ opacity: 0, x: -20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            className="text-4xl font-serif text-[#3b2a20]"
+                          >
                             {categoryInfo?.label}
-                          </h2>
-                          <div className="h-[2px] w-12 bg-[#d6a46c]/40" />
-                        </motion.div>
-                        <motion.p 
-                          initial={{ opacity: 0 }}
-                          whileInView={{ opacity: 1 }}
-                          viewport={{ once: true }}
-                          transition={{ delay: 0.2 }}
-                          className="text-gray-500 italic max-w-lg text-sm md:text-base leading-relaxed"
+                          </motion.h2>
+                          <motion.p 
+                            initial={{ opacity: 0 }}
+                            whileInView={{ opacity: 1 }}
+                            viewport={{ once: true }}
+                            className="text-gray-500 italic max-w-lg text-sm md:text-base"
+                          >
+                            {categoryInfo?.intro}
+                          </motion.p>
+                        </div>
+                        <motion.button
+                          whileHover={{ x: 5 }}
+                          onClick={() => setOption(key)}
+                          className="mt-4 md:mt-0 text-[#d6a46c] font-bold text-sm flex items-center gap-2 hover:text-[#3b2a20] transition-colors"
                         >
-                          {categoryInfo?.intro}
-                        </motion.p>
+                          Xem tất cả {categoryInfo?.label} →
+                        </motion.button>
                       </div>
                       
-                      {/* Băng chuyền chạy mượt mà cho TẤT CẢ các loại */}
-                      <MarqueeProductList urlApi={api} />
+                      {/* Thay Marquee bằng ProductList Grid */}
+                      <ProductList urlApi={api} />
                     </div>
                   );
                 })}
