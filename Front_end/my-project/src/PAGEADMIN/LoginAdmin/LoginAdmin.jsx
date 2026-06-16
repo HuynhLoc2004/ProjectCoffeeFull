@@ -33,6 +33,25 @@ const LoginAdmin = () => {
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const token = getAccessToken();
+    if (token) {
+      axiosClient
+        .get("/admin/authenAdmin", {
+          withCredentials: true,
+        })
+        .then((res) => {
+          if (res.data.statusCode === 204 || res.data.statusCode === 200) {
+            navigate("/admin");
+          }
+        })
+        .catch(() => {
+          // If token is invalid or not an admin, stay on login page
+          // No need to clear token here as it might be a valid customer token
+        });
+    }
+  }, [navigate]);
+
   const handleLogin = async (e) => {
     e.preventDefault();
     if (!username || !password) {

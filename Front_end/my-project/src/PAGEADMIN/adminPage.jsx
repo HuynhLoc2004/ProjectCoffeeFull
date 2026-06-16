@@ -58,19 +58,29 @@ const AdminPage = () => {
   // Hàm render nội dung dựa trên Tab đang chọn
 
   useEffect(() => {
+    const token = getAccessToken();
+    if (!token) {
+      navigate("/admin-login");
+      return;
+    }
+
     axiosClient
       .get("/admin/authenAdmin", {
         withCredentials: true,
       })
       .then((res) => {
-        setCheckingAuth(!checkingAuth);
+        setCheckingAuth(true);
       })
       .catch((err) => {
-        if (err.status == 401 || err.status == 403 || err.response?.status == 403 || err.response?.status == 401) {
+        const status = err.status || err.response?.status;
+        if (status === 401 || status === 403) {
+          navigate("/admin-login");
+        } else {
+          console.error("Lỗi xác thực admin:", err);
           navigate("/admin-login");
         }
       });
-  }, []);
+  }, [navigate]);
   const renderContent = () => {
     switch (activeTab) {
       case "Dashboard":
