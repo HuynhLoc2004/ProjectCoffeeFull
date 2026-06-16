@@ -21,7 +21,7 @@ public class MailSenderconfig {
             @Value("${MAIL_SYSTEM:huynhloc27102004@gmail.com}") String systemmail,
             @Value("${MAIL_PASSWORD:gekbwjyizhtldydi}") String password) 
     {
-        log.info("--- [THE COFFEE CHILL] KHỞI TẠO MAIL SERVICE ---");
+
         log.info("SMTP Host: {}, Port: {}", host, port);
         log.info("Email hệ thống gửi: {}", systemmail.trim());
 
@@ -30,7 +30,6 @@ public class MailSenderconfig {
         sender.setPort(port);
         sender.setUsername(systemmail.trim());
         
-        // Loại bỏ triệt để mọi khoảng trắng vô tình lọt vào mật khẩu
         String cleanPassword = password.trim().replaceAll("\\s+", "");
         sender.setPassword(cleanPassword);
         sender.setDefaultEncoding("UTF-8");
