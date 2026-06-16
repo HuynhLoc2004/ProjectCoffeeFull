@@ -13,7 +13,6 @@ import java.util.Properties;
 @Configuration
 public class MailSenderconfig {
     
-    // Đọc chính xác từ các biến môi trường của .env, xóa bỏ khoảng trắng thừa
     @Bean
     public JavaMailSender javaMailSender(
             @Value("${MAIL_HOST:smtp.gmail.com}") String host,
