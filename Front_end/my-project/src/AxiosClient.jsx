@@ -22,6 +22,43 @@ const axiosClient = axios.create({
 // Request interceptor to add auth token
 axiosClient.interceptors.request.use(
   (config) => {
+    const isRefreshEndpoint =
+      config.url?.startsWith("/auth/refresh_token") ||
+      config.url?.startsWith("/refresh_token");
+
+    // The refresh endpoint must authenticate with the HttpOnly refresh cookie.
+    // Sending an expired access token here makes Spring Security reject the
+    // request before it can read the still-valid refresh cookie.
+    if (isRefreshEndpoint) {
+      config.withCredentials = true;
+      if (config.headers) {
+        delete config.headers.Authorization;
+      }
+      return config;
+    }
+
+    const publicEndpoints = [
+      "/auth/login",
+      "/user/registry",
+      "/user/forgot-password",
+      "/email/send-OTP-forgotPassword",
+      "/email/verify-OTP-forgotPassword",
+    ];
+    const isPublicEndpoint = publicEndpoints.some((endpoint) =>
+      config.url?.startsWith(endpoint),
+    );
+
+    // Public authentication flows must not carry stale access/refresh tokens.
+    // Spring Security will try to validate any supplied token even when the
+    // endpoint is permitAll, which can turn a public request into a 401/403.
+    if (isPublicEndpoint) {
+      config.withCredentials = false;
+      if (config.headers) {
+        delete config.headers.Authorization;
+      }
+      return config;
+    }
+
     const token = getAccessToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;

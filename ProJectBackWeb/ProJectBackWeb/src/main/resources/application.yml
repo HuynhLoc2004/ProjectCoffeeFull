@@ -35,8 +35,8 @@ spring:
 
 jwt:
   secret_key: ${JWT_SECRET}
-  expirytime: 5
-  refresh_time: 10080
+  expirytime: ${JWT_EXPIRY_MINUTES:30}
+  refresh_time: ${JWT_REFRESH_MINUTES:10080}
 
 payos:
   client-id: ${PAYOS_CLIENT_ID}
