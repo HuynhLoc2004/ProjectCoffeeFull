@@ -1,9 +1,9 @@
 name: Build and Deploy Docker Image
 
+# Railway deploys directly from GitHub. Keep this legacy Docker Hub/SSH
+# workflow manual-only so pushes to main cannot deploy to the retired host.
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
