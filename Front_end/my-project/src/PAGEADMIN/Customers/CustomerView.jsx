@@ -42,18 +42,26 @@ const CustomerView = () => {
   };
 
   useEffect(() => {
-    axiosClient
-      .get(`/user/get-CountAllUser`, {
-        withCredentials: true,
-      })
-      .then((res) => {
-        setCountCustomer(res.data.result);
+    let mounted = true;
+    Promise.all([
+      axiosClient.get(`/user/get-CountAllUser`, { withCredentials: true }),
+      axiosClient.get(`/user/get-infoAllUser`, { withCredentials: true }),
+    ])
+      .then(([countResponse, customersResponse]) => {
+        if (!mounted) return;
+        setCountCustomer(countResponse.data.result || 0);
+        setCustomers(customersResponse.data.result || []);
       })
       .catch((err) => {
-        console.log("không call được api count", err);
+        console.error("Không thể tải danh sách khách hàng:", err);
+      })
+      .finally(() => {
+        if (mounted) setLoading(false);
       });
 
-    fetchCustomers();
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const handleToggleStatus = (userId, currentStatus) => {

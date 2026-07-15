@@ -22,7 +22,7 @@ public class OrderSHistoryEntity {
     private Long id;
     @Column(name = "totalPrice"  , nullable = true)
     private Long totalPrice;
-    @Column(name = "address_order" , columnDefinition = "NVARCHAR(MAX)")
+    @Column(name = "address_order" , columnDefinition = "TEXT")
     private String address;
     @Column(name = "time_order_history" , nullable = false)
     private LocalDateTime timeOrderHistory;

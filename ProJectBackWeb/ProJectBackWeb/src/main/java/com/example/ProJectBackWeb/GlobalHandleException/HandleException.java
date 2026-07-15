@@ -3,7 +3,6 @@ package com.example.ProJectBackWeb.GlobalHandleException;
 import com.example.ProJectBackWeb.EnumStatus.HttpStatusEnum;
 import com.example.ProJectBackWeb.Exception.Appexception;
 import com.example.ProJectBackWeb.ResponseErrorData.ResponseError;
-import com.microsoft.sqlserver.jdbc.SQLServerException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;

@@ -21,7 +21,7 @@ public class ProductEntity {
     private String code;
     @Column(name = "product_active" , nullable = false)
     private boolean active;
-    @Column(name = "product_name" , nullable = false , columnDefinition = "Nvarchar(250)")
+    @Column(name = "product_name" , nullable = false , columnDefinition = "varchar(250)")
     private String name;
     @Column(name = "product_price" , nullable = false)
     private Double price;
@@ -29,7 +29,7 @@ public class ProductEntity {
     private String img;
     @Column(name = "product_sale" , nullable = true)
     private Integer sale;
-    @Column(name = "product_category" , nullable = false , columnDefinition = "Nvarchar(100)")
+    @Column(name = "product_category" , nullable = false , columnDefinition = "varchar(100)")
     private String category;
 
     @ManyToMany(fetch = FetchType.LAZY , cascade = CascadeType.ALL)

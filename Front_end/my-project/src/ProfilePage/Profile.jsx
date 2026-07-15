@@ -27,6 +27,7 @@ const Profile = () => {
   const [accesstoken, setAccesstoken] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [imgError, setImgError] = useState(false);
   const [fullname, setFullname] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
@@ -161,6 +162,8 @@ const Profile = () => {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
+    if (!file) return;
+    setImgError(false);
     const formData = new FormData();
     formData.append("file", file);
 
@@ -233,7 +236,7 @@ const Profile = () => {
         <div className="profile-sidebar">
           <div className="profile-user-info">
             <div className="avatar-container" onClick={handleUploadClick}>
-              {userEntity?.picture ? (
+              {userEntity?.picture && !imgError ? (
                 <img
                   src={userEntity.picture}
                   alt="Avatar"

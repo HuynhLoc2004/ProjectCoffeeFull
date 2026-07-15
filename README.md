@@ -76,12 +76,7 @@ ProjectCoffe/
 
 ### 2. Cấu hình Back-end
 1. Mở thư mục `ProJectBackWeb`.
-2. Cấu hình cơ sở dữ liệu trong `src/main/resources/application.properties`:
-   - DB URL, Username, Password.
-   - Redis Host/Port.
-   - Cloudinary Keys.
-   - PayOS Keys.
-   - Google Gemini API Key.
+2. Sao chép danh sách biến từ `.env.example` và điền giá trị trong môi trường chạy. Không ghi secret trực tiếp vào `application.yml`.
 3. Chạy lệnh:
    ```bash
    mvn clean install
@@ -105,6 +100,24 @@ ProjectCoffe/
 ## 📝 Ghi chú
 - Đảm bảo SQL Server đã được chạy và database đã được khởi tạo bằng file `init.sql`.
 - Cần cấu hình đúng `CORS` trong Spring Boot để Front-end có thể gọi API thành công.
+
+## Deploy Railway
+
+Repo này là monorepo, nên tạo hai Railway service dùng chung một GitHub repo:
+
+1. Frontend: đặt Root Directory là `/Front_end`.
+2. Backend: đặt Root Directory là `/ProJectBackWeb`.
+3. Tạo public domain cho cả hai service.
+4. Ở frontend, đặt `VITE_API_URL=https://<backend-domain>/api` rồi redeploy để Vite nhận biến lúc build.
+5. Ở backend, nhập các biến trong `.env.example`; tối thiểu phải có database, Redis, JWT và `CORS_ALLOWED_ORIGINS=https://<frontend-domain>`.
+6. Cập nhật Google OAuth redirect URI và PayOS URL theo domain mới trước khi kiểm tra đăng nhập/thanh toán.
+
+Với Google OAuth, Authorized redirect URI phải trỏ về backend:
+`https://<backend-domain>/login/oauth2/code/google`. Biến `GOOGLE_RETURNURL` lại là domain frontend vì backend dùng nó để chuyển người dùng về giao diện sau khi đăng nhập.
+
+`PAYOS_RETURNURL` và `PAYOS_CANCELURL` chỉ nhận domain gốc frontend; backend sẽ tự nối `/payment-success` và `/payment-cancel`.
+
+Railway tự nhận `Dockerfile` trong Root Directory. Tham khảo [Railway monorepo guide](https://docs.railway.com/deployments/monorepo) và [Dockerfile build variables](https://docs.railway.com/builds/dockerfiles).
 
 ---
 *Chúc bạn có trải nghiệm tuyệt vời với Project Coffee!* ☕✨

@@ -4,6 +4,7 @@
 # Chặn các file chứa mật khẩu, secret key
 .env
 .env.local
+.env.migration
 .env.*.local
 *.local
 
@@ -11,6 +12,9 @@
 **/src/main/resources/application.properties
 **/src/main/resources/Application.yml
 **/src/main/resources/application.yml
+
+# Safe deployment config: values are environment-variable placeholders only.
+!ProJectBackWeb/ProJectBackWeb/src/main/resources/application.yml
 
 # ==========================================
 # 2. FRONT_END (ReactJS/Vite)

@@ -1,5 +1,5 @@
 import React from "react";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Logo from "../assets/BannerIMG/Logo.png";
 import { Link } from "react-router-dom";
@@ -18,7 +18,6 @@ import { CiMenuBurger } from "react-icons/ci";
 import "../index.css";
 import { TfiClose } from "react-icons/tfi";
 import axiosClient from "../AxiosClient";
-import debounce from "lodash/debounce";
 import { RxAvatar } from "react-icons/rx";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -30,6 +29,44 @@ import { unlogout, logout, getLogout } from "../ManagerLogout/ManagerLogout";
 import {
   getCheckAddProduct,
 } from "../ManagerAddCartProduct/ManagerAddCartProduct";
+
+const SearchInput = ({ isPastBanner, valuesearch, HandlevalueInput, setFocus }) => {
+  const [placeholder, setPlaceholder] = useState("");
+
+  useEffect(() => {
+    const text = "Nhập món bạn cần tìm...";
+    let index = 0;
+    let currentText = "";
+    const interval = setInterval(() => {
+      if (index < text.length) {
+        currentText += text[index];
+        setPlaceholder(currentText);
+        index++;
+      } else {
+        currentText = "";
+        setPlaceholder("");
+        index = 0;
+      }
+    }, 150);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <input
+      type="text"
+      placeholder={placeholder}
+      className={`rounded-full text-[11px] py-2 px-4 pl-10 w-[150px] focus:w-[200px] transition-all duration-500 outline-none border ${
+        isPastBanner
+          ? "bg-black/5 border-black/5 text-gray-800 placeholder:text-gray-400 focus:bg-black/10"
+          : "bg-white/5 border-white/10 text-white placeholder:text-white/20 focus:bg-white/10"
+      } focus:border-[#D4A373]/30`}
+      onChange={HandlevalueInput}
+      value={valuesearch}
+      onFocus={() => setFocus(true)}
+      onBlur={() => setTimeout(() => setFocus(false), 200)}
+    />
+  );
+};
 
 const Navbar = ({ userInfo }) => {
   const menuLinks = [
@@ -46,9 +83,6 @@ const Navbar = ({ userInfo }) => {
     { name: "Xếp hạng", path: "/rank-page", icon: <FaTrophy /> },
     { name: "Liên hệ", path: "/contact", icon: <FaPhoneAlt /> },
   ];
-  const text = "Nhập món bạn cần tìm...";
-  const [placeholder, setPlaceholder] = useState("");
-  const [index, setIndex] = useState(0);
   const [valuesearch, setValueSearch] = useState("");
   const [openbarMenu, setOpenbarMenu] = useState(false);
   const [itemSearch, setItemSeach] = useState([]);
@@ -83,51 +117,45 @@ const Navbar = ({ userInfo }) => {
   }, []);
 
   const HandlevalueInput = (e) => {
-    if (e.target.value === "") {
-      setPlaceholder("");
-      setIndex(0);
+    const nextValue = e.target.value;
+    setValueSearch(nextValue);
+    if (!nextValue.trim()) setItemSeach([]);
+  };
+
+  useEffect(() => {
+    const searchTerm = valuesearch.trim();
+    if (!searchTerm) {
+      return undefined;
+    }
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => {
+      axiosClient
+        .get("product/getTOpProductbySearch", {
+          params: { top: 5, searchname: searchTerm },
+          signal: controller.signal,
+        })
+        .then((res) => setItemSeach(res.data.result || []))
+        .catch((error) => {
+          if (error.name !== "CanceledError") {
+            console.error("Không thể tìm sản phẩm:", error);
+          }
+        });
+    }, 500);
+
+    return () => {
+      clearTimeout(timeoutId);
+      controller.abort();
+    };
+  }, [valuesearch]);
+
+  useEffect(() => {
+    const frameId = requestAnimationFrame(() => {
       setValueSearch("");
-    } else {
-      setValueSearch(e.target.value);
-      setIndex(text.length + 1);
-    }
-  };
-
-  useEffect(() => {
-    if (index === text.length) {
-      setPlaceholder("");
-      setIndex(0);
-    } else if (index > text.length) {
-      return;
-    }
-    const interval = setInterval(() => {
-      setPlaceholder((prev) => prev + text[index]);
-      setIndex((i) => i + 1);
-    }, 100);
-    return () => clearInterval(interval);
-  }, [placeholder, index]);
-
-  const callApiSearch = () => {
-    if (!valuesearch) {
-      setItemSeach([]);
-      return;
-    }
-    axiosClient
-      .get(`product/getTOpProductbySearch?top=5&searchname=${valuesearch}`)
-      .then((res) => setItemSeach(res.data.result))
-      .catch(() => console.log("không call dc api"));
-  };
-
-  const debounceSearch = useCallback(debounce(callApiSearch, 500), [valuesearch]);
-  useEffect(() => {
-    debounceSearch();
-    return () => debounceSearch.cancel();
-  }, [valuesearch, debounceSearch]);
-
-  useEffect(() => {
-    setValueSearch("");
-    setFocus(false);
-    setOpenbarMenu(false);
+      setFocus(false);
+      setOpenbarMenu(false);
+    });
+    return () => cancelAnimationFrame(frameId);
   }, [pathname]);
 
   const handleLogout = () => {
@@ -236,18 +264,11 @@ const Navbar = ({ userInfo }) => {
           {/* Search */}
           <div className="hidden lg:flex items-center relative group">
             <div className="relative flex items-center">
-              <input
-                type="text"
-                placeholder={placeholder}
-                className={`rounded-full text-[11px] py-2 px-4 pl-10 w-[150px] focus:w-[200px] transition-all duration-500 outline-none border ${
-                  isPastBanner 
-                    ? "bg-black/5 border-black/5 text-gray-800 placeholder:text-gray-400 focus:bg-black/10" 
-                    : "bg-white/5 border-white/10 text-white placeholder:text-white/20 focus:bg-white/10"
-                } focus:border-[#D4A373]/30`}
-                onChange={HandlevalueInput}
-                value={valuesearch}
-                onFocus={() => setFocus(true)}
-                onBlur={() => setTimeout(() => setFocus(false), 200)}
+              <SearchInput
+                isPastBanner={isPastBanner}
+                valuesearch={valuesearch}
+                HandlevalueInput={HandlevalueInput}
+                setFocus={setFocus}
               />
               <CiSearch className={`absolute left-3 transition-colors text-base ${
                 isPastBanner ? "text-gray-400" : "text-white/30"

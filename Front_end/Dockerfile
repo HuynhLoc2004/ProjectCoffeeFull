@@ -5,7 +5,7 @@ ARG VITE_API_URL
 ENV VITE_API_URL=$VITE_API_URL
 # Copy các file config từ my-project vào WORKDIR /app
 COPY my-project/package*.json ./
-RUN npm install
+RUN npm ci
 
 # Copy toàn bộ nội dung trong my-project vào /app
 COPY my-project/ .

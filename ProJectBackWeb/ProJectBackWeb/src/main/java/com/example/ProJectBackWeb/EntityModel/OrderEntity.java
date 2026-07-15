@@ -35,13 +35,13 @@ public class OrderEntity {
     @Column(name = "totalPrice" , nullable = false)
     private Double totalPrice;
 
-    @Column(name = "type_order" , nullable = false , columnDefinition = "varchar(255)")
+    @Column(name = "type_order" , nullable = true , columnDefinition = "varchar(255)")
     private String Type_Order;
     @OneToMany(fetch = FetchType.LAZY,  mappedBy = "orderEntity" , cascade = CascadeType.ALL)
     @OrderBy(value = "totalPrice desc")
     private List<OrderDetailsEntity> orderDetailEntities = new ArrayList<>();
 
-    @Column(name = "address_order" , nullable = false , columnDefinition = "NVARCHAR(MAX)")
+    @Column(name = "address_order" , nullable = false , columnDefinition = "TEXT")
     private String address;
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference

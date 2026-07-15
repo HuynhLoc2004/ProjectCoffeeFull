@@ -41,10 +41,10 @@
         @Column(name = "date_user" , nullable = true)
         private LocalDate date;
 
-        @Column(name = "fullname" , nullable = true  , columnDefinition = "Nvarchar(100)")
+        @Column(name = "fullname" , nullable = true  , columnDefinition = "varchar(100)")
         private String fullname;
 
-        @Column(name = "picture" , nullable = true , columnDefinition = "Nvarchar(255)")
+        @Column(name = "picture" , nullable = true , columnDefinition = "varchar(255)")
         private String picture;
 
         @Column(name = "user_active" , nullable = false)
@@ -55,7 +55,7 @@
 
         @Column(name = "providerId" , nullable = false)
         private String providerId;
-        @Column(name = "address" , nullable = false , columnDefinition = "NVARCHAR(255)")
+        @Column(name = "address" , nullable = false , columnDefinition = "varchar(255)")
         private String address;
         @Column(name = "create_at" , nullable = false )
         private LocalDateTime createAt;

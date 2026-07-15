@@ -14,7 +14,9 @@ const OrderDetailModal = ({ isOpen, onClose, order }) => {
   const [shouldRender, setShouldRender] = useState(isOpen);
 
   useEffect(() => {
-    if (isOpen) setShouldRender(true);
+    if (!isOpen) return undefined;
+    const frameId = requestAnimationFrame(() => setShouldRender(true));
+    return () => cancelAnimationFrame(frameId);
   }, [isOpen]);
 
   const handleTransitionEnd = (e) => {

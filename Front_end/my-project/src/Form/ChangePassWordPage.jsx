@@ -188,7 +188,7 @@ const ChangePassWordPage = () => {
   const resetForm = () => {
     setStep(1);
     setEmail("");
-    setOtp("");
+    setOtpEmail("");
     setNewPassword("");
     setConfirmPassword("");
     setCountdown(0);

@@ -22,6 +22,7 @@ import axiosClient from "../../AxiosClient";
 import {
   setAccessToken,
   clearAccessToken,
+  getAccessToken,
 } from "../../ManagerAccessToken/ManagerAccessToken";
 import { logout, unlogout } from "../../ManagerLogout/ManagerLogout";
 

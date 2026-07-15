@@ -1,0 +1,68 @@
+server:
+  port: ${PORT:8080}
+  forward-headers-strategy: native #
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:project_drink}?sslmode=${DB_SSLMODE:disable}
+    username: ${DB_USER:sa}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        connection:
+          useUnicode: true
+          characterEncoding: UTF-8
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope: [email, profile]
+  ai:
+    google:
+      genai:
+        api-key: ${GEMINI_API_KEY}
+        chat:
+          options:
+            model: gemini-1.5-flash
+
+jwt:
+  secret_key: ${JWT_SECRET}
+  expirytime: 5
+  refresh_time: 10080
+
+payos:
+  client-id: ${PAYOS_CLIENT_ID}
+  api-key: ${PAYOS_API_KEY}
+  checksum-key: ${PAYOS_CHECKSUM_KEY}
+  create-url: https://api-merchant.payos.vn/v2/payment-requests
+  returnUrl: ${PAYOS_RETURNURL}
+  cancelUrl: ${PAYOS_CANCELURL}
+
+mail:
+  host: smtp.gmail.com
+  port: 587
+  mailadmin: huynhtanlocpp09@gmail.com
+  password: ${MAIL_PASSWORD}
+  system: ${MAIL_SYSTEM}
+
+cloudinary:
+  name: ${CLOUDINARY_NAME}
+  api_key: ${CLOUDINARY_API_KEY}
+  api_secret: ${CLOUDINARY_API_SECRET}
+
+redis:
+  host: ${REDIS_HOST:localhost}
+  port: ${REDIS_PORT:6379}
+  username: ${REDIS_USERNAME:}
+  password: ${REDIS_PASSWORD:}
+
+google:
+  returnUrl: ${GOOGLE_RETURNURL}

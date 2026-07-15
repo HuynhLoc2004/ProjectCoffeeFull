@@ -36,6 +36,7 @@ import org.springframework.security.oauth2.client.oidc.authentication.OidcIdToke
 import java.time.Duration;
 
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -56,6 +57,16 @@ public class SecurityConfig implements WebMvcConfigurer {
 
     @Value("${google.returnUrl}")
     private String googleReturnUrl;
+
+    @Value("${app.cors.allowed-origins:http://localhost:5173,http://localhost:3000,http://localhost}")
+    private String allowedOrigins;
+
+    private List<String> getAllowedOrigins() {
+        return Arrays.stream(allowedOrigins.split(","))
+                .map(String::trim)
+                .filter(origin -> !origin.isEmpty())
+                .toList();
+    }
 
     @Bean
     public JwtDecoderFactory<ClientRegistration> jwtDecoderFactory() {
@@ -164,7 +175,7 @@ public class SecurityConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedMethods("GET" , "POST" , "DELETE" , "PUT")
-                .allowedOrigins("http://localhost:5173", "http://localhost:3000", "http://localhost", "http://localhost:80", "http://103.28.32.228", "http://coffeweb.duckdns.org")
+                .allowedOrigins(getAllowedOrigins().toArray(String[]::new))
                 .allowedHeaders("*")
                 .allowCredentials(true);
     }
@@ -172,7 +183,7 @@ public class SecurityConfig implements WebMvcConfigurer {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:3000", "http://localhost", "http://localhost:80", "http://103.28.32.228", "http://coffeweb.duckdns.org"));
+        config.setAllowedOrigins(getAllowedOrigins());
         config.setAllowCredentials(true);
         config.setAllowedHeaders(List.of("*"));
         config.setAllowedMethods(List.of("GET", "POST", "DELETE", "PUT", "OPTIONS", "PATCH"));

@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { motion, useSpring } from "framer-motion";
 
 const MouseCursor = () => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-
   const cursorX = useSpring(0, { stiffness: 500, damping: 28 });
   const cursorY = useSpring(0, { stiffness: 500, damping: 28 });
 

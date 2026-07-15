@@ -1,8 +1,17 @@
 import axios from "axios";
 import { getAccessToken } from "./ManagerAccessToken/ManagerAccessToken";
 
+export const getApiOrigin = () => {
+  const configuredUrl = import.meta.env.VITE_API_URL;
+  return configuredUrl
+    ? new URL(configuredUrl, window.location.origin).origin
+    : window.location.origin;
+};
+
 const axiosClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  // Same-origin `/api` works locally and behind Nginx. Railway can override it
+  // with the public backend URL at build time (for example https://api.example.com/api).
+  baseURL: import.meta.env.VITE_API_URL || "/api",
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",

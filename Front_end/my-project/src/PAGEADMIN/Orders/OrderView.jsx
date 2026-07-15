@@ -80,7 +80,6 @@ const OrderView = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    setIsLoading(true);
     axiosClient
       .get(`/order/get-orders`, {
         withCredentials: true,

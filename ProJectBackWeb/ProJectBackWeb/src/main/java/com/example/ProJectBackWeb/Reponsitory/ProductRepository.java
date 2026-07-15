@@ -21,7 +21,7 @@ public interface ProductRepository extends JpaRepository<ProductEntity , Integer
     public List<ProductEntity> findProductByCategory(@Param("category") String category);
 
     @Query(
-            value = "SELECT top (:size) * FROM Products p where p.product_category = :category ORDER BY p.product_id DESC" , nativeQuery = true
+            value = "SELECT * FROM products p WHERE p.product_category = :category ORDER BY p.product_id DESC LIMIT :size" , nativeQuery = true
     )
     public  List<ProductEntity> findTopProductbyCategory(@Param("size") int size,@Param("category") String category);
 
@@ -35,8 +35,8 @@ public interface ProductRepository extends JpaRepository<ProductEntity , Integer
     ProductEntity FindProductByid(@Param("id") int id);
 
     @Query(
-            value ="Select DISTINCT top (:size)  * from products p where p.product_name collate Latin1_General_CI_AI like CONCAT('%' ,TRIM(:searchname) , '%') and p.product_active = :active " +
-                    "order by p.product_id DESC "
+            value ="SELECT DISTINCT * FROM products p WHERE LOWER(p.product_name) LIKE LOWER(CONCAT('%', TRIM(:searchname), '%')) " +
+                    "AND p.product_active = :active ORDER BY p.product_id DESC LIMIT :size"
             , nativeQuery = true
     )
     public List<ProductEntity>  findTopProductBySearchName(@Param("size") int size  , @Param("searchname") String searchname , @Param("active") boolean active);

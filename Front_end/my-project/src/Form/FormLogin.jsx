@@ -5,7 +5,7 @@ import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa6";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import axiosClient from "../AxiosClient";
+import axiosClient, { getApiOrigin } from "../AxiosClient";
 import { setAccessToken } from "../ManagerAccessToken/ManagerAccessToken";
 import { unlogout } from "../ManagerLogout/ManagerLogout";
 
@@ -173,7 +173,7 @@ const FormLogin = () => {
                 whileTap={{ scale: 0.95 }}
                 className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl py-3 flex items-center justify-center gap-2 transition-all"
                 onClick={() => {
-                  window.location.href = "/oauth2/authorization/google";
+                  window.location.href = `${getApiOrigin()}/oauth2/authorization/google`;
                 }}
               >
                 <FcGoogle className="text-xl" />

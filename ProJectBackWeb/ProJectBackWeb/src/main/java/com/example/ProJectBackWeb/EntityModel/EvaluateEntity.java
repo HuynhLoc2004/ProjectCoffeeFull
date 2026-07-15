@@ -19,7 +19,7 @@ public class EvaluateEntity {
     @GeneratedValue(strategy =  GenerationType.IDENTITY)
     @Column(name = "evaluate_id" , nullable = false )
     private Integer id;
-    @Column(name = "evaluate_text" , nullable = true , columnDefinition = "NVARCHAR(MAX)")
+    @Column(name = "evaluate_text" , nullable = true , columnDefinition = "TEXT")
     private String text;
     @Column(name = "created_at" , nullable = true )
     private LocalDateTime created_at;

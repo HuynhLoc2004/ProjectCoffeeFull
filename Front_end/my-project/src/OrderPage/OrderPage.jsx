@@ -40,7 +40,6 @@ const OrderPage = () => {
     useState(getCheckAddProduct());
   // Reset quantity to 1 when size changes
   console.log(getCheckAddProduct());
-  let toppingExtra = 0;
   const handleSizeChange = (newSize) => {
     setSize(newSize);
     setQuantity(1); // Reset quantity to 1
@@ -209,18 +208,23 @@ const OrderPage = () => {
       });
   }, [product_id]);
 
-  const totalPrice = useMemo(() => {
-    if (!product) return -1;
-    const basePrice = product.sale == null ? product.price : product.sale;
-    const sizeExtra = SIZE_PRICE[_size] || 0;
+  const toppingExtra = useMemo(
+    () =>
+      (toppings || []).reduce(
+        (total, item) => total + (item.price_topping || 0),
+        0,
+      ),
+    [toppings],
+  );
 
-    if (toppings != null) {
-      toppings.forEach((item) => {
-        toppingExtra += item.price_topping;
-      });
-    }
-    return (basePrice + sizeExtra + toppingExtra) * quantity;
-  }, [product, _size, toppings, quantity]);
+  const basePrice = product
+    ? product.sale == null
+      ? product.price
+      : product.sale
+    : 0;
+  const totalPrice = product
+    ? (basePrice + (SIZE_PRICE[_size] || 0) + toppingExtra) * quantity
+    : -1;
 
   if (!product) {
     return (

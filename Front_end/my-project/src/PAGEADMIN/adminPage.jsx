@@ -18,7 +18,10 @@ import DashboardView from "./Dashboard/DashboardView";
 import ProductView from "./Products/ProductView";
 import OrderView from "./Orders/OrderView";
 import CustomerView from "./Customers/CustomerView";
-import { clearAccessToken } from "../ManagerAccessToken/ManagerAccessToken";
+import {
+  clearAccessToken,
+  getAccessToken,
+} from "../ManagerAccessToken/ManagerAccessToken";
 import Logo from "../assets/BannerIMG/Logo.png";
 import axiosClient from "../AxiosClient";
 import { useLocation, useNavigate } from "react-router-dom";

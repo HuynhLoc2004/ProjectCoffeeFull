@@ -17,7 +17,7 @@ public class ToppingEntity {
     private Integer id;
     @Column(name = "type_Topping" , nullable = false)
     private String typeTopping;
-    @Column(name= "name_topping" , nullable = false , columnDefinition = "Nvarchar(225)")
+    @Column(name= "name_topping" , nullable = false , columnDefinition = "varchar(225)")
     private String nameTopping;
     @Column(name = "price_topping" , nullable = false)
     private Double price_topping;

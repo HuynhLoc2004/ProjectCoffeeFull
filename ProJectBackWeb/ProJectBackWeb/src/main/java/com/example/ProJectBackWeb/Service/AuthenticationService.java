@@ -293,6 +293,7 @@ public class AuthenticationService {
         Cookie cookie = new Cookie("Refresh_Token", refresh_token);
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
+        cookie.setAttribute("SameSite", "None");
         cookie.setPath("/");
         cookie.setMaxAge(refresh_time * 60);
         httpServletResponse.addCookie(cookie);
@@ -338,6 +339,7 @@ public class AuthenticationService {
         Cookie cookie = new Cookie("Refresh_Token", refreshtoken);
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
+        cookie.setAttribute("SameSite", "None");
         cookie.setPath("/");
         cookie.setMaxAge(refresh_time * 0);
         httpServletResponse.addCookie(cookie);

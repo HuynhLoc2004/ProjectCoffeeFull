@@ -1,33 +1,12 @@
 import { Routes, Route } from "react-router-dom";
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import "./index.css";
 import "./App.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import FormRegister from "./Form/FormRegister";
-import LayoutMain from "./Layout/LayoutMain";
-import HeaderPage from "./Header/Headerpage";
-import ProductPage from "./Product/ProductPage";
-import OrderPage from "./OrderPage/OrderPage";
-import ContactPage from "./ContactPage/ContactPage";
-import CheckoutPage from "./QRthanhtoan/CheckoutPage";
-import PaymentSuccessPage from "../src/Components/Payment/PaymentSuccessPage";
 import ScrollToTop from "./Scolltoppage";
 import BackToTop from "./component/BackToTop";
-import ChatAI from "./Components/ChatAI/ChatAI";
 import MouseCursor from "./Components/MouseCursor";
-import Authentication from "./assets/Authentication/Authentication";
-import FormLogin from "./Form/FormLogin";
-import LoadingPage from "./LoadingPage/LoadingPage";
-import Cartpage from "./CartPage/Cartpage";
-import PaymentCancelPage from "./Components/Payment/PaymentCancelPage";
-import ChangePassWordPage from "./Form/ChangePassWordPage";
-import ForgotPassword from "./Form/ForgotPassword";
-import Shop from "./Shop/Shop";
-import Vippage from "./VipPage/Vippage";
-import Profile from "./ProfilePage/Profile";
-import AdminPage from "./PAGEADMIN/adminPage";
-import LoginAdmin from "./PAGEADMIN/LoginAdmin/LoginAdmin";
 import axiosClient from "./AxiosClient";
 import {
   getAccessToken,
@@ -35,15 +14,37 @@ import {
 } from "./ManagerAccessToken/ManagerAccessToken";
 import { unlogout, logout } from "./ManagerLogout/ManagerLogout";
 
+const LayoutMain = lazy(() => import("./Layout/LayoutMain"));
+const HeaderPage = lazy(() => import("./Header/Headerpage"));
+const ProductPage = lazy(() => import("./Product/ProductPage"));
+const OrderPage = lazy(() => import("./OrderPage/OrderPage"));
+const ContactPage = lazy(() => import("./ContactPage/ContactPage"));
+const CheckoutPage = lazy(() => import("./QRthanhtoan/CheckoutPage"));
+const PaymentSuccessPage = lazy(() =>
+  import("./Components/Payment/PaymentSuccessPage"),
+);
+const Authentication = lazy(() =>
+  import("./assets/Authentication/Authentication"),
+);
+const FormRegister = lazy(() => import("./Form/FormRegister"));
+const FormLogin = lazy(() => import("./Form/FormLogin"));
+const LoadingPage = lazy(() => import("./LoadingPage/LoadingPage"));
+const Cartpage = lazy(() => import("./CartPage/Cartpage"));
+const PaymentCancelPage = lazy(() =>
+  import("./Components/Payment/PaymentCancelPage"),
+);
+const ChangePassWordPage = lazy(() => import("./Form/ChangePassWordPage"));
+const ForgotPassword = lazy(() => import("./Form/ForgotPassword"));
+const Shop = lazy(() => import("./Shop/Shop"));
+const Vippage = lazy(() => import("./VipPage/Vippage"));
+const Profile = lazy(() => import("./ProfilePage/Profile"));
+const AdminPage = lazy(() => import("./PAGEADMIN/adminPage"));
+const LoginAdmin = lazy(() => import("./PAGEADMIN/LoginAdmin/LoginAdmin"));
+const ChatAI = lazy(() => import("./Components/ChatAI/ChatAI"));
+
 function App() {
-  const sv = {
-    id: String,
-    age: Number,
-  };
-  // Check authentication on app load
   useEffect(() => {
     if (getAccessToken()) {
-      // Verify if refresh token is still valid
       axiosClient
         .get("/auth/refresh_token", {
           withCredentials: true,
@@ -54,14 +55,12 @@ function App() {
             unlogout();
             console.log("Token verified on app load");
           } else {
-            // Refresh token invalid, redirect to login
             setAccessToken("");
             logout();
             window.location.href = "/login";
           }
         })
-        .catch((err) => {
-          // Refresh token invalid, redirect to login
+        .catch(() => {
           setAccessToken("");
           logout();
           window.location.href = "/login";
@@ -69,7 +68,6 @@ function App() {
     }
   }, []);
 
-  // Auto refresh token every 5 minutes
   useEffect(() => {
     const refreshTokenInterval = setInterval(
       () => {
@@ -84,7 +82,6 @@ function App() {
                 unlogout();
                 console.log("Token refreshed automatically");
               } else if (res.data.statusCode == 401) {
-                // Refresh token expired, clear tokens and redirect to login
                 setAccessToken("");
                 logout();
                 console.log("Refresh token expired, redirecting to login");
@@ -93,7 +90,6 @@ function App() {
             })
             .catch((err) => {
               if (err.response?.status === 401) {
-                // Refresh token expired, clear tokens and redirect to login
                 setAccessToken("");
                 logout();
                 console.log("Refresh token expired, redirecting to login");
@@ -105,7 +101,7 @@ function App() {
         }
       },
       5 * 60 * 1000,
-    ); // 5 minutes
+    );
 
     return () => clearInterval(refreshTokenInterval);
   }, []);
@@ -115,7 +111,9 @@ function App() {
       <MouseCursor />
       <ScrollToTop />
       <BackToTop />
-      <ChatAI />
+      <Suspense fallback={null}>
+        <ChatAI />
+      </Suspense>
       <ToastContainer
         position="top-right"
         autoClose={3000}
@@ -128,6 +126,13 @@ function App() {
         pauseOnHover
         theme="dark"
       />
+      <Suspense
+        fallback={
+          <div className="min-h-screen grid place-items-center bg-[#140a05] text-[#D4A373]">
+            Đang tải...
+          </div>
+        }
+      >
       <Routes>
         <Route element={<LayoutMain />}>
           <Route path="/" element={<HeaderPage />}></Route>
@@ -153,6 +158,7 @@ function App() {
         <Route path="/admin/login" element={<LoginAdmin />}></Route>
         <Route path="/admin-login" element={<LoginAdmin></LoginAdmin>}></Route>
       </Routes>
+      </Suspense>
     </div>
   );
 }
