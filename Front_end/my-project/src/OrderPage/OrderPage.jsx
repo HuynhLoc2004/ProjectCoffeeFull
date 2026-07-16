@@ -262,12 +262,9 @@ const OrderPage = () => {
                   className="relative w-full aspect-square overflow-hidden rounded-[2.5rem] mb-8 bg-gradient-to-br from-gray-50 to-gray-200/50 shadow-inner border border-white/40"
                 >
                   <motion.img
-                    animate={{
-                      rotateY: [0, 90, 180, 270, 360],
-                      translateY: ["0%", "2%", "0%", "-2%", "0%"],
-                    }}
+                    animate={{ translateY: ["0%", "-2%", "0%"] }}
                     transition={{
-                      duration: 8,
+                      duration: 5,
                       repeat: Infinity,
                       ease: "easeInOut",
                     }}
@@ -414,7 +411,7 @@ const OrderPage = () => {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={(e) => handleCheckout(e)}
-                    className="w-full py-4 text-lg rounded-xl bg-gradient-to-r from-emerald-500 to-green-500 text-white font-bold shadow-lg hover:shadow-xl transition-all"
+                    className="w-full py-4 text-lg rounded-xl bg-[#b88754] text-white font-bold shadow-lg hover:bg-[#a57648] hover:shadow-xl transition-all"
                   >
                     💳 Thanh toán ngay
                   </motion.button>

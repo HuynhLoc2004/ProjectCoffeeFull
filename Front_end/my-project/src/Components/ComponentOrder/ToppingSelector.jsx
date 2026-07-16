@@ -30,8 +30,8 @@ const ToppingSelector = ({
             whileHover={{ scale: 1.03 }}
             className={`relative p-3 rounded-xl cursor-pointer transition-all duration-200 ease-in-out text-center ${
               selected
-                ? "bg-emerald-500 text-white shadow-lg border-2 border-emerald-600"
-                : "bg-white text-gray-800 shadow-sm border border-gray-200 hover:border-emerald-400"
+                ? "topping-active text-white border"
+                : "topping-idle border"
             }`}
           >
             {selected && (

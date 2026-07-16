@@ -3,12 +3,14 @@ import { motion } from "framer-motion";
 
 const SizeSelector = ({ _size, setSize, listSize }) => {
   return (
-    <div className="relative flex w-full h-16 bg-slate-100 rounded-full p-2 space-x-2">
+    <div className="size-selector relative flex w-full min-h-16 rounded-2xl p-1.5 gap-1.5">
       {listSize?.map((item) => (
         <div key={item.id} className="relative flex-1">
           <motion.button
+            type="button"
             onClick={() => setSize(item.size)}
-            className="relative w-full h-full rounded-full font-bold transition-colors text-gray-800 z-10 flex flex-col items-center justify-center"
+            aria-pressed={item.size === _size}
+            className={`size-option relative w-full min-h-13 rounded-xl font-bold z-10 flex flex-col items-center justify-center ${item.size === _size ? "is-active" : ""}`}
             whileTap={{ scale: 0.98 }}
           >
             <div className="text-lg font-black">{item.size}</div>
@@ -18,13 +20,6 @@ const SizeSelector = ({ _size, setSize, listSize }) => {
                 : "Cơ bản"}
             </div>
           </motion.button>
-          {item.size === _size && (
-            <motion.div
-              layoutId="activeSize"
-              className="absolute inset-0 bg-white rounded-full shadow-md z-0"
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            />
-          )}
         </div>
       ))}
     </div>
