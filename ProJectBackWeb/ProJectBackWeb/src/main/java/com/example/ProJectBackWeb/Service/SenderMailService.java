@@ -24,17 +24,14 @@
     import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
     import org.springframework.stereotype.Service;
 
-    import java.net.URI;
-    import java.net.http.HttpClient;
-    import java.net.http.HttpRequest;
-    import java.net.http.HttpResponse;
-    import java.security.SecureRandom;
-    import java.time.Duration;
-    import java.time.LocalDateTime;
-    import java.util.List;
-    import java.util.Map;
-    import java.util.UUID;
-    import java.util.concurrent.TimeUnit;
+import java.security.SecureRandom;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+import jakarta.mail.internet.MimeMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 
     @Slf4j
     @Service
@@ -46,18 +43,13 @@
         private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         private final SecureRandom secureRandom = new SecureRandom();
         private final EvaluateRepository evaluateRepository;
+        private final JavaMailSender mailSender;
         
         @Value("${mail.mailadmin}")
         private String adminMail;
 
         @Value("${mail.system:huynhtanlocpp09@gmail.com}")
         private String systemMail;
-
-        @Value("${mail.api-key:}")
-        private String mailApiKey;
-
-        @Value("${mail.api-url:https://api.brevo.com/v3/smtp/email}")
-        private String mailApiUrl;
 
         @jakarta.annotation.PostConstruct
         public void init() {
@@ -67,12 +59,13 @@
             log.info("------------------------------------------");
         }
 
-        public SenderMailService(RedisTemplate<String, String> redisTemplate, ObjectMapper objectMapper, OtpEmailRepository otpEmailRepository, UserRepository userRepository, EvaluateRepository evaluateRepository) {
+        public SenderMailService(RedisTemplate<String, String> redisTemplate, ObjectMapper objectMapper, OtpEmailRepository otpEmailRepository, UserRepository userRepository, EvaluateRepository evaluateRepository, JavaMailSender mailSender) {
             this.redisTemplate = redisTemplate;
             this.objectMapper = objectMapper;
             this.otpEmailRepository = otpEmailRepository;
             this.userRepository = userRepository;
             this.evaluateRepository = evaluateRepository;
+            this.mailSender = mailSender;
         }
 
         private String CreateOtp(){
@@ -133,15 +126,24 @@
                    "</html>";
         }
 
+        private String escapeHtml(String value) {
+            if (value == null) return "";
+            return value.replace("&", "&amp;")
+                    .replace("<", "&lt;")
+                    .replace(">", "&gt;")
+                    .replace("\"", "&quot;")
+                    .replace("'", "&#39;");
+        }
+
         private void sendMailHelper(String to, String subject, String htmlContent, String type) {
             try {
-                if (mailApiKey == null || mailApiKey.isBlank()) {
-                    throw new IllegalStateException("BREVO_API_KEY chưa được cấu hình");
+                if (systemMail == null || systemMail.isBlank()) {
+                    throw new IllegalStateException("MAIL_SYSTEM chưa được cấu hình");
                 }
 
                 log.info("Type: {}, To: {}, Subject: {}", type, to, subject);
-                sendMailWithBrevo(to, subject, htmlContent);
-                log.info("--- GỬI MAIL THÀNH CÔNG QUA BREVO API ---");
+                sendMailWithSmtp(to, subject, htmlContent);
+                log.info("--- GỬI MAIL THÀNH CÔNG QUA GMAIL SMTP ---");
             } catch (Exception e) {
                 log.error("!!! LỖI GỬI MAIL NGHIÊM TRỌNG !!!");
                 log.error("Type: {}, To: {}", type, to);
@@ -156,51 +158,31 @@
         private String getPublicMailError(Exception exception) {
             String detail = exception.getMessage() == null ? "" : exception.getMessage();
 
-            if (detail.contains("BREVO_API_KEY chưa được cấu hình")) {
-                return "Backend chưa được cấu hình BREVO_API_KEY.";
+            if (detail.contains("MAIL_SYSTEM chưa được cấu hình")) {
+                return "Backend chưa được cấu hình MAIL_SYSTEM.";
             }
-            if (detail.contains("HTTP 401")) {
-                return "BREVO_API_KEY không hợp lệ hoặc đã bị thu hồi.";
+            if (detail.contains("AuthenticationFailedException") || detail.contains("535")) {
+                return "Gmail từ chối đăng nhập SMTP. Hãy dùng App Password 16 ký tự và kiểm tra MAIL_SYSTEM/MAIL_PASSWORD.";
             }
-            if (detail.contains("HTTP 400")) {
-                return "Brevo từ chối địa chỉ gửi. Hãy kiểm tra MAIL_SYSTEM trùng với sender đã Verified.";
-            }
-            if (detail.contains("HTTP 403")) {
-                return "Tài khoản Brevo chưa được phép gửi email giao dịch.";
-            }
-            if (detail.contains("HTTP 429")) {
-                return "Brevo đã hết hạn mức gửi email hôm nay. Vui lòng thử lại sau.";
+            if (detail.contains("MAIL_PASSWORD") || detail.toLowerCase().contains("password")) {
+                return "Không thể xác thực Gmail SMTP. Hãy kiểm tra App Password trong MAIL_PASSWORD.";
             }
 
-            return "Không thể kết nối dịch vụ gửi email. Vui lòng thử lại sau.";
+            return "Không thể kết nối Gmail SMTP. Vui lòng thử lại sau.";
         }
 
-        private void sendMailWithBrevo(String to, String subject, String htmlContent) throws Exception {
-            Map<String, Object> payload = Map.of(
-                    "sender", Map.of("name", "Coffee House", "email", systemMail),
-                    "to", List.of(Map.of("email", to)),
-                    "subject", subject,
-                    "htmlContent", htmlContent
+        private void sendMailWithSmtp(String to, String subject, String htmlContent) throws Exception {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(
+                    message,
+                    MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
+                    StandardCharsets.UTF_8.name()
             );
-
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(mailApiUrl))
-                    .timeout(Duration.ofSeconds(30))
-                    .header("accept", "application/json")
-                    .header("content-type", "application/json")
-                    .header("api-key", mailApiKey)
-                    .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(payload)))
-                    .build();
-            HttpResponse<String> response = HttpClient.newBuilder()
-                    .connectTimeout(Duration.ofSeconds(10))
-                    .build()
-                    .send(request, HttpResponse.BodyHandlers.ofString());
-
-            if (response.statusCode() < 200 || response.statusCode() >= 300) {
-                throw new IllegalStateException(
-                        "Brevo API trả về HTTP " + response.statusCode() + ": " + response.body()
-                );
-            }
+            helper.setFrom(systemMail, "Coffee House");
+            helper.setTo(to);
+            helper.setSubject(subject);
+            helper.setText(htmlContent, true);
+            mailSender.send(message);
         }
 
         @Transactional
@@ -362,12 +344,15 @@
                 evaluateEntity.setUserEntity(userEntity);
                 this.evaluateRepository.save(evaluateEntity);
 
-                String subject = "Đánh giá mới từ khách hàng: " + userEntity.getFullname();
-                String body = "<p>Bạn có một đánh giá mới từ khách hàng <strong>" + userEntity.getFullname() + "</strong>.</p>" +
+                String safeFullname = escapeHtml(userEntity.getFullname());
+                String safeReview = escapeHtml(evaluatedRequest.getTextForm());
+                String safeTime = escapeHtml(String.valueOf(evaluatedRequest.getLocalDateTime()));
+                String subject = "Đánh giá mới từ khách hàng: " + String.valueOf(userEntity.getFullname()).replaceAll("[\\r\\n]", " ");
+                String body = "<p>Bạn có một đánh giá mới từ khách hàng <strong>" + safeFullname + "</strong>.</p>" +
                              "<div class='otp-box' style='text-align: left;'>" +
                              "<p><strong>Nội dung:</strong></p>" +
-                             "<p><i>\"" + evaluatedRequest.getTextForm() + "\"</i></p>" +
-                             "<p style='margin-top: 15px; font-size: 13px; color: #888;'>Thời gian: " + evaluatedRequest.getLocalDateTime() + "</p>" +
+                             "<p><i>\"" + safeReview + "\"</i></p>" +
+                             "<p style='margin-top: 15px; font-size: 13px; color: #888;'>Thời gian: " + safeTime + "</p>" +
                              "</div>";
                 
                 String htmlContent = generateHtmlTemplate("Đánh Giá Khách Hàng", body, null, null);

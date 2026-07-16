@@ -27,6 +27,21 @@ spring:
         connection:
           useUnicode: true
           characterEncoding: UTF-8
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_SYSTEM}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 10000
+          timeout: 15000
+          writetimeout: 15000
   security:
     oauth2:
       client:
@@ -59,8 +74,6 @@ payos:
 mail:
   mailadmin: huynhtanlocpp09@gmail.com
   system: ${MAIL_SYSTEM}
-  api-key: ${BREVO_API_KEY:}
-  api-url: https://api.brevo.com/v3/smtp/email
 
 cloudinary:
   name: ${CLOUDINARY_NAME}
