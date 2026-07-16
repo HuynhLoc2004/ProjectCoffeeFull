@@ -34,6 +34,7 @@ const ForgotPassword = () => {
   const [otpEmail, setOtpEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [resetToken, setResetToken] = useState("");
 
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -62,6 +63,10 @@ const ForgotPassword = () => {
   const sendOtp = async () => {
     if (!email || !email.trim()) {
       setError("Vui lòng nhập email");
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      setError("Email không đúng định dạng");
       return;
     }
 
@@ -110,14 +115,13 @@ const ForgotPassword = () => {
         email: email,
       });
 
-      if (data.data.statusCode == 400) {
-        console.log(data);
-        setError(data.data.message);
-        return;
+      if (data.data?.statusCode !== 200 || !data.data?.result) {
+        throw new Error(data.data?.message || "OTP không đúng hoặc đã hết hạn");
       }
+      setResetToken(data.data.result);
       changeStep(3);
     } catch (err) {
-      setError("OTP không đúng hoặc đã hết hạn");
+      setError(err.response?.data?.message || err.message || "OTP không đúng hoặc đã hết hạn");
     } finally {
       setIsLoading(false);
     }
@@ -128,6 +132,10 @@ const ForgotPassword = () => {
       setError("Mật khẩu xác nhận không khớp");
       return;
     }
+    if (newPassword.length < 8) {
+      setError("Mật khẩu phải có ít nhất 8 ký tự");
+      return;
+    }
 
     setIsLoading(true);
     setError("");
@@ -136,14 +144,19 @@ const ForgotPassword = () => {
       const res = await axiosClient.post("/user/forgot-password", {
         email: email,
         newPassword: newPassword,
+        resetToken: resetToken,
       });
+
+      if (res.data?.statusCode !== 201 || res.data?.result !== true) {
+        throw new Error(res.data?.message || "Đổi mật khẩu thất bại");
+      }
 
       setMessage("Đổi mật khẩu thành công");
        setTimeout(()=>{
         navigate('/login')
        },1500)
     } catch (err) {
-      setError("Đổi mật khẩu thất bại");
+      setError(err.response?.data?.message || err.message || "Đổi mật khẩu thất bại");
     } finally {
       setIsLoading(false);
     }
@@ -194,7 +207,7 @@ const ForgotPassword = () => {
                   type="text"
                   placeholder=" "
                   value={otpEmail}
-                  onChange={(e) => setOtpEmail(e.target.value)}
+                  onChange={(e) => setOtpEmail(e.target.value.replace(/\D/g, ""))}
                   maxLength="6"
                   disabled={isLoading}
                 />

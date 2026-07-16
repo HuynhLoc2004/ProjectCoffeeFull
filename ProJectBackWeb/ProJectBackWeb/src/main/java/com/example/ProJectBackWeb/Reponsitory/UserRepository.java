@@ -18,6 +18,8 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<UserEntity , Integer> {
     public boolean existsByAccount(String account);
     public boolean existsByEmail(String email);
+    boolean existsByEmailIgnoreCase(String email);
+    Optional<UserEntity> findFirstByEmailIgnoreCase(String email);
     @Query(
             value = "select u.* , r.name_role , p.name_permission\n" +
                     "from user_account u join user_role ur on u.id_user = ur.id_user \n" +

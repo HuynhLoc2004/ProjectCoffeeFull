@@ -58,12 +58,14 @@ public class UserService {
 
     public UserEntity createUser(UserRequestRegistry userRequest) throws JsonProcessingException {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+        String normalizedEmail = userRequest.getEmail().trim().toLowerCase();
+        userRequest.setEmail(normalizedEmail);
 
         Role roleQuery = roleRepository.findRoleByName("USER");
         if(userRepository.existsByAccount(userRequest.getAccount())){
             throw new Appexception(HttpStatusEnum.BAD_REQUEST.getCode() , "User existed" , userRequest);
         }
-        if(userRepository.existsByEmail(userRequest.getEmail())){
+        if(userRepository.existsByEmailIgnoreCase(normalizedEmail)){
             throw new Appexception(HttpStatusEnum.BAD_REQUEST.getCode() , "Email user existed" , userRequest);
         }
 
@@ -81,15 +83,33 @@ public class UserService {
     @Transactional
     public Boolean changePasswordUSer(ChangePasswordRequest changePasswordRequest , JwtAuthenticationToken jwtAuthenticationToken){
          Long userId =   jwtAuthenticationToken.getToken().getClaim("userId");
+         String tokenOwner = this.redisTemplate.opsForValue().getAndDelete(
+                 "PASSWORD_CHANGE_TOKEN:" + changePasswordRequest.getVerificationToken()
+         );
+         if (tokenOwner == null || !tokenOwner.equals(String.valueOf(userId))) {
+             throw new Appexception(HttpStatusEnum.UNAUTHORIZED.getCode(), "Bạn chưa xác thực OTP hoặc phiên xác thực đã hết hạn");
+         }
          String newPassword = passwordEncoder.encode(changePasswordRequest.getNewPassword());
          this.userRepository.updatePasswordUser(newPassword , userId.intValue());
+         this.redisTemplate.delete("userEntity" + userId);
+         this.redisTemplate.delete("userProfile" + userId);
          return true;
     }
     @Transactional
     public Boolean ForgotPasswordUSer(ForGotPassWordRequest forGotPassWordRequest ){
-        UserEntity userEntity = this.userRepository.findUserByEmail(forGotPassWordRequest.getEmail());
+        String requestEmail = forGotPassWordRequest.getEmail().trim().toLowerCase();
+        String verifiedEmail = this.redisTemplate.opsForValue().getAndDelete(
+                "PASSWORD_RESET_TOKEN:" + forGotPassWordRequest.getResetToken()
+        );
+        if (verifiedEmail == null || !verifiedEmail.equalsIgnoreCase(requestEmail)) {
+            throw new Appexception(HttpStatusEnum.UNAUTHORIZED.getCode(), "Bạn chưa xác thực OTP hoặc reset token đã hết hạn");
+        }
+        UserEntity userEntity = this.userRepository.findFirstByEmailIgnoreCase(requestEmail)
+                .orElseThrow(() -> new Appexception(HttpStatusEnum.NOT_FOUND.getCode(), "Email không tồn tại trong hệ thống"));
         String newPassword = passwordEncoder.encode(forGotPassWordRequest.getNewPassword());
         userEntity.setPassword(newPassword);
+        this.redisTemplate.delete("userEntity" + userEntity.getId());
+        this.redisTemplate.delete("userProfile" + userEntity.getId());
         return true;
     }
 
@@ -109,11 +129,14 @@ public class UserService {
                 () -> new Appexception(HttpStatusEnum.NOT_FOUND.getCode(), "not found user")
         );
 
-        if (!user.getEmail().equals(userUpdateReqquest.getEmail())) {
-            if (userRepository.existsByEmail(userUpdateReqquest.getEmail())) {
-                throw new Appexception(HttpStatusEnum.BAD_REQUEST.getCode(), "Email này đã được người khác sử dụng");
+        if (userUpdateReqquest.getEmail() != null && !userUpdateReqquest.getEmail().isBlank()) {
+            String normalizedEmail = userUpdateReqquest.getEmail().trim().toLowerCase();
+            if (!user.getEmail().equalsIgnoreCase(normalizedEmail)) {
+                if (userRepository.existsByEmailIgnoreCase(normalizedEmail)) {
+                    throw new Appexception(HttpStatusEnum.BAD_REQUEST.getCode(), "Email này đã được người khác sử dụng");
+                }
+                user.setEmail(normalizedEmail);
             }
-            user.setEmail(userUpdateReqquest.getEmail());
         }
 
         if (userUpdateReqquest.getFullname() != null && !userUpdateReqquest.getFullname().isEmpty()) {

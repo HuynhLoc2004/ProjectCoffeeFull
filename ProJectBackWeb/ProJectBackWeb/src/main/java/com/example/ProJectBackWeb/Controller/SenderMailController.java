@@ -25,19 +25,19 @@ public class SenderMailController {
     }
 
     @PostMapping("/send-OTP-ChangePassword")
-     public ResponseData<Boolean> sendOtpChangePassword( @RequestBody EmailRequest emailRequest , JwtAuthenticationToken jwtAuthenticationToken) throws JsonProcessingException {
-         return new ResponseData<Boolean>(HttpStatusEnum.OK.getCode(), "send otp successfully" ,this.senderMailService.SenderOtpEmail_ChangePassword(emailRequest , jwtAuthenticationToken));
+     public ResponseData<Boolean> sendOtpChangePassword(@RequestBody @Valid EmailRequest emailRequest, JwtAuthenticationToken jwtAuthenticationToken) throws JsonProcessingException {
+         return new ResponseData<>(HttpStatusEnum.OK.getCode(), "send otp successfully", this.senderMailService.SenderOtpEmail_ChangePassword(emailRequest, jwtAuthenticationToken));
     }
     @PostMapping("/verify-OTP-ChangePassword")
-    public ResponseData<Boolean> verifyOtpChangePassword(@RequestBody @Valid OTPemailRequest otPemailRequest , JwtAuthenticationToken jwtAuthenticationToken) throws JsonProcessingException {
+    public ResponseData<String> verifyOtpChangePassword(@RequestBody @Valid OTPemailRequest otPemailRequest , JwtAuthenticationToken jwtAuthenticationToken) throws JsonProcessingException {
         return new ResponseData<>(HttpStatusEnum.OK.getCode() , "verify otp email successfully" , this.senderMailService.Verify_OTP_CHANGE_PASSWORD(otPemailRequest , jwtAuthenticationToken));
     }
     @PostMapping("/send-OTP-forgotPassword")
-    public ResponseData<Boolean> sendOtpForgotPassword( @RequestBody EmailRequest emailRequest ) throws JsonProcessingException {
-        return new ResponseData<Boolean>(HttpStatusEnum.OK.getCode(), "send otp successfully" ,this.senderMailService.SenderOtpEmail_Forgotpassword(emailRequest ));
+    public ResponseData<Boolean> sendOtpForgotPassword(@RequestBody @Valid EmailRequest emailRequest) throws JsonProcessingException {
+        return new ResponseData<>(HttpStatusEnum.OK.getCode(), "send otp successfully", this.senderMailService.SenderOtpEmail_Forgotpassword(emailRequest));
     }
     @PostMapping("/verify-OTP-forgotPassword")
-    public ResponseData<Boolean> verifyOtp_fotgotPassword(@RequestBody @Valid OTPResetpassWordRequest otpResetpassWordRequest ) throws JsonProcessingException {
+    public ResponseData<String> verifyOtp_fotgotPassword(@RequestBody @Valid OTPResetpassWordRequest otpResetpassWordRequest ) throws JsonProcessingException {
         return new ResponseData<>(HttpStatusEnum.OK.getCode() , "verify otp email successfully" , this.senderMailService.Verify_OTP_Forgot_PASSWORD(otpResetpassWordRequest ));
     }
     @PostMapping("/sendEvaluate")

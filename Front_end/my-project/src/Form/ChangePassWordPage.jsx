@@ -34,6 +34,7 @@ const ChangePassWordPage = () => {
   const [otpEmail, setOtpEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [verificationToken, setVerificationToken] = useState("");
 
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -62,6 +63,10 @@ const ChangePassWordPage = () => {
   const sendOtp = async () => {
     if (!email || !email.trim()) {
       setError("Vui lòng nhập email");
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      setError("Email không đúng định dạng");
       return;
     }
 
@@ -127,7 +132,7 @@ const ChangePassWordPage = () => {
           return;
         }
       }
-      const errorMsg = err.response?.data?.message || "Không thể gửi OTP. Vui lòng thử lại sau.";
+      const errorMsg = err.response?.data?.message || err.message || "Không thể gửi OTP. Vui lòng thử lại sau.";
       setError(errorMsg);
     } finally {
       setIsLoading(false);
@@ -156,9 +161,13 @@ const ChangePassWordPage = () => {
         },
       );
 
+      if (data.data?.statusCode !== 200 || !data.data?.result) {
+        throw new Error(data.data?.message || "OTP không đúng hoặc đã hết hạn");
+      }
+      setVerificationToken(data.data.result);
       changeStep(3);
     } catch (err) {
-      setError("OTP không đúng hoặc đã hết hạn");
+      setError(err.response?.data?.message || err.message || "OTP không đúng hoặc đã hết hạn");
     } finally {
       setIsLoading(false);
     }
@@ -167,6 +176,10 @@ const ChangePassWordPage = () => {
   const changePassword = async () => {
     if (newPassword !== confirmPassword) {
       setError("Mật khẩu xác nhận không khớp");
+      return;
+    }
+    if (newPassword.length < 8) {
+      setError("Mật khẩu phải có ít nhất 8 ký tự");
       return;
     }
 
@@ -178,6 +191,7 @@ const ChangePassWordPage = () => {
         "/user/change-password",
         {
           newPassword: newPassword,
+          verificationToken: verificationToken,
         },
         {
           headers: {
@@ -186,10 +200,14 @@ const ChangePassWordPage = () => {
         },
       );
 
+      if (res.data?.statusCode !== 201 || res.data?.result !== true) {
+        throw new Error(res.data?.message || "Đổi mật khẩu thất bại");
+      }
+
       setMessage("Đổi mật khẩu thành công");
       setTimeout(resetForm, 2500);
     } catch (err) {
-      setError("Đổi mật khẩu thất bại");
+      setError(err.response?.data?.message || err.message || "Đổi mật khẩu thất bại");
     } finally {
       setIsLoading(false);
     }
@@ -201,6 +219,7 @@ const ChangePassWordPage = () => {
     setOtpEmail("");
     setNewPassword("");
     setConfirmPassword("");
+    setVerificationToken("");
     setCountdown(0);
     setMessage("");
     setError("");
@@ -251,7 +270,7 @@ const ChangePassWordPage = () => {
                   type="text"
                   placeholder=" "
                   value={otpEmail}
-                  onChange={(e) => setOtpEmail(e.target.value)}
+                  onChange={(e) => setOtpEmail(e.target.value.replace(/\D/g, ""))}
                   maxLength="6"
                   disabled={isLoading}
                 />
