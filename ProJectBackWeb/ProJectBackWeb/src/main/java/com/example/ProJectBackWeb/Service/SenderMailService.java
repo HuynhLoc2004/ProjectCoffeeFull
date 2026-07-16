@@ -224,6 +224,14 @@ import java.util.concurrent.TimeUnit;
                              "<p>Nếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua email hoặc liên hệ với bộ phận hỗ trợ.</p>";
                 
                 String htmlContent = generateHtmlTemplate("Xác Thực Thay Đổi Mật Khẩu", body, null, null);
+                OTPEmailEntity otpEmailEntity = new OTPEmailEntity();
+                otpEmailEntity.setOtpEmail(passwordEncoder.encode(otp));
+                otpEmailEntity.setExpiryTime(LocalDateTime.now().plusMinutes(5));
+                otpEmailEntity.setEmail(verifiedEmail);
+                otpEmailEntity.setTypeOtp(TypeOTpEmailEnums.CHANGE_PASSWORD.toString());
+                this.otpEmailRepository.save(otpEmailEntity);
+                this.redisTemplate.opsForValue().set("OTP_CHANGE_PASSWORD" + verifiedEmail,
+                        objectMapper.writeValueAsString(otpEmailEntity), 5, TimeUnit.MINUTES);
                 try {
                     this.sendMailHelper(verifiedEmail, "Mã OTP xác thực thay đổi mật khẩu", htmlContent, "Change Password");
                 } catch (RuntimeException exception) {
@@ -231,15 +239,6 @@ import java.util.concurrent.TimeUnit;
                     throw exception;
                 }
                 this.redisTemplate.delete("OTP_ATTEMPTS:CHANGE:" + verifiedEmail);
-
-                OTPEmailEntity otpEmailEntity = new OTPEmailEntity();
-                otpEmailEntity.setOtpEmail(passwordEncoder.encode(otp));
-                otpEmailEntity.setExpiryTime(LocalDateTime.now().plusMinutes(5));
-                otpEmailEntity.setEmail(verifiedEmail);
-                otpEmailEntity.setTypeOtp(TypeOTpEmailEnums.CHANGE_PASSWORD.toString());
-                this.otpEmailRepository.save(otpEmailEntity);
-                
-                this.redisTemplate.opsForValue().set("OTP_CHANGE_PASSWORD"+verifiedEmail , objectMapper.writeValueAsString(otpEmailEntity) , 5 , TimeUnit.MINUTES);
                 return true;
             } else {
                 throw new Appexception(HttpStatusEnum.BAD_REQUEST.getCode(), "Email không khớp với tài khoản đang đăng nhập");
@@ -266,6 +265,14 @@ import java.util.concurrent.TimeUnit;
                          "<p>Vui lòng nhập mã này vào trang khôi phục để tiếp tục.</p>";
             
             String htmlContent = generateHtmlTemplate("Khôi Phục Mật Khẩu", body, null, null);
+            OTPEmailEntity otpEmailEntity = new OTPEmailEntity();
+            otpEmailEntity.setOtpEmail(passwordEncoder.encode(otp));
+            otpEmailEntity.setExpiryTime(LocalDateTime.now().plusMinutes(5));
+            otpEmailEntity.setEmail(verifiedEmail);
+            otpEmailEntity.setTypeOtp(TypeOTpEmailEnums.RESET_PASSWORD.toString());
+            this.otpEmailRepository.save(otpEmailEntity);
+            this.redisTemplate.opsForValue().set("OTP_RESET_PASSWORD" + verifiedEmail,
+                    objectMapper.writeValueAsString(otpEmailEntity), 5, TimeUnit.MINUTES);
             try {
                 this.sendMailHelper(verifiedEmail, "Mã OTP khôi phục mật khẩu", htmlContent, "Forgot Password");
             } catch (RuntimeException exception) {
@@ -273,15 +280,6 @@ import java.util.concurrent.TimeUnit;
                 throw exception;
             }
             this.redisTemplate.delete("OTP_ATTEMPTS:RESET:" + verifiedEmail);
-
-            OTPEmailEntity otpEmailEntity = new OTPEmailEntity();
-            otpEmailEntity.setOtpEmail(passwordEncoder.encode(otp));
-            otpEmailEntity.setExpiryTime(LocalDateTime.now().plusMinutes(5));
-            otpEmailEntity.setEmail(verifiedEmail);
-            otpEmailEntity.setTypeOtp(TypeOTpEmailEnums.RESET_PASSWORD.toString());
-            this.otpEmailRepository.save(otpEmailEntity);
-            
-            this.redisTemplate.opsForValue().set("OTP_RESET_PASSWORD"+verifiedEmail , objectMapper.writeValueAsString(otpEmailEntity) , 5 , TimeUnit.MINUTES);
             return true;
         }
 
