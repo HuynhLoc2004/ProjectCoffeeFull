@@ -10,6 +10,7 @@ import MouseCursor from "./Components/MouseCursor";
 import axiosClient from "./AxiosClient";
 import {
   getAccessToken,
+  isAccessTokenExpired,
   setAccessToken,
 } from "./ManagerAccessToken/ManagerAccessToken";
 import { unlogout, logout } from "./ManagerLogout/ManagerLogout";
@@ -44,7 +45,18 @@ const ChatAI = lazy(() => import("./Components/ChatAI/ChatAI"));
 
 function App() {
   useEffect(() => {
-    if (getAccessToken()) {
+    const accessToken = getAccessToken();
+    if (!accessToken) return;
+
+    // PayOS performs a full-page redirect back to the application. Keep the
+    // current session when its access token is still valid instead of forcing
+    // an unnecessary refresh request that can redirect the user to /login.
+    if (!isAccessTokenExpired(accessToken, 60)) {
+      unlogout();
+      return;
+    }
+
+    if (accessToken) {
       axiosClient
         .get("/auth/refresh_token", {
           withCredentials: true,
@@ -71,7 +83,8 @@ function App() {
   useEffect(() => {
     const refreshTokenInterval = setInterval(
       () => {
-        if (getAccessToken()) {
+        const accessToken = getAccessToken();
+        if (accessToken && isAccessTokenExpired(accessToken, 60)) {
           axiosClient
             .get("/auth/refresh_token", {
               withCredentials: true,
