@@ -74,6 +74,7 @@ const ChangePassWordPage = () => {
         "/email/send-OTP-ChangePassword",
         { email: trimmedEmail },
         {
+          timeout: 60000,
           headers: {
             Authorization: `Bearer ${getAccessToken()}`,
           },
@@ -98,6 +99,7 @@ const ChangePassWordPage = () => {
             "/email/send-OTP-ChangePassword",
             { email: email.trim() },
             {
+              timeout: 60000,
               headers: {
                 Authorization: `Bearer ${newToken}`,
               },

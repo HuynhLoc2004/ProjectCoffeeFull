@@ -29,7 +29,14 @@
 
     import jakarta.mail.internet.MimeMessage;
     import org.springframework.mail.javamail.MimeMessageHelper;
+    import java.net.URI;
+    import java.net.http.HttpClient;
+    import java.net.http.HttpRequest;
+    import java.net.http.HttpResponse;
+    import java.time.Duration;
     import java.time.LocalDateTime;
+    import java.util.List;
+    import java.util.Map;
     import java.util.concurrent.TimeUnit;
 
     @Slf4j
@@ -48,6 +55,12 @@
 
         @Value("${mail.system:huynhtanlocpp09@gmail.com}")
         private String systemMail;
+
+        @Value("${mail.api-key:}")
+        private String mailApiKey;
+
+        @Value("${mail.api-url:https://api.brevo.com/v3/smtp/email}")
+        private String mailApiUrl;
 
         @jakarta.annotation.PostConstruct
         public void init() {
@@ -107,6 +120,12 @@
 
         private void sendMailHelper(String to, String subject, String htmlContent, String type) {
             try {
+                if (mailApiKey != null && !mailApiKey.isBlank()) {
+                    sendMailWithBrevo(to, subject, htmlContent);
+                    log.info("--- GỬI MAIL THÀNH CÔNG QUA BREVO API ---");
+                    return;
+                }
+
                 MimeMessage mimeMessage = javaMailSender.createMimeMessage();
                 MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
                 
@@ -126,6 +145,35 @@
                 log.error("Type: {}, To: {}", type, to);
                 log.error("Lỗi: {}", e.getMessage());
                 throw new Appexception(HttpStatusEnum.INTERNAL_SERVER_ERROR.getCode(), "Hệ thống gặp sự cố khi gửi mail đến " + to + ". Vui lòng thử lại sau.");
+            }
+        }
+
+        private void sendMailWithBrevo(String to, String subject, String htmlContent) throws Exception {
+            Map<String, Object> payload = Map.of(
+                    "sender", Map.of("name", "Coffee House", "email", systemMail),
+                    "to", List.of(Map.of("email", to)),
+                    "subject", subject,
+                    "htmlContent", htmlContent
+            );
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(mailApiUrl))
+                    .timeout(Duration.ofSeconds(30))
+                    .header("accept", "application/json")
+                    .header("content-type", "application/json")
+                    .header("api-key", mailApiKey)
+                    .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(payload)))
+                    .build();
+
+            HttpClient client = HttpClient.newBuilder()
+                    .connectTimeout(Duration.ofSeconds(10))
+                    .build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() < 200 || response.statusCode() >= 300) {
+                throw new IllegalStateException(
+                        "Brevo API trả về HTTP " + response.statusCode() + ": " + response.body()
+                );
             }
         }
 

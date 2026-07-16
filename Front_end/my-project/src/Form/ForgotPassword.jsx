@@ -70,9 +70,11 @@ const ForgotPassword = () => {
 
     try {
       const trimmedEmail = email.trim();
-      const res = await axiosClient.post("/email/send-OTP-forgotPassword", {
-        email: trimmedEmail,
-      });
+      const res = await axiosClient.post(
+        "/email/send-OTP-forgotPassword",
+        { email: trimmedEmail },
+        { timeout: 60000 },
+      );
 
       setMessage("Mã OTP đã được gửi về email của bạn");
       setCountdown(60);
