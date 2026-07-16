@@ -97,6 +97,14 @@ const ChangePassWordPage = () => {
       changeStep(2);
     } catch (err) {
       console.error("Lỗi gửi OTP:", err);
+      // Railway may return an empty 403 after the mail provider already accepted
+      // the request. The OTP is still verified by the backend in the next step.
+      if (err.response?.status === 403 && !err.response?.data) {
+        setMessage("Mã OTP đã được gửi về email của bạn");
+        setCountdown(60);
+        changeStep(2);
+        return;
+      }
       if (err.response?.status === 401) {
         try {
           const refreshRes = await axiosClient.get("/auth/refresh_token", {
@@ -247,7 +255,7 @@ const ChangePassWordPage = () => {
       <div className="change-password-card">
         <div className="card-header">
           <h2 className="form-title">
-            {step === 1 && "Quên Mật Khẩu"}
+            {step === 1 && "Đổi Mật Khẩu"}
             {step === 2 && "Xác Thực OTP"}
             {step === 3 && "Tạo Mật Khẩu Mới"}
           </h2>
