@@ -24,6 +24,7 @@ import com.nimbusds.jwt.SignedJWT;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -331,20 +332,47 @@ public class AuthenticationService {
       return new ResponseAuthentication(true , "RefreshToken successfully" ,  jwt_access);
     }
 
-    public ResponseAuthentication logout(JwtAuthenticationToken jwtAuthenticationToken , HttpServletResponse httpServletResponse){
+    public ResponseAuthentication logout(
+            JwtAuthenticationToken jwtAuthenticationToken,
+            HttpServletRequest httpServletRequest,
+            HttpServletResponse httpServletResponse
+    ) {
+        String accessTokenJti = jwtAuthenticationToken.getToken().getId();
+        revokeTokenJti(accessTokenJti);
 
-         String refreshtoken =  this.redisTemplate.opsForValue().get("refreshtoken_"+jwtAuthenticationToken.getToken().getId());
-         this.redisTemplate.delete("refreshtoken_"+jwtAuthenticationToken.getToken().getId());
-         this.invalidRefreshTokenRepository.save(new InvalidRefreshTokenEntity(jwtAuthenticationToken.getToken().getId()));
-        Cookie cookie = new Cookie("Refresh_Token", refreshtoken);
+        if (httpServletRequest.getCookies() != null) {
+            for (Cookie requestCookie : httpServletRequest.getCookies()) {
+                if (!"Refresh_Token".equals(requestCookie.getName())) {
+                    continue;
+                }
+
+                try {
+                    String refreshTokenJti = SignedJWT.parse(requestCookie.getValue())
+                            .getJWTClaimsSet()
+                            .getJWTID();
+                    this.redisTemplate.delete("refreshtoken_" + refreshTokenJti);
+                    revokeTokenJti(refreshTokenJti);
+                } catch (ParseException exception) {
+                    log.warn("Không thể đọc refresh token khi logout: {}", exception.getMessage());
+                }
+                break;
+            }
+        }
+
+        Cookie cookie = new Cookie("Refresh_Token", "");
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
         cookie.setAttribute("SameSite", "None");
         cookie.setPath("/");
-        cookie.setMaxAge(refresh_time * 0);
+        cookie.setMaxAge(0);
         httpServletResponse.addCookie(cookie);
-        return new ResponseAuthentication(true , "logout successfully " );
+        return new ResponseAuthentication(true, "logout successfully");
+    }
 
+    private void revokeTokenJti(String jti) {
+        if (jti != null && !jti.isBlank() && this.invalidRefreshTokenRepository.countByJti(jti) == 0) {
+            this.invalidRefreshTokenRepository.save(new InvalidRefreshTokenEntity(jti));
+        }
     }
 }
 

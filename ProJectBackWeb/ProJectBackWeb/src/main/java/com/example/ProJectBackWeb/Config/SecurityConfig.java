@@ -101,7 +101,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .requestMatchers(HttpMethod.GET  , "/api/user/get-infoAllUser").authenticated()
                 .requestMatchers(HttpMethod.GET , "/api/auth/info").authenticated()
                 .requestMatchers(HttpMethod.GET , "/api/auth/refresh_token").authenticated()
-                .requestMatchers(HttpMethod.GET , "/api/auth/logout").authenticated()
+                .requestMatchers(HttpMethod.POST , "/api/auth/logout").authenticated()
                 .requestMatchers(HttpMethod.POST , "/api/cart/createCart").authenticated()
                 .requestMatchers(HttpMethod.GET , "/api/cart/getCart").authenticated()
                 .requestMatchers(HttpMethod.PUT,"/api/cartproduct/**").authenticated()

@@ -92,15 +92,12 @@ const LoginAdmin = () => {
               toast.error("Bạn không có quyền truy cập vùng này!");
               setIsLoading(false);
               axiosClient
-                .get("/auth/logout", {
+                .post("/auth/logout", null, {
                   withCredentials: true,
                 })
-                .then((res) => {
+                .finally(() => {
                   logout();
                   clearAccessToken();
-                })
-                .catch((err) => {
-                  console.log(err);
                 });
             });
         } else {

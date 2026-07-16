@@ -158,15 +158,18 @@ const Navbar = ({ userInfo }) => {
     return () => cancelAnimationFrame(frameId);
   }, [pathname]);
 
-  const handleLogout = () => {
-    axiosClient.get("/auth/logout", { withCredentials: true }).then((res) => {
-      if (res.data.statusCode === 200) {
-        clearAccessToken();
-        logout();
-        localStorage.setItem("page_before", "/");
-        navigate("/loadingPage");
-      }
-    });
+  const handleLogout = async () => {
+    try {
+      await axiosClient.post("/auth/logout", null, { withCredentials: true });
+    } catch (error) {
+      console.error("Không thể thu hồi phiên đăng nhập trên máy chủ:", error);
+    } finally {
+      clearAccessToken();
+      logout();
+      localStorage.removeItem("page_before");
+      setcartProductEntities([]);
+      navigate("/login", { replace: true });
+    }
   };
 
   useEffect(() => {

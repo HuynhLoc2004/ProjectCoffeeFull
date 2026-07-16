@@ -11,6 +11,7 @@ import com.nimbusds.jwt.SignedJWT;
 import com.nimbusds.oauth2.sdk.auth.JWTAuthentication;
 import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.Jwts;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -59,9 +60,14 @@ public class AuthenticationController {
 
     }
 
-    @GetMapping("/logout")
-    public ResponseData<ResponseAuthentication> logoutUser(JwtAuthenticationToken jwtAuthenticationToke , HttpServletResponse httpServletResponse){
-        return new ResponseData<>(HttpStatusEnum.OK.getCode(), HttpStatusEnum.OK.getMessage() , this.authenticationService.logout(jwtAuthenticationToke , httpServletResponse));
+    @PostMapping("/logout")
+    public ResponseData<ResponseAuthentication> logoutUser(
+            JwtAuthenticationToken jwtAuthenticationToken,
+            HttpServletRequest httpServletRequest,
+            HttpServletResponse httpServletResponse
+    ) {
+        return new ResponseData<>(HttpStatusEnum.OK.getCode(), HttpStatusEnum.OK.getMessage(),
+                this.authenticationService.logout(jwtAuthenticationToken, httpServletRequest, httpServletResponse));
     }
 
 

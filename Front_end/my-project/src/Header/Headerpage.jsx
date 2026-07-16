@@ -22,6 +22,12 @@ const HeaderPage = () => {
   const [accessToken, setAccesstoken] = useState(getAccessToken());
 
   useEffect(() => {
+    // Không tự khôi phục phiên bằng cookie sau khi người dùng chủ động logout.
+    if (getLogout() === 1) {
+      setInfoUser(null);
+      return;
+    }
+
     if (getLogout() == 0 && getAccessToken() != "") {
       axiosClient
         .get("/auth/info", {
