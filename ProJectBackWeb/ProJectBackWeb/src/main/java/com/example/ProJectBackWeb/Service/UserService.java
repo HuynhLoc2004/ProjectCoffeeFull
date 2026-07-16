@@ -211,6 +211,7 @@ public class UserService {
          return 1;
      }
 
+     @Transactional
      public List<UserDTO> get_userS(){
        List<UserEntity> userEntities =  this.userRepository.findAllUsers();
 
@@ -220,6 +221,14 @@ public class UserService {
 
        List<UserDTO> userDTOS = new ArrayList<>();
        for (UserEntity user : userEntities){
+           boolean isAdmin = user.getRoles() != null && user.getRoles().stream()
+                   .map(Role::getNamerole)
+                   .filter(Objects::nonNull)
+                   .anyMatch(roleName -> "ADMIN".equalsIgnoreCase(roleName));
+           if (isAdmin) {
+               continue;
+           }
+
            UserDTO userDTO = new UserDTO();
            userDTO.setFullname(user.getFullname());
            if(user.getPicture() == null){
@@ -238,9 +247,7 @@ public class UserService {
            userDTO.setTotalPriceOrder(totalPriceOrder);
            userDTOS.add(userDTO);
        }
-        userDTOS.sort((o1, o2) -> {
-            return Math.toIntExact(o2.getTotalPriceOrder() - o1.getTotalPriceOrder());
-        });
+        userDTOS.sort((o1, o2) -> Long.compare(o2.getTotalPriceOrder(), o1.getTotalPriceOrder()));
 
         return userDTOS;
      }
