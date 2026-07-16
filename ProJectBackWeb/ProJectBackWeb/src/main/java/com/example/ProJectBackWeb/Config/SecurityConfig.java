@@ -58,7 +58,8 @@ public class SecurityConfig implements WebMvcConfigurer {
     @Value("${google.returnUrl}")
     private String googleReturnUrl;
 
-    @Value("${app.cors.allowed-origins:http://localhost:5173,http://localhost:3000,http://localhost}")
+    // Railway/frontend supplies CORS_ALLOWED_ORIGINS. Keep the old property as a fallback for local setups.
+    @Value("${CORS_ALLOWED_ORIGINS:${app.cors.allowed-origins:http://localhost:5173,http://localhost:3000,http://localhost}}")
     private String allowedOrigins;
 
     private List<String> getAllowedOrigins() {
