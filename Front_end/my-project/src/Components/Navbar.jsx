@@ -30,6 +30,8 @@ import {
   getCheckAddProduct,
 } from "../ManagerAddCartProduct/ManagerAddCartProduct";
 import { preloadRoute } from "../RoutePreloader";
+import { Moon, Sun } from "lucide-react";
+import { useTheme } from "../Theme/ThemeProvider";
 
 const SearchInput = ({ isPastBanner, valuesearch, HandlevalueInput, setFocus }) => {
   const [placeholder, setPlaceholder] = useState("");
@@ -70,6 +72,7 @@ const SearchInput = ({ isPastBanner, valuesearch, HandlevalueInput, setFocus }) 
 };
 
 const Navbar = ({ userInfo }) => {
+  const { theme, toggleTheme } = useTheme();
   const menuLinks = [
     { name: "Trang chủ", path: "/" },
     { name: "Sản phẩm", path: "/product" },
@@ -310,6 +313,17 @@ const Navbar = ({ userInfo }) => {
 
           {/* Icons Area */}
           <div className="flex items-center gap-1">
+            <motion.button
+              type="button"
+              whileHover={{ scale: 1.08, rotate: theme === "dark" ? -8 : 8 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={toggleTheme}
+              className="theme-toggle"
+              aria-label={theme === "dark" ? "Chuyển sang giao diện sáng" : "Chuyển sang giao diện tối"}
+              title={theme === "dark" ? "Giao diện sáng" : "Giao diện tối"}
+            >
+              {theme === "dark" ? <Sun size={17} /> : <Moon size={17} />}
+            </motion.button>
             {/* Cart */}
             <motion.div whileHover={{ scale: 1.1 }} onClick={handleCart} className={`relative p-2.5 rounded-full cursor-pointer transition-colors ${isPastBanner ? "text-gray-700 hover:text-[#D4A373]" : "text-gray-200 hover:text-[#D4A373]"}`}>
               <BsCart size={18} />

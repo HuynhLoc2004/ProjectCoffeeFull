@@ -14,7 +14,7 @@ import { Coffee, Heart } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="w-full mt-[100px] bg-[#fdfaf7] text-[#3b2a20] border-t border-[#d6a46c]/20">
+    <footer className="coffee-footer w-full mt-[100px] bg-[#fdfaf7] text-[#3b2a20] border-t border-[#d6a46c]/20">
       {/* Main Grid */}
       <div className="max-w-7xl mx-auto px-6 py-20 grid grid-cols-1 md:grid-cols-5 gap-12">
         {/* About / Logo */}

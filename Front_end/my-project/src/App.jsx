@@ -15,6 +15,7 @@ import {
 } from "./ManagerAccessToken/ManagerAccessToken";
 import { unlogout, logout } from "./ManagerLogout/ManagerLogout";
 import { preloadCommonRoutes } from "./RoutePreloader";
+import { useTheme } from "./Theme/ThemeProvider";
 
 const LayoutMain = lazy(() => import("./Layout/LayoutMain"));
 const HeaderPage = lazy(() => import("./Header/Headerpage"));
@@ -45,6 +46,7 @@ const LoginAdmin = lazy(() => import("./PAGEADMIN/LoginAdmin/LoginAdmin"));
 const ChatAI = lazy(() => import("./Components/ChatAI/ChatAI"));
 
 function App() {
+  const { theme } = useTheme();
   useEffect(() => {
     const preload = () => preloadCommonRoutes();
     if ("requestIdleCallback" in window) {
@@ -148,7 +150,7 @@ function App() {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        theme="dark"
+        theme={theme}
       />
       <Suspense
         fallback={
