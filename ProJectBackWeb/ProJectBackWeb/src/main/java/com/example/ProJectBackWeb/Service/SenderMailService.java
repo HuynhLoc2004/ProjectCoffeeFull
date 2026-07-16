@@ -124,8 +124,33 @@
                 log.error("!!! LỖI GỬI MAIL NGHIÊM TRỌNG !!!");
                 log.error("Type: {}, To: {}", type, to);
                 log.error("Lỗi: {}", e.getMessage());
-                throw new Appexception(HttpStatusEnum.INTERNAL_SERVER_ERROR.getCode(), "Hệ thống gặp sự cố khi gửi mail đến " + to + ". Vui lòng thử lại sau.");
+                throw new Appexception(
+                        HttpStatusEnum.INTERNAL_SERVER_ERROR.getCode(),
+                        getPublicMailError(e)
+                );
             }
+        }
+
+        private String getPublicMailError(Exception exception) {
+            String detail = exception.getMessage() == null ? "" : exception.getMessage();
+
+            if (detail.contains("BREVO_API_KEY chưa được cấu hình")) {
+                return "Backend chưa được cấu hình BREVO_API_KEY.";
+            }
+            if (detail.contains("HTTP 401")) {
+                return "BREVO_API_KEY không hợp lệ hoặc đã bị thu hồi.";
+            }
+            if (detail.contains("HTTP 400")) {
+                return "Brevo từ chối địa chỉ gửi. Hãy kiểm tra MAIL_SYSTEM trùng với sender đã Verified.";
+            }
+            if (detail.contains("HTTP 403")) {
+                return "Tài khoản Brevo chưa được phép gửi email giao dịch.";
+            }
+            if (detail.contains("HTTP 429")) {
+                return "Brevo đã hết hạn mức gửi email hôm nay. Vui lòng thử lại sau.";
+            }
+
+            return "Không thể kết nối dịch vụ gửi email. Vui lòng thử lại sau.";
         }
 
         private void sendMailWithBrevo(String to, String subject, String htmlContent) throws Exception {
