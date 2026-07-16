@@ -80,6 +80,10 @@ const ChangePassWordPage = () => {
           },
         },
       );
+
+      if (res.data?.statusCode !== 200 || res.data?.result !== true) {
+        throw new Error(res.data?.message || "Không thể gửi OTP");
+      }
       
       setMessage("Mã OTP đã được gửi về email của bạn");
       setCountdown(60);
@@ -95,7 +99,7 @@ const ChangePassWordPage = () => {
           const newToken = refreshRes.data.result.accessToken;
           setAccessToken(newToken);
 
-          await axiosClient.post(
+          const retryRes = await axiosClient.post(
             "/email/send-OTP-ChangePassword",
             { email: email.trim() },
             {
@@ -105,6 +109,10 @@ const ChangePassWordPage = () => {
               },
             },
           );
+
+          if (retryRes.data?.statusCode !== 200 || retryRes.data?.result !== true) {
+            throw new Error(retryRes.data?.message || "Không thể gửi OTP");
+          }
 
           setMessage("Mã OTP đã được gửi về email của bạn");
           setCountdown(60);

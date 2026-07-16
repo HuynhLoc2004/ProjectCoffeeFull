@@ -19,16 +19,12 @@
     import lombok.extern.slf4j.Slf4j;
     import org.springframework.beans.factory.annotation.Value;
     import org.springframework.data.redis.core.RedisTemplate;
-    import org.springframework.mail.SimpleMailMessage;
     import org.springframework.mail.javamail.JavaMailSender;
-    import org.springframework.security.access.prepost.PreAuthorize;
     import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
     import org.springframework.security.crypto.password.PasswordEncoder;
     import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
     import org.springframework.stereotype.Service;
 
-    import jakarta.mail.internet.MimeMessage;
-    import org.springframework.mail.javamail.MimeMessageHelper;
     import java.net.URI;
     import java.net.http.HttpClient;
     import java.net.http.HttpRequest;
@@ -120,26 +116,13 @@
 
         private void sendMailHelper(String to, String subject, String htmlContent, String type) {
             try {
-                if (mailApiKey != null && !mailApiKey.isBlank()) {
-                    sendMailWithBrevo(to, subject, htmlContent);
-                    log.info("--- GỬI MAIL THÀNH CÔNG QUA BREVO API ---");
-                    return;
+                if (mailApiKey == null || mailApiKey.isBlank()) {
+                    throw new IllegalStateException("BREVO_API_KEY chưa được cấu hình");
                 }
 
-                MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-                MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
-                
-                helper.setFrom(systemMail);
-                helper.setTo(to);
-                helper.setSubject(subject);
-                helper.setText(htmlContent, true); // Set to true for HTML
-                
-                log.info("--- BẮT ĐẦU TIẾN TRÌNH GỬI MAIL (HTML) ---");
                 log.info("Type: {}, To: {}, Subject: {}", type, to, subject);
-                
-                this.javaMailSender.send(mimeMessage);
-                
-                log.info("--- GỬI MAIL THÀNH CÔNG ---");
+                sendMailWithBrevo(to, subject, htmlContent);
+                log.info("--- GỬI MAIL THÀNH CÔNG QUA BREVO API ---");
             } catch (Exception e) {
                 log.error("!!! LỖI GỬI MAIL NGHIÊM TRỌNG !!!");
                 log.error("Type: {}, To: {}", type, to);
@@ -164,11 +147,10 @@
                     .header("api-key", mailApiKey)
                     .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(payload)))
                     .build();
-
-            HttpClient client = HttpClient.newBuilder()
+            HttpResponse<String> response = HttpClient.newBuilder()
                     .connectTimeout(Duration.ofSeconds(10))
-                    .build();
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                    .build()
+                    .send(request, HttpResponse.BodyHandlers.ofString());
 
             if (response.statusCode() < 200 || response.statusCode() >= 300) {
                 throw new IllegalStateException(

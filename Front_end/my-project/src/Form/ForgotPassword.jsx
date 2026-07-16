@@ -76,12 +76,19 @@ const ForgotPassword = () => {
         { timeout: 60000 },
       );
 
+      if (res.data?.statusCode !== 200 || res.data?.result !== true) {
+        throw new Error(res.data?.message || "Không thể gửi OTP");
+      }
+
       setMessage("Mã OTP đã được gửi về email của bạn");
       setCountdown(60);
       changeStep(2);
     } catch (err) {
       console.error("Lỗi gửi OTP:", err);
-      const errorMsg = err.response?.data?.message || "Không thể gửi OTP. Vui lòng thử lại sau.";
+      const errorMsg =
+        err.response?.data?.message ||
+        err.message ||
+        "Không thể gửi OTP. Vui lòng thử lại sau.";
       setError(errorMsg);
     } finally {
       setIsLoading(false);
