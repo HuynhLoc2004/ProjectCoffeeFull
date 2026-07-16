@@ -43,6 +43,7 @@ axiosClient.interceptors.request.use(
       "/user/forgot-password",
       "/email/send-OTP-forgotPassword",
       "/email/verify-OTP-forgotPassword",
+      "/ai/chat",
     ];
     const isPublicEndpoint = publicEndpoints.some((endpoint) =>
       config.url?.startsWith(endpoint),
