@@ -4,6 +4,7 @@ import com.example.ProJectBackWeb.Reponsitory.UserRepository;
 import com.example.ProJectBackWeb.RequestData.AdminLoginRequest;
 import com.example.ProJectBackWeb.RequestData.UserRequestLogin;
 import com.example.ProJectBackWeb.ResponseData.ResponseAuthentication;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,11 @@ public class AuthenAdminService {
         return this.authenticationService.authentication_login(adminLoginRequest , httpServletResponse);
     }
 
-    public ResponseAuthentication authenLogout(JwtAuthenticationToken jwtAuthenticationToken , HttpServletResponse httpServletResponse){
-        return this.authenticationService.logout(jwtAuthenticationToken , httpServletResponse);
+    public ResponseAuthentication authenLogout(
+            JwtAuthenticationToken jwtAuthenticationToken,
+            HttpServletRequest httpServletRequest,
+            HttpServletResponse httpServletResponse
+    ) {
+        return this.authenticationService.logout(jwtAuthenticationToken, httpServletRequest, httpServletResponse);
     }
 }

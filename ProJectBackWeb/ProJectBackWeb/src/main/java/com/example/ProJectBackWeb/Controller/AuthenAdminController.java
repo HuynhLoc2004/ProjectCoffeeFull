@@ -7,6 +7,7 @@ import com.example.ProJectBackWeb.ResponseData.ResponseAuthentication;
 import com.example.ProJectBackWeb.ResponseData.ResponseData;
 import com.example.ProJectBackWeb.Service.AuthenAdminService;
 import com.example.ProJectBackWeb.Service.AuthenticationService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,7 +36,12 @@ public class AuthenAdminController {
     }
     @GetMapping("/AdminLogOut")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseData<ResponseAuthentication> adminLogOut(JwtAuthenticationToken jwtAuthenticationToken , HttpServletResponse httpServletResponse){
-        return new ResponseData<>(HttpStatusEnum.OK.getCode(),  "Logout successfully" , this.authenAdminService.authenLogout(jwtAuthenticationToken ,httpServletResponse ));
+    public ResponseData<ResponseAuthentication> adminLogOut(
+            JwtAuthenticationToken jwtAuthenticationToken,
+            HttpServletRequest httpServletRequest,
+            HttpServletResponse httpServletResponse
+    ) {
+        return new ResponseData<>(HttpStatusEnum.OK.getCode(), "Logout successfully",
+                this.authenAdminService.authenLogout(jwtAuthenticationToken, httpServletRequest, httpServletResponse));
     }
 }
