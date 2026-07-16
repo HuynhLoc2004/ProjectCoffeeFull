@@ -145,7 +145,8 @@ public class OrderService {
 
         Number idAdminNum = (Number) jwtAuthenticationToken.getToken().getClaim("userId");
         Long idAdmin = idAdminNum.longValue();
-        return this.ordersRepository.getOrders(idAdmin) == null ? null : this.ordersRepository.getOrders(idAdmin);
+        List<OrderDTO> orders = this.ordersRepository.getOrders(idAdmin);
+        return orders == null ? List.of() : orders;
     }
 
 

@@ -7,7 +7,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "invalid_refresh_tokens")
+@Table(name = "invalid_refresh_tokens", indexes = {
+        @Index(name = "idx_invalid_refresh_token_jti", columnList = "jti")
+})
 @Getter
 @Setter
 @AllArgsConstructor

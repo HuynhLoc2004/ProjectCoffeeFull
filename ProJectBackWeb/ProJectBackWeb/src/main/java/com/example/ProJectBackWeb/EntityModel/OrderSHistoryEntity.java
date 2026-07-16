@@ -11,7 +11,10 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "OrdersHistory")
+@Table(name = "OrdersHistory", indexes = {
+        @Index(name = "idx_order_history_user_time", columnList = "user_id,time_order_history"),
+        @Index(name = "idx_order_history_status_time", columnList = "status,time_order_history")
+})
 @Setter
 @Getter
 @NoArgsConstructor

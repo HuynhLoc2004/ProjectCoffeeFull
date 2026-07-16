@@ -121,6 +121,7 @@ public class UserService {
     private void revokeAllTokens(UserEntity user) {
         int currentVersion = user.getTokenVersion() == null ? 0 : user.getTokenVersion();
         user.setTokenVersion(currentVersion + 1);
+        cacheUserSecurityState(user);
 
         String tokenIndexKey = "user_refresh_tokens:" + user.getId();
         Set<String> refreshTokenJtis = this.redisTemplate.opsForSet().members(tokenIndexKey);
@@ -131,6 +132,15 @@ public class UserService {
             this.redisTemplate.delete(refreshTokenKeys);
         }
         this.redisTemplate.delete(tokenIndexKey);
+    }
+
+    private void cacheUserSecurityState(UserEntity user) {
+        this.redisTemplate.opsForValue().set(
+                "user_token_state:" + user.getId(),
+                user.getTokenVersion() + ":" + Boolean.TRUE.equals(user.getActive()),
+                7,
+                TimeUnit.DAYS
+        );
     }
 
         @Transactional
@@ -263,6 +273,7 @@ public class UserService {
             });
 
             userEntity.setActive(acRequest.getActiveupdate());
+            cacheUserSecurityState(userEntity);
             return true;
         }
 }

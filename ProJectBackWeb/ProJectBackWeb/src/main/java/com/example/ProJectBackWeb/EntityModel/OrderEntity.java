@@ -19,7 +19,10 @@ import java.util.*;
 @Setter
 @Getter
 @Slf4j
-@Table(name = "Orders")
+@Table(name = "Orders", indexes = {
+        @Index(name = "idx_orders_user_created", columnList = "user_id,created_at"),
+        @Index(name = "idx_orders_status_expired", columnList = "status,expired_at")
+})
 public class OrderEntity {
     @Column(name = "order_id")
     @Id

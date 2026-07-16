@@ -14,6 +14,7 @@ import {
   setAccessToken,
 } from "./ManagerAccessToken/ManagerAccessToken";
 import { unlogout, logout } from "./ManagerLogout/ManagerLogout";
+import { preloadCommonRoutes } from "./RoutePreloader";
 
 const LayoutMain = lazy(() => import("./Layout/LayoutMain"));
 const HeaderPage = lazy(() => import("./Header/Headerpage"));
@@ -44,6 +45,16 @@ const LoginAdmin = lazy(() => import("./PAGEADMIN/LoginAdmin/LoginAdmin"));
 const ChatAI = lazy(() => import("./Components/ChatAI/ChatAI"));
 
 function App() {
+  useEffect(() => {
+    const preload = () => preloadCommonRoutes();
+    if ("requestIdleCallback" in window) {
+      const id = window.requestIdleCallback(preload, { timeout: 2500 });
+      return () => window.cancelIdleCallback(id);
+    }
+    const id = window.setTimeout(preload, 1500);
+    return () => window.clearTimeout(id);
+  }, []);
+
   useEffect(() => {
     const accessToken = getAccessToken();
     if (!accessToken) return;

@@ -9,6 +9,7 @@ import {
   setAccessToken,
 } from "../ManagerAccessToken/ManagerAccessToken";
 import { unlogout, getLogout } from "../ManagerLogout/ManagerLogout";
+import { getCached } from "../ApiCache";
 
 const categories = [
   { key: "", label: "Tất cả" },
@@ -29,12 +30,25 @@ const ProductPage = () => {
   const [option, setOption] = useState("");
   const [infoUser, setInfoUser] = useState(null);
   const [accessToken, setAccesstoken] = useState(getAccessToken());
+  const [publicProducts, setPublicProducts] = useState([]);
 
   useEffect(() => {
     localStorage.setItem(
       "page_before",
       window.location.pathname + window.location.search,
     );
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
+    getCached("/product/public")
+      .then((res) => {
+        if (mounted) setPublicProducts(res.data?.result || []);
+      })
+      .catch((error) => console.error("Không thể tải danh sách sản phẩm:", error));
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   useEffect(() => {
@@ -162,7 +176,7 @@ const ProductPage = () => {
                 exit={{ opacity: 0 }}
                 className="flex flex-col gap-24"
               >
-                {Object.entries(urlApi).map(([key, api]) => {
+                {Object.keys(urlApi).map((key) => {
                   const categoryInfo = categories.find((c) => c.key === key);
                   return (
                     <div key={key} className="flex flex-col gap-12">
@@ -196,7 +210,9 @@ const ProductPage = () => {
                       </div>
                       
                       {/* Thay Marquee bằng ProductList Grid */}
-                      <ProductList urlApi={api} />
+                      <ProductList
+                        products={publicProducts.filter((product) => product.category === key)}
+                      />
                     </div>
                   );
                 })}
@@ -222,7 +238,9 @@ const ProductPage = () => {
                   </p>
                 </div>
                 {/* Dạng lưới truyền thống cho tab riêng lẻ */}
-                <ProductList urlApi={urlApi[option]} />
+                <ProductList
+                  products={publicProducts.filter((product) => product.category === option)}
+                />
               </motion.div>
             )}
           </AnimatePresence>

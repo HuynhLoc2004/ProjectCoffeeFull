@@ -11,7 +11,13 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-@Table(name = "Products")
+@Table(
+        name = "Products",
+        indexes = {
+                @Index(name = "idx_products_active_category", columnList = "product_active, product_category"),
+                @Index(name = "idx_products_name", columnList = "product_name")
+        }
+)
 public class ProductEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

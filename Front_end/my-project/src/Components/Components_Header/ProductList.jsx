@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import Product from "./Product";
-import axiosClient from "../../AxiosClient";
 import { useEffect, useState } from "react";
+import { getCached } from "../../ApiCache";
 
 const container = {
   hidden: {},
@@ -23,20 +23,25 @@ const item = {
   },
 };
 
-const ProductList = ({ urlApi }) => {
-  const [listProduct, setListProduct] = useState([]);
+const ProductList = ({ urlApi, products }) => {
+  const [listProduct, setListProduct] = useState(products || []);
 
   useEffect(() => {
+    if (products !== undefined) {
+      setListProduct(products);
+      return undefined;
+    }
+
     (async () => {
       try {
-        const res = await axiosClient.get(urlApi);
+        const res = await getCached(urlApi);
         setListProduct(res.data?.result || []);
       } catch (error) {
         console.error("Failed to fetch products:", error);
         setListProduct([]); // Set empty array on error
       }
     })();
-  }, [urlApi]);
+  }, [urlApi, products]);
 
   return (
     <motion.div

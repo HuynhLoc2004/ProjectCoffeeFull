@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,16 +15,11 @@ import java.util.Optional;
 @Repository
 public interface ProductRepository extends JpaRepository<ProductEntity , Integer> {
     public boolean existsByCode(String code);
-    @Query(
-            value = "SELECT * FROM Products p WHERE p.product_category = :category",
-            nativeQuery = true
-    )
-    public List<ProductEntity> findProductByCategory(@Param("category") String category);
+    List<ProductEntity> findByCategoryAndActiveTrueOrderByIdDesc(String category);
 
-    @Query(
-            value = "SELECT * FROM products p WHERE p.product_category = :category ORDER BY p.product_id DESC LIMIT :size" , nativeQuery = true
-    )
-    public  List<ProductEntity> findTopProductbyCategory(@Param("size") int size,@Param("category") String category);
+    List<ProductEntity> findByActiveTrueOrderByIdDesc();
+
+    List<ProductEntity> findByCategoryAndActiveTrue(String category, Pageable pageable);
 
     @Query("""
     SELECT DISTINCT p
@@ -34,12 +30,7 @@ public interface ProductRepository extends JpaRepository<ProductEntity , Integer
 """)
     ProductEntity FindProductByid(@Param("id") int id);
 
-    @Query(
-            value ="SELECT DISTINCT * FROM products p WHERE LOWER(p.product_name) LIKE LOWER(CONCAT('%', TRIM(:searchname), '%')) " +
-                    "AND p.product_active = :active ORDER BY p.product_id DESC LIMIT :size"
-            , nativeQuery = true
-    )
-    public List<ProductEntity>  findTopProductBySearchName(@Param("size") int size  , @Param("searchname") String searchname , @Param("active") boolean active);
+    List<ProductEntity> findByNameContainingIgnoreCaseAndActiveTrueOrderByIdDesc(String searchName, Pageable pageable);
 
     @Query(value = "SELECT p FROM ProductEntity p")
     public List<ProductEntity> get_products();

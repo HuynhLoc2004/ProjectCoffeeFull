@@ -42,8 +42,8 @@ public class ProductController {
 
 
         @GetMapping("/getTopProductsPage")
-        public ResponseData<List<ProductEntity>> getTopProducts(@RequestParam(defaultValue = "page") int page ,
-                                                                @RequestParam(defaultValue = "size") int size){
+        public ResponseData<List<ProductEntity>> getTopProducts(@RequestParam(defaultValue = "0") int page ,
+                                                                @RequestParam(defaultValue = "20") int size){
             return new ResponseData<>(HttpStatusEnum.OK.getCode(), "get "+ size + " products" , this.productService.getTopProducts(page,size));
         }
         @GetMapping("/getProducts")
@@ -51,16 +51,21 @@ public class ProductController {
             return new ResponseData<>(HttpStatusEnum.OK.getCode(), HttpStatusEnum.OK.getMessage() , this.productService.getProductbyCategory(category));
         }
 
+        @GetMapping("/public")
+        public ResponseData<List<ProductEntity>> getPublicProducts(){
+            return new ResponseData<>(HttpStatusEnum.OK.getCode(), HttpStatusEnum.OK.getMessage(), this.productService.getPublicProducts());
+        }
+
         @GetMapping("/getTopProductByCategory")
-        public ResponseData<List<ProductEntity>> getTopProductsBycategory(@RequestParam(defaultValue = "size") int size , @RequestParam(defaultValue = "category") String category){
+        public ResponseData<List<ProductEntity>> getTopProductsBycategory(@RequestParam(defaultValue = "12") int size , @RequestParam String category){
                 return new ResponseData<>(HttpStatusEnum.OK.getCode(), HttpStatusEnum.OK.getMessage() , this.productService.getTopProductbyCategory(size , category));
         }
         @GetMapping("/getTOpProductbySearch")
-        public ResponseData<List<ProductEntity>> getopProductbySearch(@RequestParam(defaultValue = "top") int top ,@RequestParam(defaultValue = "searchname") String searchname){
+        public ResponseData<List<ProductEntity>> getopProductbySearch(@RequestParam(defaultValue = "5") int top , @RequestParam String searchname){
             return  new ResponseData<>(HttpStatusEnum.OK.getCode(), HttpStatusEnum.OK.getMessage() , this.productService.getTopProductBySearch(top , searchname));
         }
         @GetMapping("/getProductById")
-        public ResponseData<ProductEntity> getProductByid(@RequestParam(defaultValue = "id") int id) {
+        public ResponseData<ProductEntity> getProductByid(@RequestParam int id) {
             return new ResponseData<>(HttpStatusEnum.OK.getCode(), "get product succesfully" , this.productService.getProductBycategoryById(id));
         }
 

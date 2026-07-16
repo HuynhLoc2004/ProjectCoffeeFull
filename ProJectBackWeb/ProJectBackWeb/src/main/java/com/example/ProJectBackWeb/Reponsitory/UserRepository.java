@@ -20,14 +20,13 @@ public interface UserRepository extends JpaRepository<UserEntity , Integer> {
     public boolean existsByEmail(String email);
     boolean existsByEmailIgnoreCase(String email);
     Optional<UserEntity> findFirstByEmailIgnoreCase(String email);
-    @Query(
-            value = "select u.* , r.name_role , p.name_permission\n" +
-                    "from user_account u join user_role ur on u.id_user = ur.id_user \n" +
-                    "join roles_permission rp on ur.id_role  = rp.id_role\n" +
-                    "join permissions p on rp.id_permission = p.id_permission\n" +
-                    "join roles r on r.id_role = ur.id_role\n" +
-                    "where u.account_user = :account" ,nativeQuery = true
-    )
+    @Query("""
+            SELECT DISTINCT u
+            FROM UserEntity u
+            LEFT JOIN FETCH u.roles r
+            LEFT JOIN FETCH r.permissionSets
+            WHERE u.account = :account
+            """)
     public UserEntity findUserByAccount(@Param("account") String account);
 
     @Query("""

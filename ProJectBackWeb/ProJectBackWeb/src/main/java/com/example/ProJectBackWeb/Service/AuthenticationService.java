@@ -55,6 +55,10 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Service
 public class AuthenticationService {
+    private static final String TOKEN_STATUS_PREFIX = "token_status:";
+    private static final String USER_TOKEN_STATE_PREFIX = "user_token_state:";
+    private static final String TOKEN_VALID = "valid";
+    private static final String TOKEN_REVOKED = "revoked";
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PermissionRepository permissionRepository;
@@ -117,7 +121,8 @@ public class AuthenticationService {
                         .signWith(SignatureAlgorithm.HS256, SECRET_KEY.getBytes())
                         .compact();
 
-
+                cacheUserSecurityState(userEntityQuery);
+                cacheTokenStatus(jwt_access, TOKEN_VALID);
                 GenRefresh_token(jwt_access, httpServletResponse);
                 return new ResponseAuthentication(true, "login successfully" , jwt_access);
 
@@ -176,6 +181,8 @@ public class AuthenticationService {
                             .signWith(SignatureAlgorithm.HS256, SECRET_KEY.getBytes())
                             .compact();
 
+                    cacheUserSecurityState(userEntityQuery);
+                    cacheTokenStatus(jwt_access, TOKEN_VALID);
                     GenRefresh_token(jwt_access, httpServletResponse);
 
                     return new ResponseAuthentication(true, "login successfully" , jwt_access);
@@ -207,6 +214,8 @@ public class AuthenticationService {
                     .signWith(SignatureAlgorithm.HS256, SECRET_KEY.getBytes())
                     .compact();
 
+          cacheUserSecurityState(userEntityQuery);
+          cacheTokenStatus(jwt_access, TOKEN_VALID);
           GenRefresh_token(jwt_access, httpServletResponse);
           return new ResponseAuthentication(true, "login successfully" , jwt_access);
 
@@ -250,7 +259,15 @@ public class AuthenticationService {
         }
 
         String jti = signedJWT.getJWTClaimsSet().getJWTID();
-        if (jti == null || this.invalidRefreshTokenRepository.countByJti(jti) > 0) {
+        if (jti == null) {
+            throw new Appexception(HttpStatusEnum.UNAUTHORIZED.getCode(), "invalid token");
+        }
+        String tokenStatus = this.redisTemplate.opsForValue().get(TOKEN_STATUS_PREFIX + jti);
+        if (tokenStatus == null) {
+            tokenStatus = this.invalidRefreshTokenRepository.countByJti(jti) > 0 ? TOKEN_REVOKED : TOKEN_VALID;
+            cacheTokenStatus(signedJWT, tokenStatus);
+        }
+        if (TOKEN_REVOKED.equals(tokenStatus)) {
             throw new Appexception(HttpStatusEnum.UNAUTHORIZED.getCode(), "token revoked");
         }
 
@@ -260,10 +277,12 @@ public class AuthenticationService {
             throw new Appexception(HttpStatusEnum.UNAUTHORIZED.getCode(), "invalid token");
         }
 
-        UserEntity tokenOwner = this.userRepository.findById(userIdClaim.intValue())
-                .orElseThrow(() -> new Appexception(HttpStatusEnum.UNAUTHORIZED.getCode(), "invalid token"));
         int tokenVersion = tokenVersionClaim == null ? 0 : tokenVersionClaim.intValue();
-        if (!Boolean.TRUE.equals(tokenOwner.getActive()) || tokenVersion != tokenVersionOf(tokenOwner)) {
+        String userState = getUserSecurityState(userIdClaim.intValue());
+        String[] stateParts = userState.split(":", 2);
+        int currentTokenVersion = Integer.parseInt(stateParts[0]);
+        boolean active = Boolean.parseBoolean(stateParts[1]);
+        if (!active || tokenVersion != currentTokenVersion) {
             throw new Appexception(HttpStatusEnum.UNAUTHORIZED.getCode(), "token revoked");
         }
 
@@ -341,6 +360,7 @@ public class AuthenticationService {
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY.getBytes())
                 .compact();
 
+      cacheTokenStatus(jwt_access, TOKEN_VALID);
       this.GenRefresh_token(jwt_access , httpServletResponse);
       String oldRefreshJti = jwtAuthenticationToken.getToken().getId();
       this.redisTemplate.delete("refreshtoken_" + oldRefreshJti);
@@ -401,6 +421,14 @@ public class AuthenticationService {
         if (jti != null && !jti.isBlank() && this.invalidRefreshTokenRepository.countByJti(jti) == 0) {
             this.invalidRefreshTokenRepository.save(new InvalidRefreshTokenEntity(jti));
         }
+        if (jti != null && !jti.isBlank()) {
+            this.redisTemplate.opsForValue().set(
+                    TOKEN_STATUS_PREFIX + jti,
+                    TOKEN_REVOKED,
+                    this.refresh_time,
+                    TimeUnit.MINUTES
+            );
+        }
     }
 
     private int tokenVersionOf(UserEntity user) {
@@ -421,11 +449,49 @@ public class AuthenticationService {
                 this.refresh_time,
                 TimeUnit.MINUTES
         );
+        cacheTokenStatus(signedJWT, TOKEN_VALID);
         if (userId != null) {
             String userTokenIndex = "user_refresh_tokens:" + userId.intValue();
             this.redisTemplate.opsForSet().add(userTokenIndex, jti);
             this.redisTemplate.expire(userTokenIndex, this.refresh_time, TimeUnit.MINUTES);
         }
+    }
+
+    private void cacheUserSecurityState(UserEntity user) {
+        this.redisTemplate.opsForValue().set(
+                USER_TOKEN_STATE_PREFIX + user.getId(),
+                tokenVersionOf(user) + ":" + Boolean.TRUE.equals(user.getActive()),
+                this.refresh_time,
+                TimeUnit.MINUTES
+        );
+    }
+
+    private String getUserSecurityState(int userId) {
+        String key = USER_TOKEN_STATE_PREFIX + userId;
+        String cachedState = this.redisTemplate.opsForValue().get(key);
+        if (cachedState != null) return cachedState;
+
+        UserEntity user = this.userRepository.findById(userId)
+                .orElseThrow(() -> new Appexception(HttpStatusEnum.UNAUTHORIZED.getCode(), "invalid token"));
+        cacheUserSecurityState(user);
+        return tokenVersionOf(user) + ":" + Boolean.TRUE.equals(user.getActive());
+    }
+
+    private void cacheTokenStatus(String token, String status) throws ParseException {
+        cacheTokenStatus(SignedJWT.parse(token), status);
+    }
+
+    private void cacheTokenStatus(SignedJWT token, String status) throws ParseException {
+        Date expiration = token.getJWTClaimsSet().getExpirationTime();
+        long ttlSeconds = expiration == null
+                ? TimeUnit.MINUTES.toSeconds(this.expirytime)
+                : Math.max(1, (expiration.getTime() - System.currentTimeMillis()) / 1000);
+        this.redisTemplate.opsForValue().set(
+                TOKEN_STATUS_PREFIX + token.getJWTClaimsSet().getJWTID(),
+                status,
+                ttlSeconds,
+                TimeUnit.SECONDS
+        );
     }
 }
 

@@ -29,6 +29,7 @@ import { unlogout, logout, getLogout } from "../ManagerLogout/ManagerLogout";
 import {
   getCheckAddProduct,
 } from "../ManagerAddCartProduct/ManagerAddCartProduct";
+import { preloadRoute } from "../RoutePreloader";
 
 const SearchInput = ({ isPastBanner, valuesearch, HandlevalueInput, setFocus }) => {
   const [placeholder, setPlaceholder] = useState("");
@@ -241,7 +242,13 @@ const Navbar = ({ userInfo }) => {
           {/* Menu */}
           <div className="hidden md:flex items-center gap-1">
             {menuLinks.map((link) => (
-              <Link key={link.path} to={link.path}>
+              <Link
+                key={link.path}
+                to={link.path}
+                onMouseEnter={() => preloadRoute(link.path)}
+                onFocus={() => preloadRoute(link.path)}
+                onPointerDown={() => preloadRoute(link.path)}
+              >
                 <motion.div
                   whileHover={{ y: -1 }}
                   whileTap={{ y: 0 }}
@@ -427,7 +434,12 @@ const Navbar = ({ userInfo }) => {
 
                 <div className="space-y-2">
                   {mobileMenuIcons.map((item, i) => (
-                    <Link key={i} to={item.path} onClick={() => setOpenbarMenu(false)}>
+                    <Link
+                      key={i}
+                      to={item.path}
+                      onPointerDown={() => preloadRoute(item.path)}
+                      onClick={() => setOpenbarMenu(false)}
+                    >
                       <motion.div whileTap={{ x: 10 }} className="flex items-center gap-5 p-5 rounded-2xl hover:bg-white/5 text-gray-300 font-bold transition-all">
                         <span className="text-[#D4A373] text-2xl">{item.icon}</span>
                         <span className="text-base tracking-tight uppercase">{item.name}</span>
