@@ -1,24 +1,33 @@
-import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import axiosClient from "../../AxiosClient";
+import { useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { IoReloadSharp } from "react-icons/io5";
-import {
-  getAccessToken,
-  setAccessToken,
-} from "../../ManagerAccessToken/ManagerAccessToken";
-import { logout, unlogout, getLogout } from "../../ManagerLogout/ManagerLogout";
-import { useSearchParams } from "react-router-dom";
+import { setAccessToken } from "../../ManagerAccessToken/ManagerAccessToken";
+import { unlogout } from "../../ManagerLogout/ManagerLogout";
+
 const Authentication = () => {
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const accesstk = searchParams.get("info");
+  const [searchParams] = useSearchParams();
+  const accessToken = searchParams.get("info");
+
   useEffect(() => {
-    setTimeout(() => {
-      setAccessToken(accesstk);
-      unlogout();
-      navigate(localStorage.getItem("page_before"));
-    }, 100);
-  }, []);
+    if (!accessToken) {
+      navigate("/login?error=google_login_failed", { replace: true });
+      return;
+    }
+
+    setAccessToken(accessToken);
+    unlogout();
+
+    const previousPage = localStorage.getItem("page_before");
+    const invalidPreviousPage =
+      !previousPage ||
+      previousPage.startsWith("/login") ||
+      previousPage.startsWith("/authentication");
+
+    localStorage.removeItem("page_before");
+    navigate(invalidPreviousPage ? "/" : previousPage, { replace: true });
+  }, [accessToken, navigate]);
+
   return (
     <div className="flex justify-center items-center h-screen flex-col">
       <p className="text-sm ">Đang xử lí..</p>
