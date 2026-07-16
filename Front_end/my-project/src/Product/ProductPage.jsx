@@ -104,7 +104,7 @@ const ProductPage = () => {
       <Navbar userInfo={infoUser} />
       <div className="product-page min-h-screen overflow-x-hidden">
         {/* 🍂 FILTER - Made Sticky */}
-        <section className="product-filter sticky top-20 z-40 py-5 mb-20">
+        <section className="product-filter sticky z-40 py-4 mb-10">
           <div className="flex justify-center gap-4 md:gap-8 flex-wrap max-w-[1400px] mx-auto px-4">
             {categories.map((item, idx) => (
               <motion.button

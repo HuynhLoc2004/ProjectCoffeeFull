@@ -212,7 +212,7 @@ const Navbar = ({ userInfo }) => {
 
   return (
     <>
-      <div className={`fixed top-4 left-0 right-0 z-[1000] flex px-6 lg:px-12 pointer-events-none transition-all duration-500 ${
+      <div className={`${pathname === "/" ? "fixed top-4" : "sticky top-0 h-[82px] pt-4 nav-page-rail"} left-0 right-0 z-[1000] flex px-6 lg:px-12 pointer-events-none transition-all duration-500 ${
         isScrolled ? "justify-center lg:justify-start" : "justify-center"
       }`}>
         <motion.nav
