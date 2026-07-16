@@ -10,8 +10,6 @@ import {
 } from "../ManagerAccessToken/ManagerAccessToken";
 import { unlogout, getLogout } from "../ManagerLogout/ManagerLogout";
 import { getCached } from "../ApiCache";
-import { Coffee, Leaf, Sparkles } from "lucide-react";
-import HeroImg from "../assets/Shop/brewing-coffee.jpg";
 
 const categories = [
   { key: "", label: "Tất cả" },
@@ -105,44 +103,6 @@ const ProductPage = () => {
     <>
       <Navbar userInfo={infoUser} />
       <div className="product-page min-h-screen overflow-x-hidden">
-        <section className="product-hero relative min-h-[620px] flex items-center overflow-hidden">
-          <img src={HeroImg} alt="Barista pha cà phê" className="absolute inset-0 w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/65 to-black/15" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/20" />
-          <div className="relative z-10 max-w-7xl mx-auto w-full px-6 pt-28">
-            <div className="max-w-3xl text-left text-white">
-          <motion.div
-            initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="inline-flex items-center gap-2 mb-7 px-4 py-2 rounded-full bg-white/10 border border-white/15 backdrop-blur-xl text-[#e2b681] text-[10px] font-bold uppercase tracking-[.24em]"
-          >
-            <Sparkles size={13} /> Crafted coffee collection
-          </motion.div>
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: .8, delay: .1 }}
-            className="text-6xl md:text-8xl font-serif leading-[.95] tracking-tight"
-          >
-            Một menu.<br/><span className="text-[#d7a66f] italic">Nhiều cảm xúc.</span>
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="mt-8 max-w-xl text-white/65 text-base md:text-lg leading-relaxed"
-          >
-            Khám phá tinh hoa ẩm thực trong từng món đồ uống và bánh ngọt. 
-            Chúng tôi tận tâm mang đến trải nghiệm hương vị tuyệt vời nhất cho bạn.
-          </motion.p>
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .45 }} className="flex gap-8 mt-10 text-sm text-white/70">
-            <span className="flex items-center gap-2"><Coffee size={17} className="text-[#d7a66f]"/> Rang xay chọn lọc</span>
-            <span className="flex items-center gap-2"><Leaf size={17} className="text-[#d7a66f]"/> Nguyên liệu tươi</span>
-          </motion.div>
-            </div>
-          </div>
-        </section>
-
         {/* 🍂 FILTER - Made Sticky */}
         <section className="product-filter sticky top-20 z-40 py-5 mb-20">
           <div className="flex justify-center gap-4 md:gap-8 flex-wrap max-w-[1400px] mx-auto px-4">
