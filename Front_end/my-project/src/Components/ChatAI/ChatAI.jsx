@@ -74,9 +74,11 @@ const ChatAI = () => {
     setIsLoading(true);
 
     try {
-      const response = await axiosClient.post("/ai/chat", {
-        content: currentInput,
-      });
+      const response = await axiosClient.post(
+        "/ai/chat",
+        { content: currentInput },
+        { timeout: 60000 },
+      );
 
       const aiResponse = {
         id: Date.now() + 1,
