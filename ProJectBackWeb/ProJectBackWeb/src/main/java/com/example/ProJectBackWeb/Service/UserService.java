@@ -82,7 +82,8 @@ public class UserService {
 
     @Transactional
     public Boolean changePasswordUSer(ChangePasswordRequest changePasswordRequest , JwtAuthenticationToken jwtAuthenticationToken){
-         Long userId =   jwtAuthenticationToken.getToken().getClaim("userId");
+         Number userIdClaim = jwtAuthenticationToken.getToken().getClaim("userId");
+         int userId = userIdClaim.intValue();
          String tokenOwner = this.redisTemplate.opsForValue().getAndDelete(
                  "PASSWORD_CHANGE_TOKEN:" + changePasswordRequest.getVerificationToken()
          );
@@ -90,7 +91,10 @@ public class UserService {
              throw new Appexception(HttpStatusEnum.UNAUTHORIZED.getCode(), "Bạn chưa xác thực OTP hoặc phiên xác thực đã hết hạn");
          }
          String newPassword = passwordEncoder.encode(changePasswordRequest.getNewPassword());
-         this.userRepository.updatePasswordUser(newPassword , userId.intValue());
+         UserEntity user = this.userRepository.findById(userId)
+                 .orElseThrow(() -> new Appexception(HttpStatusEnum.NOT_FOUND.getCode(), "Không tìm thấy tài khoản"));
+         user.setPassword(newPassword);
+         revokeAllTokens(user);
          this.redisTemplate.delete("userEntity" + userId);
          this.redisTemplate.delete("userProfile" + userId);
          return true;
@@ -108,9 +112,25 @@ public class UserService {
                 .orElseThrow(() -> new Appexception(HttpStatusEnum.NOT_FOUND.getCode(), "Email không tồn tại trong hệ thống"));
         String newPassword = passwordEncoder.encode(forGotPassWordRequest.getNewPassword());
         userEntity.setPassword(newPassword);
+        revokeAllTokens(userEntity);
         this.redisTemplate.delete("userEntity" + userEntity.getId());
         this.redisTemplate.delete("userProfile" + userEntity.getId());
         return true;
+    }
+
+    private void revokeAllTokens(UserEntity user) {
+        int currentVersion = user.getTokenVersion() == null ? 0 : user.getTokenVersion();
+        user.setTokenVersion(currentVersion + 1);
+
+        String tokenIndexKey = "user_refresh_tokens:" + user.getId();
+        Set<String> refreshTokenJtis = this.redisTemplate.opsForSet().members(tokenIndexKey);
+        if (refreshTokenJtis != null && !refreshTokenJtis.isEmpty()) {
+            List<String> refreshTokenKeys = refreshTokenJtis.stream()
+                    .map(jti -> "refreshtoken_" + jti)
+                    .toList();
+            this.redisTemplate.delete(refreshTokenKeys);
+        }
+        this.redisTemplate.delete(tokenIndexKey);
     }
 
         @Transactional

@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import "./ChangePassWordPage.css";
 import axiosClient from "../AxiosClient";
 import {
+  clearAccessToken,
   getAccessToken,
   setAccessToken,
 } from "../ManagerAccessToken/ManagerAccessToken";
+import { logout } from "../ManagerLogout/ManagerLogout";
 import { useNavigate } from "react-router-dom";
 
 /* ================= Eye Icon ================= */
@@ -205,7 +207,9 @@ const ChangePassWordPage = () => {
       }
 
       setMessage("Đổi mật khẩu thành công");
-      setTimeout(resetForm, 2500);
+      clearAccessToken();
+      logout();
+      setTimeout(() => navigate("/login", { replace: true }), 1200);
     } catch (err) {
       setError(err.response?.data?.message || err.message || "Đổi mật khẩu thất bại");
     } finally {

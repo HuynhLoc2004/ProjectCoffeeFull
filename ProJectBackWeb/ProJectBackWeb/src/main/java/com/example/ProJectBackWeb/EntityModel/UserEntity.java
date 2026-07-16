@@ -59,6 +59,11 @@
         private String address;
         @Column(name = "create_at" , nullable = false )
         private LocalDateTime createAt;
+
+        // Null is treated as version 0 for accounts created before this column existed.
+        @Column(name = "token_version")
+        private Integer tokenVersion = 0;
+
         @ManyToMany(
                 fetch = FetchType.LAZY
         )

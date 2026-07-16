@@ -111,14 +111,14 @@ public class AuthenticationService {
                         .claim("scope", scope)
                         .claim("provider" , userEntityQuery.getProvider())
                         .claim("userId" ,userEntityQuery.getId())
+                        .claim("tokenVersion", tokenVersionOf(userEntityQuery))
                         .setIssuedAt(new Date())
                         .setExpiration(Date.from(Instant.now().plus(expirytime, ChronoUnit.MINUTES)))
                         .signWith(SignatureAlgorithm.HS256, SECRET_KEY.getBytes())
                         .compact();
 
 
-                String refreshTk =  GenRefresh_token(jwt_access, httpServletResponse);
-                this.redisTemplate.opsForValue().set("refreshtoken_"+SignedJWT.parse(refreshTk).getJWTClaimsSet().getJWTID() , refreshTk);
+                GenRefresh_token(jwt_access, httpServletResponse);
                 return new ResponseAuthentication(true, "login successfully" , jwt_access);
 
 
@@ -170,6 +170,7 @@ public class AuthenticationService {
                             .claim("scope", scope)
                             .claim("userId" ,userEntityQuery.getId())
                             .claim("provider" , userEntityQuery.getProvider())
+                            .claim("tokenVersion", tokenVersionOf(userEntityQuery))
                             .setIssuedAt(new Date())
                             .setExpiration(Date.from(Instant.now().plus(expirytime, ChronoUnit.MINUTES)))
                             .signWith(SignatureAlgorithm.HS256, SECRET_KEY.getBytes())
@@ -200,13 +201,13 @@ public class AuthenticationService {
                     .claim("scope", scope)
                     .claim("userId" ,userEntityQuery.getId())
                     .claim("provider" , userEntityQuery.getProvider())
+                    .claim("tokenVersion", tokenVersionOf(userEntityQuery))
                     .setIssuedAt(new Date())
                     .setExpiration(Date.from(Instant.now().plus(expirytime, ChronoUnit.MINUTES)))
                     .signWith(SignatureAlgorithm.HS256, SECRET_KEY.getBytes())
                     .compact();
 
-          String refreshTk =  GenRefresh_token(jwt_access, httpServletResponse);
-          this.redisTemplate.opsForValue().set("refreshtoken_"+SignedJWT.parse(refreshTk).getJWTClaimsSet().getJWTID() , refreshTk);
+          GenRefresh_token(jwt_access, httpServletResponse);
           return new ResponseAuthentication(true, "login successfully" , jwt_access);
 
     }
@@ -244,11 +245,29 @@ public class AuthenticationService {
         
         Date expirytime = signedJWT.getJWTClaimsSet().getExpirationTime();
 
-        if(veritfy && expirytime.after(new Date())){
-            return new ResponseAuthentication(true , "verify token succussfully");
-        }else{
+        if (!veritfy || expirytime == null || !expirytime.after(new Date())) {
             throw new Appexception(HttpStatusEnum.UNAUTHORIZED.getCode(), "invalid token");
         }
+
+        String jti = signedJWT.getJWTClaimsSet().getJWTID();
+        if (jti == null || this.invalidRefreshTokenRepository.countByJti(jti) > 0) {
+            throw new Appexception(HttpStatusEnum.UNAUTHORIZED.getCode(), "token revoked");
+        }
+
+        Number userIdClaim = (Number) signedJWT.getJWTClaimsSet().getClaim("userId");
+        Number tokenVersionClaim = (Number) signedJWT.getJWTClaimsSet().getClaim("tokenVersion");
+        if (userIdClaim == null) {
+            throw new Appexception(HttpStatusEnum.UNAUTHORIZED.getCode(), "invalid token");
+        }
+
+        UserEntity tokenOwner = this.userRepository.findById(userIdClaim.intValue())
+                .orElseThrow(() -> new Appexception(HttpStatusEnum.UNAUTHORIZED.getCode(), "invalid token"));
+        int tokenVersion = tokenVersionClaim == null ? 0 : tokenVersionClaim.intValue();
+        if (!Boolean.TRUE.equals(tokenOwner.getActive()) || tokenVersion != tokenVersionOf(tokenOwner)) {
+            throw new Appexception(HttpStatusEnum.UNAUTHORIZED.getCode(), "token revoked");
+        }
+
+        return new ResponseAuthentication(true , "verify token succussfully");
 
     }
 
@@ -286,6 +305,7 @@ public class AuthenticationService {
                 .claim("scope", signedJWT.getJWTClaimsSet().getClaim("scope"))
                 .claim("userId" ,signedJWT.getJWTClaimsSet().getClaim("userId"))
                 .claim("provider" , signedJWT.getJWTClaimsSet().getClaim("provider"))
+                .claim("tokenVersion", claimTokenVersion(signedJWT.getJWTClaimsSet().getClaim("tokenVersion")))
                 .setIssuedAt(new Date())
                 .setExpiration(Date.from(Instant.now().plus(refresh_time, ChronoUnit.MINUTES)))
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY.getBytes())
@@ -298,15 +318,14 @@ public class AuthenticationService {
         cookie.setPath("/");
         cookie.setMaxAge(refresh_time * 60);
         httpServletResponse.addCookie(cookie);
+        storeRefreshToken(refresh_token);
         return refresh_token;
     }
 
     public ResponseAuthentication refreshToken(JwtAuthenticationToken jwtAuthenticationToken , HttpServletResponse httpServletResponse) throws ParseException {
           String refreshToken = this.redisTemplate.opsForValue().get("refreshtoken_"+jwtAuthenticationToken.getToken().getId());
           if(refreshToken == null ){
-             if(this.invalidRefreshTokenRepository.countByJti(jwtAuthenticationToken.getToken().getId()) > 0){
-                  throw new Appexception(HttpStatusEnum.UNAUTHORIZED.getCode(),  "Invalid Token!!!");
-             }
+              throw new Appexception(HttpStatusEnum.UNAUTHORIZED.getCode(),  "Invalid Token!!!");
           }
 
         String jwt_access = Jwts.builder()
@@ -316,16 +335,21 @@ public class AuthenticationService {
                 .claim("scope", jwtAuthenticationToken.getToken().getClaim("scope"))
                 .claim("userId" ,jwtAuthenticationToken.getToken().getClaim("userId"))
                 .claim("provider" , jwtAuthenticationToken.getToken().getClaim("provider"))
+                .claim("tokenVersion", claimTokenVersion(jwtAuthenticationToken.getToken().getClaim("tokenVersion")))
                 .setIssuedAt(new Date())
                 .setExpiration(Date.from(Instant.now().plus(expirytime, ChronoUnit.MINUTES)))
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY.getBytes())
                 .compact();
 
-      String rfToken = this.GenRefresh_token(jwt_access , httpServletResponse);
-      SignedJWT signedJWT = SignedJWT.parse(rfToken);
-      this.redisTemplate.opsForValue().set("refreshtoken_" + signedJWT.getJWTClaimsSet().getJWTID() , rfToken , this.refresh_time , TimeUnit.MINUTES);
+      this.GenRefresh_token(jwt_access , httpServletResponse);
+      String oldRefreshJti = jwtAuthenticationToken.getToken().getId();
+      this.redisTemplate.delete("refreshtoken_" + oldRefreshJti);
+      Number userId = jwtAuthenticationToken.getToken().getClaim("userId");
+      if (userId != null) {
+          this.redisTemplate.opsForSet().remove("user_refresh_tokens:" + userId.intValue(), oldRefreshJti);
+      }
       InvalidRefreshTokenEntity invalidRefreshTokenEntity  = new InvalidRefreshTokenEntity();
-      invalidRefreshTokenEntity.setJti(jwtAuthenticationToken.getToken().getId());
+      invalidRefreshTokenEntity.setJti(oldRefreshJti);
       this.invalidRefreshTokenRepository.save(invalidRefreshTokenEntity);
 
 
@@ -351,6 +375,10 @@ public class AuthenticationService {
                             .getJWTClaimsSet()
                             .getJWTID();
                     this.redisTemplate.delete("refreshtoken_" + refreshTokenJti);
+                    Number userId = jwtAuthenticationToken.getToken().getClaim("userId");
+                    if (userId != null) {
+                        this.redisTemplate.opsForSet().remove("user_refresh_tokens:" + userId.intValue(), refreshTokenJti);
+                    }
                     revokeTokenJti(refreshTokenJti);
                 } catch (ParseException exception) {
                     log.warn("Không thể đọc refresh token khi logout: {}", exception.getMessage());
@@ -372,6 +400,31 @@ public class AuthenticationService {
     private void revokeTokenJti(String jti) {
         if (jti != null && !jti.isBlank() && this.invalidRefreshTokenRepository.countByJti(jti) == 0) {
             this.invalidRefreshTokenRepository.save(new InvalidRefreshTokenEntity(jti));
+        }
+    }
+
+    private int tokenVersionOf(UserEntity user) {
+        return user.getTokenVersion() == null ? 0 : user.getTokenVersion();
+    }
+
+    private int claimTokenVersion(Object claim) {
+        return claim instanceof Number number ? number.intValue() : 0;
+    }
+
+    private void storeRefreshToken(String refreshToken) throws ParseException {
+        SignedJWT signedJWT = SignedJWT.parse(refreshToken);
+        String jti = signedJWT.getJWTClaimsSet().getJWTID();
+        Number userId = (Number) signedJWT.getJWTClaimsSet().getClaim("userId");
+        this.redisTemplate.opsForValue().set(
+                "refreshtoken_" + jti,
+                refreshToken,
+                this.refresh_time,
+                TimeUnit.MINUTES
+        );
+        if (userId != null) {
+            String userTokenIndex = "user_refresh_tokens:" + userId.intValue();
+            this.redisTemplate.opsForSet().add(userTokenIndex, jti);
+            this.redisTemplate.expire(userTokenIndex, this.refresh_time, TimeUnit.MINUTES);
         }
     }
 }

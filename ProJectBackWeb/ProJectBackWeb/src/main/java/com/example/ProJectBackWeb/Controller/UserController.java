@@ -10,6 +10,8 @@ import com.example.ProJectBackWeb.ResponseData.ResponseData;
 import com.example.ProJectBackWeb.Service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.Valid;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -39,13 +41,20 @@ public class UserController {
     }
 
     @PostMapping("/change-password")
-    public ResponseData<Boolean> changePassword(@RequestBody @Valid ChangePasswordRequest  changePasswordRequest , JwtAuthenticationToken  jwtAuthenticationToken){
-       return new ResponseData<>(HttpStatusEnum.CREATED.getCode() , "change password successfully" ,  this.userService.changePasswordUSer(changePasswordRequest , jwtAuthenticationToken));
+    public ResponseData<Boolean> changePassword(@RequestBody @Valid ChangePasswordRequest changePasswordRequest,
+                                                JwtAuthenticationToken jwtAuthenticationToken,
+                                                HttpServletResponse httpServletResponse){
+       Boolean changed = this.userService.changePasswordUSer(changePasswordRequest, jwtAuthenticationToken);
+       clearRefreshTokenCookie(httpServletResponse);
+       return new ResponseData<>(HttpStatusEnum.CREATED.getCode(), "change password successfully", changed);
     }
 
     @PostMapping("/forgot-password")
-    public ResponseData<Boolean> forGotPassWord(@RequestBody @Valid ForGotPassWordRequest forGotPassWordRequest){
-        return new ResponseData<>(HttpStatusEnum.CREATED.getCode(), "reset password successfully" , this.userService.ForgotPasswordUSer(forGotPassWordRequest));
+    public ResponseData<Boolean> forGotPassWord(@RequestBody @Valid ForGotPassWordRequest forGotPassWordRequest,
+                                                HttpServletResponse httpServletResponse){
+        Boolean changed = this.userService.ForgotPasswordUSer(forGotPassWordRequest);
+        clearRefreshTokenCookie(httpServletResponse);
+        return new ResponseData<>(HttpStatusEnum.CREATED.getCode(), "reset password successfully", changed);
     }
 
     @GetMapping("/profile")
@@ -87,6 +96,16 @@ public class UserController {
     @PutMapping("/change-userActive")
     public ResponseData<Boolean> changuserActive(@RequestParam("userId") long userId , @RequestBody ActiveRequest acRequest ){
         return new ResponseData<>(HttpStatusEnum.OK.getCode() ,"change userAactive successfully" , this.userService.changeActiveUse(userId , acRequest));
+    }
+
+    private void clearRefreshTokenCookie(HttpServletResponse httpServletResponse) {
+        Cookie cookie = new Cookie("Refresh_Token", "");
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setAttribute("SameSite", "None");
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+        httpServletResponse.addCookie(cookie);
     }
 
 
