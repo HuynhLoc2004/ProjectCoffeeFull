@@ -26,12 +26,16 @@
 
 import java.security.SecureRandom;
 import java.nio.charset.StandardCharsets;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import jakarta.mail.internet.MimeMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 
     @Slf4j
     @Service
@@ -43,29 +47,33 @@ import org.springframework.mail.javamail.MimeMessageHelper;
         private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         private final SecureRandom secureRandom = new SecureRandom();
         private final EvaluateRepository evaluateRepository;
-        private final JavaMailSender mailSender;
         
         @Value("${mail.mailadmin}")
         private String adminMail;
 
-        @Value("${mail.system:huynhtanlocpp09@gmail.com}")
-        private String systemMail;
+        @Value("${resend.api-key:}")
+        private String resendApiKey;
+
+        @Value("${resend.from:onboarding@resend.dev}")
+        private String resendFrom;
+
+        @Value("${resend.api-url:https://api.resend.com/emails}")
+        private String resendApiUrl;
 
         @jakarta.annotation.PostConstruct
         public void init() {
             log.info("--- KIỂM TRA CẤU HÌNH MAIL KHI KHỞI CHẠY ---");
-            log.info("System Mail: {}", systemMail);
+            log.info("Resend sender: {}", resendFrom);
             log.info("Admin Mail: {}", adminMail);
             log.info("------------------------------------------");
         }
 
-        public SenderMailService(RedisTemplate<String, String> redisTemplate, ObjectMapper objectMapper, OtpEmailRepository otpEmailRepository, UserRepository userRepository, EvaluateRepository evaluateRepository, JavaMailSender mailSender) {
+        public SenderMailService(RedisTemplate<String, String> redisTemplate, ObjectMapper objectMapper, OtpEmailRepository otpEmailRepository, UserRepository userRepository, EvaluateRepository evaluateRepository) {
             this.redisTemplate = redisTemplate;
             this.objectMapper = objectMapper;
             this.otpEmailRepository = otpEmailRepository;
             this.userRepository = userRepository;
             this.evaluateRepository = evaluateRepository;
-            this.mailSender = mailSender;
         }
 
         private String CreateOtp(){
@@ -137,13 +145,13 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 
         private void sendMailHelper(String to, String subject, String htmlContent, String type) {
             try {
-                if (systemMail == null || systemMail.isBlank()) {
-                    throw new IllegalStateException("MAIL_SYSTEM chưa được cấu hình");
+                if (resendApiKey == null || resendApiKey.isBlank()) {
+                    throw new IllegalStateException("RESEND_API_KEY chưa được cấu hình");
                 }
 
                 log.info("Type: {}, To: {}, Subject: {}", type, to, subject);
-                sendMailWithSmtp(to, subject, htmlContent);
-                log.info("--- GỬI MAIL THÀNH CÔNG QUA GMAIL SMTP ---");
+                sendMailWithResend(to, subject, htmlContent);
+                log.info("--- GỬI MAIL THÀNH CÔNG QUA RESEND API ---");
             } catch (Exception e) {
                 log.error("!!! LỖI GỬI MAIL NGHIÊM TRỌNG !!!");
                 log.error("Type: {}, To: {}", type, to);
@@ -158,31 +166,43 @@ import org.springframework.mail.javamail.MimeMessageHelper;
         private String getPublicMailError(Exception exception) {
             String detail = exception.getMessage() == null ? "" : exception.getMessage();
 
-            if (detail.contains("MAIL_SYSTEM chưa được cấu hình")) {
-                return "Backend chưa được cấu hình MAIL_SYSTEM.";
+            if (detail.contains("RESEND_API_KEY chưa được cấu hình")) {
+                return "Backend chưa được cấu hình RESEND_API_KEY.";
             }
-            if (detail.contains("AuthenticationFailedException") || detail.contains("535")) {
-                return "Gmail từ chối đăng nhập SMTP. Hãy dùng App Password 16 ký tự và kiểm tra MAIL_SYSTEM/MAIL_PASSWORD.";
+            if (detail.contains("HTTP 401")) {
+                return "RESEND_API_KEY không hợp lệ hoặc đã bị thu hồi.";
             }
-            if (detail.contains("MAIL_PASSWORD") || detail.toLowerCase().contains("password")) {
-                return "Không thể xác thực Gmail SMTP. Hãy kiểm tra App Password trong MAIL_PASSWORD.";
+            if (detail.contains("HTTP 403") || detail.contains("HTTP 422")) {
+                return "Resend từ chối sender. Hãy xác minh domain và đặt RESEND_FROM bằng email thuộc domain đó.";
+            }
+            if (detail.contains("HTTP 429")) {
+                return "Resend đã giới hạn số lần gửi. Vui lòng thử lại sau.";
             }
 
-            return "Không thể kết nối Gmail SMTP. Vui lòng thử lại sau.";
+            return "Không thể kết nối Resend. Vui lòng thử lại sau.";
         }
 
-        private void sendMailWithSmtp(String to, String subject, String htmlContent) throws Exception {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(
-                    message,
-                    MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
-                    StandardCharsets.UTF_8.name()
+        private void sendMailWithResend(String to, String subject, String htmlContent) throws Exception {
+            Map<String, Object> payload = Map.of(
+                    "from", "Coffee House <" + resendFrom + ">",
+                    "to", List.of(to),
+                    "subject", subject,
+                    "html", htmlContent
             );
-            helper.setFrom(systemMail, "Coffee House");
-            helper.setTo(to);
-            helper.setSubject(subject);
-            helper.setText(htmlContent, true);
-            mailSender.send(message);
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(resendApiUrl))
+                    .timeout(Duration.ofSeconds(30))
+                    .header("Authorization", "Bearer " + resendApiKey)
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(payload), StandardCharsets.UTF_8))
+                    .build();
+            HttpResponse<String> response = HttpClient.newBuilder()
+                    .connectTimeout(Duration.ofSeconds(10))
+                    .build()
+                    .send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() < 200 || response.statusCode() >= 300) {
+                throw new IllegalStateException("Resend API trả về HTTP " + response.statusCode() + ": " + response.body());
+            }
         }
 
         @Transactional

@@ -27,21 +27,6 @@ spring:
         connection:
           useUnicode: true
           characterEncoding: UTF-8
-  mail:
-    host: ${MAIL_HOST:smtp.gmail.com}
-    port: ${MAIL_PORT:587}
-    username: ${MAIL_SYSTEM}
-    password: ${MAIL_PASSWORD}
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-            required: true
-          connectiontimeout: 10000
-          timeout: 15000
-          writetimeout: 15000
   security:
     oauth2:
       client:
@@ -72,8 +57,12 @@ payos:
   cancelUrl: ${PAYOS_CANCELURL}
 
 mail:
-  mailadmin: huynhtanlocpp09@gmail.com
-  system: ${MAIL_SYSTEM}
+  mailadmin: ${MAIL_ADMIN:huynhtanlocpp09@gmail.com}
+
+resend:
+  api-key: ${RESEND_API_KEY:}
+  from: ${RESEND_FROM:onboarding@resend.dev}
+  api-url: https://api.resend.com/emails
 
 cloudinary:
   name: ${CLOUDINARY_NAME}
