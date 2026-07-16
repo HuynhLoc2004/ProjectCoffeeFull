@@ -102,6 +102,7 @@ const Navbar = ({ userInfo }) => {
   // Optimized Scroll logic to reduce lag
   const [isScrolled, setIsScrolled] = useState(false);
   const [isPastBanner, setIsPastBanner] = useState(false);
+  const navIsLight = theme === "light" && isPastBanner;
 
   useEffect(() => {
     let ticking = false;
@@ -220,8 +221,8 @@ const Navbar = ({ userInfo }) => {
           animate={{ 
             y: 0, 
             opacity: 1,
-            backgroundColor: isPastBanner ? "rgba(255, 255, 255, 0.15)" : "rgba(10, 10, 10, 0.8)",
-            borderColor: isPastBanner ? "rgba(0, 0, 0, 0.05)" : "rgba(255, 255, 255, 0.1)",
+            backgroundColor: navIsLight ? "rgba(255, 253, 249, 0.86)" : "rgba(15, 14, 13, 0.86)",
+            borderColor: navIsLight ? "rgba(30, 27, 24, 0.08)" : "rgba(255, 255, 255, 0.1)",
           }}
           transition={{ 
             layout: springConfig,
@@ -238,7 +239,7 @@ const Navbar = ({ userInfo }) => {
             onClick={() => navigate("/")}
           >
             <img src={Logo} alt="Logo" className={`w-9 h-9 rounded-full object-cover border transition-colors ${
-              isPastBanner ? "border-black/5" : "border-white/10"
+              navIsLight ? "border-black/5" : "border-white/10"
             }`} />
           </motion.div>
 
@@ -258,7 +259,7 @@ const Navbar = ({ userInfo }) => {
                   className={`px-4 py-2 rounded-full text-sm font-black transition-colors relative ${
                     pathname === link.path 
                       ? "text-[#D4A373]" 
-                      : isPastBanner ? "text-gray-800 hover:text-black" : "text-gray-200 hover:text-white"
+                      : navIsLight ? "text-gray-800 hover:text-black" : "text-gray-200 hover:text-white"
                   }`}
                 >
                   {link.name}
@@ -278,13 +279,13 @@ const Navbar = ({ userInfo }) => {
           <div className="hidden lg:flex items-center relative group">
             <div className="relative flex items-center">
               <SearchInput
-                isPastBanner={isPastBanner}
+                isPastBanner={navIsLight}
                 valuesearch={valuesearch}
                 HandlevalueInput={HandlevalueInput}
                 setFocus={setFocus}
               />
               <CiSearch className={`absolute left-3 transition-colors text-base ${
-                isPastBanner ? "text-gray-400" : "text-white/30"
+                navIsLight ? "text-gray-400" : "text-white/30"
               } group-focus-within:text-[#D4A373]`} />
             </div>
             
@@ -295,7 +296,7 @@ const Navbar = ({ userInfo }) => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 10 }}
                   className={`absolute top-full mt-4 left-0 w-[300px] backdrop-blur-3xl rounded-3xl shadow-2xl border overflow-hidden z-[110] ${
-                    isPastBanner ? "bg-white/95 border-black/5 text-gray-800" : "bg-black/95 border-white/5 text-white"
+                    navIsLight ? "bg-white/95 border-black/5 text-gray-800" : "bg-black/95 border-white/5 text-white"
                   }`}
                 >
                   <div className="p-3">
@@ -325,10 +326,10 @@ const Navbar = ({ userInfo }) => {
               {theme === "dark" ? <Sun size={17} /> : <Moon size={17} />}
             </motion.button>
             {/* Cart */}
-            <motion.div whileHover={{ scale: 1.1 }} onClick={handleCart} className={`relative p-2.5 rounded-full cursor-pointer transition-colors ${isPastBanner ? "text-gray-700 hover:text-[#D4A373]" : "text-gray-200 hover:text-[#D4A373]"}`}>
+            <motion.div whileHover={{ scale: 1.1 }} onClick={handleCart} className={`relative p-2.5 rounded-full cursor-pointer transition-colors ${navIsLight ? "text-gray-700 hover:text-[#D4A373]" : "text-gray-200 hover:text-[#D4A373]"}`}>
               <BsCart size={18} />
               {cartProductEntities.length > 0 && (
-                <span className="absolute top-1 right-1 bg-[#D4A373] text-white text-[8px] font-black w-3.5 h-3.5 rounded-full flex items-center justify-center border shadow-sm" style={{ borderColor: isPastBanner ? "white" : "#0a0a0a" }}>
+                <span className="absolute top-1 right-1 bg-[#D4A373] text-white text-[8px] font-black w-3.5 h-3.5 rounded-full flex items-center justify-center border shadow-sm" style={{ borderColor: navIsLight ? "white" : "#0a0a0a" }}>
                   {cartProductEntities.length}
                 </span>
               )}
@@ -344,10 +345,10 @@ const Navbar = ({ userInfo }) => {
                 onClick={() => userInfo && setShowAvatarMenu(!showAvatarMenu)} 
                 className="flex items-center gap-2 p-1 rounded-full hover:bg-white/5 transition-all"
               >
-                <div className={`w-8 h-8 rounded-full overflow-hidden flex items-center justify-center border ${isPastBanner ? "bg-black/5 border-black/10" : "bg-white/5 border-white/10"}`}>
-                  {userInfo?.picture ? <img src={userInfo.picture} className="w-full h-full object-cover" /> : <FaRegUser className={isPastBanner ? "text-gray-400" : "text-white/40"} />}
+                <div className={`w-8 h-8 rounded-full overflow-hidden flex items-center justify-center border ${navIsLight ? "bg-black/5 border-black/10" : "bg-white/5 border-white/10"}`}>
+                  {userInfo?.picture ? <img src={userInfo.picture} className="w-full h-full object-cover" /> : <FaRegUser className={navIsLight ? "text-gray-400" : "text-white/40"} />}
                 </div>
-                {userInfo && <span className={`text-[10px] font-black hidden lg:block uppercase tracking-tighter pr-2 ${isPastBanner ? "text-gray-700" : "text-gray-200"}`}>{userInfo.fullname}</span>}
+                {userInfo && <span className={`text-[10px] font-black hidden lg:block uppercase tracking-tighter pr-2 ${navIsLight ? "text-gray-700" : "text-gray-200"}`}>{userInfo.fullname}</span>}
               </motion.button>
 
               <AnimatePresence>
@@ -359,7 +360,7 @@ const Navbar = ({ userInfo }) => {
                     className={`absolute right-0 top-full pt-2 w-64 z-[110]`}
                   >
                     <div className={`backdrop-blur-3xl rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] border overflow-hidden ${
-                      isPastBanner ? "bg-white/98 border-black/5 text-gray-800" : "bg-black/98 border-white/10 text-white"
+                      navIsLight ? "bg-white/98 border-black/5 text-gray-800" : "bg-black/98 border-white/10 text-white"
                     }`}>
                       <div className="p-6 border-b border-white/5 bg-white/5">
                         <p className="text-[8px] text-[#D4A373] font-black uppercase tracking-widest mb-1">Elite Member</p>
@@ -387,14 +388,14 @@ const Navbar = ({ userInfo }) => {
               </AnimatePresence>
             </div>
 
-            {!userInfo && <Link to="/login" className={`text-xs font-black px-4 py-2 rounded-full border transition-all ${isPastBanner ? "border-black/10 text-gray-800 hover:bg-black/5" : "border-white/10 text-white hover:bg-white/5"}`}>LOGIN</Link>}
+            {!userInfo && <Link to="/login" className={`text-xs font-black px-4 py-2 rounded-full border transition-all ${navIsLight ? "border-black/10 text-gray-800 hover:bg-black/5" : "border-white/10 text-white hover:bg-white/5"}`}>LOGIN</Link>}
 
             {/* Mobile Burger */}
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={() => setOpenbarMenu(true)}
               className={`p-2 rounded-full md:hidden transition-colors ${
-                isPastBanner ? "text-gray-800 hover:bg-black/5" : "text-white hover:bg-white/10"
+                navIsLight ? "text-gray-800 hover:bg-black/5" : "text-white hover:bg-white/10"
               }`}
             >
               <CiMenuBurger size={22} />
