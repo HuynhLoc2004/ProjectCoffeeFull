@@ -63,9 +63,12 @@ public class SecurityConfig implements WebMvcConfigurer {
     private String allowedOrigins;
 
     private List<String> getAllowedOrigins() {
-        return Arrays.stream(allowedOrigins.split(","))
+        return Arrays.stream((allowedOrigins + ",https://thecoffeechill-production.up.railway.app").split(","))
                 .map(String::trim)
+                .map(origin -> origin.replaceAll("^\\\"|\\\"$", ""))
+                .map(origin -> origin.replaceAll("/+$", ""))
                 .filter(origin -> !origin.isEmpty())
+                .distinct()
                 .toList();
     }
 
