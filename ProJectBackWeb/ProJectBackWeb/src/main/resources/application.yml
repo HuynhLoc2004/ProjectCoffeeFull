@@ -47,10 +47,7 @@ payos:
   cancelUrl: ${PAYOS_CANCELURL}
 
 mail:
-  host: smtp.gmail.com
-  port: 587
   mailadmin: huynhtanlocpp09@gmail.com
-  password: ${MAIL_PASSWORD}
   system: ${MAIL_SYSTEM}
   api-key: ${BREVO_API_KEY:}
   api-url: https://api.brevo.com/v3/smtp/email

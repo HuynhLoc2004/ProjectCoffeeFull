@@ -19,7 +19,6 @@
     import lombok.extern.slf4j.Slf4j;
     import org.springframework.beans.factory.annotation.Value;
     import org.springframework.data.redis.core.RedisTemplate;
-    import org.springframework.mail.javamail.JavaMailSender;
     import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
     import org.springframework.security.crypto.password.PasswordEncoder;
     import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
@@ -41,7 +40,6 @@
         private final RedisTemplate<String  , String> redisTemplate;
         private final ObjectMapper objectMapper;
         private final OtpEmailRepository otpEmailRepository;
-        private final JavaMailSender javaMailSender ;
         private final UserRepository userRepository;
         private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         private final EvaluateRepository evaluateRepository;
@@ -66,11 +64,10 @@
             log.info("------------------------------------------");
         }
 
-        public SenderMailService(RedisTemplate<String, String> redisTemplate, ObjectMapper objectMapper, OtpEmailRepository otpEmailRepository, JavaMailSender javaMailSender, UserRepository userRepository, EvaluateRepository evaluateRepository) {
+        public SenderMailService(RedisTemplate<String, String> redisTemplate, ObjectMapper objectMapper, OtpEmailRepository otpEmailRepository, UserRepository userRepository, EvaluateRepository evaluateRepository) {
             this.redisTemplate = redisTemplate;
             this.objectMapper = objectMapper;
             this.otpEmailRepository = otpEmailRepository;
-            this.javaMailSender = javaMailSender;
             this.userRepository = userRepository;
             this.evaluateRepository = evaluateRepository;
         }
