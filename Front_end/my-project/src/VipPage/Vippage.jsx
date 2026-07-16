@@ -94,7 +94,7 @@ const Vippage = () => {
     );
 
   return (
-    <div className="vip-container relative min-h-screen font-sans overflow-x-hidden bg-[#f4f1ea] text-[#3b2a20]">
+    <div className="vip-container rank-page page-shell relative min-h-screen font-sans overflow-x-hidden text-[#3b2a20]">
       <Navbar userInfo={infoUser} />
 
       {/* HEADER */}

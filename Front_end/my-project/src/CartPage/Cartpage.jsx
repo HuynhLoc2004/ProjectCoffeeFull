@@ -115,7 +115,7 @@ const Cartpage = () => {
   }, [accesstoken, checkupdate, navigate]);
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] text-gray-800 p-4 sm:p-6 lg:p-8 font-sans cart-slide-down" style={{ paddingTop: "100px" }}>
+    <div className="cart-page page-shell min-h-screen text-gray-800 p-4 sm:p-6 lg:p-8 font-sans cart-slide-down" style={{ paddingTop: "110px" }}>
       <div className="max-w-5xl mx-auto">
         <div className="bg-white rounded-[2.5rem] shadow-2xl shadow-gray-200/50 p-6 sm:p-10 border border-gray-100">
           {!cart || cart.cartProductEntities.length === 0 ? (

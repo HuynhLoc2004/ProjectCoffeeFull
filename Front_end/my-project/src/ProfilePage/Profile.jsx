@@ -232,7 +232,7 @@ const Profile = () => {
   return (
     <div>
       <Navbar userInfo={infoUser}></Navbar>
-      <div className="profile-page-container pt-5">
+      <div className="profile-page-container page-shell pt-28">
         <div className="profile-sidebar">
           <div className="profile-user-info">
             <div className="avatar-container" onClick={handleUploadClick}>

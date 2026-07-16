@@ -165,13 +165,13 @@ const Shop = () => {
   return (
     <div
       ref={containerRef}
-      className="bg-gradient-to-br from-blue-50 via-white to-purple-50 text-gray-900 selection:bg-blue-500 selection:text-white overflow-x-hidden relative"
+      className="shop-page page-shell text-gray-900 overflow-x-hidden relative"
     >
       <Navbar userInfo={infoUser} />
 
       {/* Scroll Progress Bar - Tối ưu hóa */}
       <motion.div
-        className="fixed top-0 left-0 right-0 h-1 bg-blue-500 origin-left z-[100]"
+        className="fixed top-0 left-0 right-0 h-1 bg-[#b88754] origin-left z-[100]"
         style={{
           scaleX,
           // Performance optimizations

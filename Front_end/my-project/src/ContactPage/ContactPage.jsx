@@ -33,10 +33,10 @@ const ContactPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] text-gray-800">
+    <div className="contact-page page-shell min-h-screen text-gray-800">
       <Navbar userInfo={infoUser} />
 
-      <main className="max-w-6xl mx-auto px-6 pt-32 pb-20">
+      <main className="max-w-6xl mx-auto px-6 pt-36 pb-20">
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-20">
           <h1 className="text-5xl md:text-6xl font-black tracking-tighter mb-6 text-[#1a1a1a]">Kết nối cùng The Coffee Chill</h1>
           <p className="text-lg text-gray-500 max-w-2xl mx-auto">Bạn gặp khó khăn hay cần tư vấn về sản phẩm? Chúng tôi luôn sẵn sàng lắng nghe và đồng hành cùng bạn 24/7.</p>

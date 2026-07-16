@@ -238,7 +238,7 @@ const OrderPage = () => {
     <>
       <Navbar userInfo={infoUser} />
       <div
-        className="min-h-screen bg-gray-50"
+        className="order-page page-shell min-h-screen"
         style={{ paddingTop: NAV_HEIGHT }}
       >
         <div className="container mx-auto px-4 py-8">
