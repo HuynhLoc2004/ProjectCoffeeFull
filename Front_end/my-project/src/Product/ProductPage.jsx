@@ -10,6 +10,8 @@ import {
 } from "../ManagerAccessToken/ManagerAccessToken";
 import { unlogout, getLogout } from "../ManagerLogout/ManagerLogout";
 import { getCached } from "../ApiCache";
+import { Coffee, Leaf, Sparkles } from "lucide-react";
+import HeroImg from "../assets/Shop/brewing-coffee.jpg";
 
 const categories = [
   { key: "", label: "Tất cả" },
@@ -102,44 +104,47 @@ const ProductPage = () => {
   return (
     <>
       <Navbar userInfo={infoUser} />
-      <div className="min-h-screen bg-[#faf7f2] overflow-x-hidden">
-        {/* 🌿 HERO */}
-        <section className="relative pt-32 pb-16 text-center">
+      <div className="product-page min-h-screen overflow-x-hidden">
+        <section className="product-hero relative min-h-[620px] flex items-center overflow-hidden">
+          <img src={HeroImg} alt="Barista pha cà phê" className="absolute inset-0 w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/65 to-black/15" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/20" />
+          <div className="relative z-10 max-w-7xl mx-auto w-full px-6 pt-28">
+            <div className="max-w-3xl text-left text-white">
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="inline-block mb-4 px-4 py-1 rounded-full bg-[#d6a46c]/10 text-[#d6a46c] text-xs font-bold uppercase tracking-widest"
+            className="inline-flex items-center gap-2 mb-7 px-4 py-2 rounded-full bg-white/10 border border-white/15 backdrop-blur-xl text-[#e2b681] text-[10px] font-bold uppercase tracking-[.24em]"
           >
-            Thưởng thức hương vị
+            <Sparkles size={13} /> Crafted coffee collection
           </motion.div>
           <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-6xl md:text-7xl font-serif text-[#3b2a20] relative inline-block"
+            initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: .8, delay: .1 }}
+            className="text-6xl md:text-8xl font-serif leading-[.95] tracking-tight"
           >
-            Thực đơn
-            <motion.span 
-              initial={{ width: 0 }}
-              animate={{ width: "100%" }}
-              transition={{ delay: 0.5, duration: 0.8 }}
-              className="absolute -bottom-2 left-0 h-1 bg-[#d6a46c] rounded-full"
-            />
+            Một menu.<br/><span className="text-[#d7a66f] italic">Nhiều cảm xúc.</span>
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
-            className="mt-8 max-w-2xl mx-auto text-gray-600 text-lg leading-relaxed px-4"
+            className="mt-8 max-w-xl text-white/65 text-base md:text-lg leading-relaxed"
           >
             Khám phá tinh hoa ẩm thực trong từng món đồ uống và bánh ngọt. 
             Chúng tôi tận tâm mang đến trải nghiệm hương vị tuyệt vời nhất cho bạn.
           </motion.p>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .45 }} className="flex gap-8 mt-10 text-sm text-white/70">
+            <span className="flex items-center gap-2"><Coffee size={17} className="text-[#d7a66f]"/> Rang xay chọn lọc</span>
+            <span className="flex items-center gap-2"><Leaf size={17} className="text-[#d7a66f]"/> Nguyên liệu tươi</span>
+          </motion.div>
+            </div>
+          </div>
         </section>
 
         {/* 🍂 FILTER - Made Sticky */}
-        <section className="sticky top-20 z-40 bg-[#faf7f2]/80 backdrop-blur-md py-6 mb-16 shadow-sm border-b border-gray-100">
+        <section className="product-filter sticky top-20 z-40 py-5 mb-20">
           <div className="flex justify-center gap-4 md:gap-8 flex-wrap max-w-[1400px] mx-auto px-4">
             {categories.map((item, idx) => (
               <motion.button
@@ -150,11 +155,11 @@ const ProductPage = () => {
                 onClick={() => setOption(item.key)}
                 className={`
                   px-6 py-2.5 rounded-full text-sm font-bold tracking-wide
-                  transition-all duration-300 border-2
+                  transition-all duration-300 border
                   ${
                     option === item.key
-                      ? "bg-[#3b2a20] border-[#3b2a20] text-white shadow-lg scale-105"
-                      : "bg-white border-transparent text-[#3b2a20] hover:border-[#d6a46c] hover:text-[#d6a46c] shadow-sm"
+                      ? "product-filter-active text-white scale-105"
+                      : "product-filter-idle"
                   }
                 `}
               >
@@ -181,13 +186,13 @@ const ProductPage = () => {
                   return (
                     <div key={key} className="flex flex-col gap-12">
                       {/* Tiêu đề & Giới thiệu cho mỗi loại */}
-                      <div className="flex flex-col md:flex-row md:items-end justify-between border-b-2 border-[#d6a46c]/20 pb-6 mb-4">
+                        <div className="product-section-heading flex flex-col md:flex-row md:items-end justify-between pb-7 mb-4">
                         <div className="flex flex-col gap-2">
                           <motion.h2 
                             initial={{ opacity: 0, x: -20 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
-                            className="text-4xl font-serif text-[#3b2a20]"
+                            className="product-title text-4xl md:text-5xl font-serif"
                           >
                             {categoryInfo?.label}
                           </motion.h2>
@@ -203,7 +208,7 @@ const ProductPage = () => {
                         <motion.button
                           whileHover={{ x: 5 }}
                           onClick={() => setOption(key)}
-                          className="mt-4 md:mt-0 text-[#d6a46c] font-bold text-sm flex items-center gap-2 hover:text-[#3b2a20] transition-colors"
+                          className="mt-4 md:mt-0 text-[#b88754] font-bold text-sm flex items-center gap-2 hover:opacity-70 transition-opacity"
                         >
                           Xem tất cả {categoryInfo?.label} →
                         </motion.button>
@@ -230,7 +235,7 @@ const ProductPage = () => {
                 className="flex flex-col gap-16"
               >
                 <div className="flex flex-col items-center text-center">
-                  <h2 className="text-5xl font-serif text-[#3b2a20] mb-4">
+                  <h2 className="product-title text-5xl font-serif mb-4">
                     {categories.find((c) => c.key === option)?.label}
                   </h2>
                   <p className="text-gray-500 italic max-w-xl text-lg px-4">

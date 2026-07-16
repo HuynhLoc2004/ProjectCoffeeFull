@@ -64,8 +64,8 @@ const Product = ({ ProductItem }) => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-100px" }}
       transition={{ type: "spring", stiffness: 100, damping: 20 }}
-      whileHover={{ y: -10, scale: 1.02 }}
-      className="relative w-[280px] h-[400px] rounded-[32px] bg-white/80 backdrop-blur-sm shadow-[0_20px_50px_rgba(0,0,0,0.1)] overflow-hidden group border border-white/40 cursor-pointer"
+      whileHover={{ y: -7 }}
+      className="product-card relative w-[280px] h-[410px] rounded-[28px] overflow-hidden group cursor-pointer"
     >
       {/* Hover Slide-in Effect */}
       <motion.div
@@ -74,12 +74,8 @@ const Product = ({ ProductItem }) => {
         transition={{ duration: 0.6, ease: "easeInOut" }}
       />
       
-      {/* Background Decor */}
-      <div className="absolute top-0 right-0 -mr-16 -mt-16 w-48 h-48 bg-[#d6a46c]/10 rounded-full blur-3xl group-hover:bg-[#d6a46c]/20 transition-all duration-700" />
-      <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-48 h-48 bg-[#3b2a20]/5 rounded-full blur-3xl group-hover:bg-[#3b2a20]/10 transition-all duration-700" />
-
       {/* Image Container */}
-      <div className="relative z-10 h-[240px] overflow-hidden m-4 rounded-[24px]">
+      <div className="relative z-10 h-[265px] overflow-hidden m-3 rounded-[21px] bg-[#ece9e4]">
         <motion.img
           src={ProductItem.img}
           alt={ProductItem.name}
@@ -101,12 +97,12 @@ const Product = ({ ProductItem }) => {
       </div>
 
       {/* Content */}
-      <div className="relative z-20 px-6 text-center">
-        <h3 className="font-serif text-xl text-[#3b2a20] mb-2 group-hover:text-[#d6a46c] transition-colors duration-300">
+      <div className="relative z-20 px-6 pt-2 text-left">
+        <h3 className="product-card-title font-serif text-xl mb-2 group-hover:text-[#b88754] transition-colors duration-300 truncate">
           {ProductItem.name}
         </h3>
         
-        <div className="flex justify-center items-baseline gap-2">
+        <div className="flex items-baseline gap-2">
           {ProductItem.sale != null ? (
             <>
               <span className="text-xs text-gray-400 line-through font-medium">
@@ -117,7 +113,7 @@ const Product = ({ ProductItem }) => {
               </span>
             </>
           ) : (
-            <span className="text-2xl font-bold text-[#3b2a20]">
+            <span className="product-card-price text-xl font-bold">
               {ProductItem.price.toLocaleString("vi-VN")}đ
             </span>
           )}
@@ -125,14 +121,14 @@ const Product = ({ ProductItem }) => {
       </div>
 
       {/* Interactive Footer */}
-      <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out z-30">
+      <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-30">
         <motion.button
           onClick={(e) => {
             e.stopPropagation();
             handleOrder(e);
           }}
           whileTap={{ scale: 0.95 }}
-          className="w-full py-3 rounded-2xl bg-[#3b2a20] text-white text-sm font-bold shadow-[0_10px_20px_rgba(59,42,32,0.3)] hover:bg-[#d6a46c] transition-all duration-300 flex items-center justify-center gap-2"
+          className="w-full py-3 rounded-2xl bg-[#171513] text-white text-sm font-bold hover:bg-[#b88754] transition-all duration-300 flex items-center justify-center gap-2"
         >
           <span>Thêm ngay</span>
         </motion.button>
