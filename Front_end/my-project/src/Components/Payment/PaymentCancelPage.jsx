@@ -1,58 +1,75 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import './PaymentCancelPage.css';
+import React, { useState, useEffect } from "react";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
+import { X, ArrowLeft, ShoppingBag, RotateCcw } from "lucide-react";
+import "./PaymentCancelPage.css";
 
-/**
- * PaymentCancelPage Component - v4 (Fast, Clean & Direct)
- *
- * This version prioritizes speed, clarity, and direct user feedback.
- * - Renders with a single, fast fade-in animation.
- * - Features a clean, professional design with a subtle shadow on the main card.
- * - The call-to-action is a single button with a clear "return" arrow icon.
- * - The color palette is simple and universally understood (blue for action, red for cancel).
- */
 const PaymentCancelPage = () => {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const orderCode = searchParams.get("orderCode");
+  const [countdown, setCountdown] = useState(5);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          navigate("/", { replace: true });
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [navigate]);
+
   return (
-    <div className="payment-cancel-wrapper">
-      <div className="cancel-card">
-        
-        {/* Simple, universally understood cancel icon */}
-        <div className="icon-wrapper">
-          <svg 
-            className="cancel-svg-icon" 
-            xmlns="http://www.w3.org/2000/svg" 
-            viewBox="0 0 24 24"
-            fill="none"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M18 6L6 18"></path>
-            <path d="M6 6l12 12"></path>
-          </svg>
+    <div className="payment-status-wrapper page-shell">
+      <div className="payment-status-card">
+        {/* Cancel Icon */}
+        <div className="payment-icon-circle cancel">
+          <X size={38} strokeWidth={2.8} />
         </div>
 
-        <h1>Thanh toán bị hủy</h1>
-        <p>
-          Giao dịch của bạn đã không được hoàn tất. Vui lòng quay lại trang chủ để tiếp tục.
+        {/* Title & Description */}
+        <h1 className="payment-status-title">Thanh toán bị hủy</h1>
+        <p className="payment-status-desc">
+          Giao dịch của bạn đã không được hoàn tất. Đừng lo lắng, các món đã chọn vẫn được lưu trong giỏ hàng của bạn.
         </p>
 
-        {/* A single, clear call-to-action button with an arrow icon */}
-        <Link to="/" className="btn-home">
-          <svg 
-            className="btn-arrow-icon"
-            xmlns="http://www.w3.org/2000/svg" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeLinecap="round" 
-            strokeLinejoin="round"
+        {/* Order Code Pill if present */}
+        {orderCode && (
+          <div className="payment-info-box">
+            <span className="payment-info-label">Mã giao dịch:</span>
+            <span className="payment-info-value">#{orderCode}</span>
+          </div>
+        )}
+
+        {/* Live Countdown Badge */}
+        <div className="payment-countdown-badge">
+          <RotateCcw size={14} className="animate-spin" style={{ animationDuration: "4s" }} />
+          <span>
+            Tự động về trang chủ sau <b className="countdown-number">{countdown}s</b>
+          </span>
+        </div>
+
+        {/* Actions */}
+        <div className="payment-actions-col">
+          <button
+            type="button"
+            onClick={() => navigate("/", { replace: true })}
+            className="btn-payment-primary"
           >
-            <path d="M19 12H5"></path>
-            <path d="M12 19l-7-7 7-7"></path>
-          </svg>
-          <span>Quay về trang chủ</span>
-        </Link>
-        
+            <ArrowLeft size={18} />
+            <span>Quay về trang chủ ngay ({countdown}s)</span>
+          </button>
+
+          <Link to="/cart" className="btn-payment-secondary">
+            <ShoppingBag size={17} />
+            <span>Xem lại giỏ hàng</span>
+          </Link>
+        </div>
       </div>
     </div>
   );

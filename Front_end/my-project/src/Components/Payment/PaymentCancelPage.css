@@ -1,109 +1,196 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+/* ==========================================================================
+   PAYMENT STATUS PAGES (CANCEL & SUCCESS) - LUXURY COFFEE DUAL THEME
+   ========================================================================== */
 
-:root {
-  --color-blue: #007bff;
-  --color-blue-dark: #0056b3;
-  --color-red: #dc3545;
-  --color-text-primary: #212529;
-  --color-text-secondary: #6c757d;
-  --color-white: #ffffff;
-  --color-bg: #f8f9fa;
-}
-
-.payment-cancel-wrapper {
+.payment-status-wrapper {
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 80vh;
-  font-family: 'Roboto', sans-serif;
-  background: var(--color-bg);
-  padding: 1rem;
+  padding: 32px 16px;
+  background: var(--page);
+  color: var(--ink);
+  transition: background-color 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
-.cancel-card {
-  background: var(--color-white);
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 10px 20px rgba(0, 0, 0, 0.05);
-  padding: 2.5rem;
-  max-width: 450px;
+.payment-status-card {
   width: 100%;
+  max-width: 460px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.15);
+  border-radius: 28px;
+  padding: 44px 32px;
   text-align: center;
-  /* A single, fast animation */
-  animation: quick-fade-in 0.4s ease-out forwards;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  position: relative;
+  z-index: 10;
+  animation: payment-fade-up 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-@keyframes quick-fade-in {
+:root[data-theme="dark"] .payment-status-card {
+  box-shadow: 0 30px 70px -15px rgba(0, 0, 0, 0.6);
+}
+
+@keyframes payment-fade-up {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(18px) scale(0.97);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
-.icon-wrapper {
-  width: 60px;
-  height: 60px;
-  margin: 0 auto 1.5rem;
-  background-color: var(--color-red);
+/* Icon Containers */
+.payment-icon-circle {
+  width: 76px;
+  height: 76px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-bottom: 20px;
+  position: relative;
 }
 
-.cancel-svg-icon {
-  width: 30px;
-  height: 30px;
-  stroke: var(--color-white);
-  stroke-width: 5;
+.payment-icon-circle.cancel {
+  background: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  box-shadow: 0 0 30px rgba(239, 68, 68, 0.2);
 }
 
-.cancel-card h1 {
-  font-size: 1.8rem;
+.payment-icon-circle.success {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  box-shadow: 0 0 30px rgba(16, 185, 129, 0.2);
+}
+
+/* Typography */
+.payment-status-title {
+  font-family: inherit;
+  font-size: 1.65rem;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+  margin: 0 0 8px 0;
+}
+
+.payment-status-desc {
+  font-size: 0.92rem;
+  color: var(--muted);
+  line-height: 1.55;
+  margin: 0 0 20px 0;
+  max-width: 360px;
+}
+
+/* Order Info Pill */
+.payment-info-box {
+  width: 100%;
+  background: rgba(125, 125, 125, 0.05);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 14px 18px;
+  margin-bottom: 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.88rem;
+}
+
+.payment-info-label {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.payment-info-value {
+  font-weight: 800;
+  color: var(--ink);
+  font-family: monospace;
+}
+
+/* Live Countdown Pill */
+.payment-countdown-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 16px;
+  border-radius: 999px;
+  background: rgba(212, 163, 115, 0.12);
+  border: 1px solid rgba(212, 163, 115, 0.28);
+  color: #d4a373;
+  font-size: 0.82rem;
   font-weight: 700;
-  color: var(--color-text-primary);
-  margin-bottom: 0.5rem;
+  margin-bottom: 24px;
 }
 
-.cancel-card p {
-  font-size: 1rem;
-  color: var(--color-text-secondary);
-  line-height: 1.6;
-  margin-bottom: 2rem;
+.countdown-number {
+  font-weight: 900;
+  color: #d4a373;
 }
 
-.btn-home {
+/* Action Buttons */
+.payment-actions-col {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn-payment-primary {
+  width: 100%;
+  padding: 13px 20px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #d4a373 0%, #b88754 100%);
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 800;
+  border: none;
+  cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.6rem;
-  
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 500;
+  gap: 8px;
   text-decoration: none;
-  
-  cursor: pointer; /* Explicitly set cursor pointer */
-  
-  transition: background-color 0.2s ease, transform 0.2s ease;
-  border: none;
-  
-  color: var(--color-white);
-  background-color: var(--color-blue);
+  box-shadow: 0 10px 25px -5px rgba(212, 163, 115, 0.38);
+  transition: all 0.25s ease;
 }
 
-.btn-home:hover {
-  background-color: var(--color-blue-dark);
+.btn-payment-primary:hover {
   transform: translateY(-2px);
+  box-shadow: 0 14px 30px -5px rgba(212, 163, 115, 0.5);
+  color: #ffffff;
 }
 
-.btn-arrow-icon {
-  width: 18px;
-  height: 18px;
-  stroke: var(--color-white);
-  stroke-width: 2;
+.btn-payment-secondary {
+  width: 100%;
+  padding: 12px 20px;
+  border-radius: 14px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 700;
+  border: 1px solid var(--line);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-payment-secondary:hover {
+  background: rgba(125, 125, 125, 0.08);
+  color: var(--ink);
+  border-color: var(--muted);
 }
