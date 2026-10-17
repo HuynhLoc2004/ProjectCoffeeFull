@@ -82,13 +82,11 @@ function App() {
           } else {
             setAccessToken("");
             logout();
-            window.location.href = "/login";
           }
         })
         .catch(() => {
           setAccessToken("");
           logout();
-          window.location.href = "/login";
         });
     }
   }, []);
@@ -110,16 +108,14 @@ function App() {
               } else if (res.data.statusCode == 401) {
                 setAccessToken("");
                 logout();
-                console.log("Refresh token expired, redirecting to login");
-                window.location.href = "/login";
+                console.log("Session expired, logged out");
               }
             })
             .catch((err) => {
               if (err.response?.status === 401) {
                 setAccessToken("");
                 logout();
-                console.log("Refresh token expired, redirecting to login");
-                window.location.href = "/login";
+                console.log("Session expired, logged out");
               } else {
                 console.log("Failed to refresh token:", err);
               }

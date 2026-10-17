@@ -144,7 +144,12 @@ public class AuthenticationService {
 
 
                 if(!userRepository.existsByEmail(email)){
-                    String filePicture = this.downloadGoogleAvatar(picture);
+                    String filePicture = picture;
+                    try {
+                        filePicture = this.downloadGoogleAvatar(picture);
+                    } catch (Exception e) {
+                        log.warn("Không thể tải avatar Google qua Cloudinary, dùng trực tiếp link Google: {}", e.getMessage());
+                    }
                     UserEntity userEntity = new UserEntity();
                     userEntity.setEmail(email);
                     userEntity.setFullname(fullname);
@@ -152,6 +157,7 @@ public class AuthenticationService {
                     userEntity.setProvider("GOOGLE");
                     userEntity.setProviderId(subId);
                     userEntity.setActive(true);
+                    userEntity.setTokenVersion(0);
                     userEntity.setAddress("");
                     userEntity.setCreateAt(LocalDateTime.now());
                     userEntity.addRole(roleRepository.findRoleByName("USER"));
@@ -297,7 +303,8 @@ public class AuthenticationService {
           if(userInfogson == null){
               Number idUserNum =  jwtAuthenticationToken.getToken().getClaim("userId");
               Integer iduser = idUserNum.intValue();
-              UserEntity userQuery = this.userRepository.findUserFullInfoById(iduser).orElseThrow();
+              UserEntity userQuery = this.userRepository.findById(iduser)
+                      .orElseThrow(() -> new Appexception(HttpStatusEnum.NOT_FOUND.getCode(), "User not found"));
               UserEntity userinfo = new UserEntity();
               userinfo.setFullname(userQuery.getFullname());
               if(userQuery.getPicture() == null){

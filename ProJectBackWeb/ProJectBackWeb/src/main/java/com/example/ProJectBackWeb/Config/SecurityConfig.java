@@ -29,6 +29,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
 import org.springframework.security.oauth2.core.OAuth2TokenValidator;
@@ -83,8 +85,18 @@ public class SecurityConfig implements WebMvcConfigurer {
         return factory;
     }
 
+    private OAuth2AuthorizationRequestResolver authorizationRequestResolver(
+            ClientRegistrationRepository clientRegistrationRepository) {
+        DefaultOAuth2AuthorizationRequestResolver resolver =
+                new DefaultOAuth2AuthorizationRequestResolver(clientRegistrationRepository, "/oauth2/authorization");
+        resolver.setAuthorizationRequestCustomizer(customizer ->
+                customizer.additionalParameters(params -> params.put("prompt", "select_account"))
+        );
+        return resolver;
+    }
+
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http , JwtAuthenticationConverter authenticationConverter  , BearerTokenResolver bearerTokenResolver) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http , JwtAuthenticationConverter authenticationConverter  , BearerTokenResolver bearerTokenResolver, ClientRegistrationRepository clientRegistrationRepository) throws Exception {
         http.csrf(csrf -> csrf.disable());
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.POST , ENDPOINT).permitAll()
@@ -151,6 +163,9 @@ public class SecurityConfig implements WebMvcConfigurer {
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.oauth2Login(oauth2Login -> oauth2Login
+                .authorizationEndpoint(authorization -> authorization
+                        .authorizationRequestResolver(authorizationRequestResolver(clientRegistrationRepository))
+                )
                 .successHandler((req , res , authentication)->{
             OAuth2AuthenticationToken oAuth2AuthenticationToken = (OAuth2AuthenticationToken) authentication;
             ResponseAuthentication responseAuthentication;
