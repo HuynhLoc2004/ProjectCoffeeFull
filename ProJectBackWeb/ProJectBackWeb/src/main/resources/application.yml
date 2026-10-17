@@ -74,6 +74,7 @@ redis:
   port: ${REDIS_PORT:6379}
   username: ${REDIS_USERNAME:}
   password: ${REDIS_PASSWORD:}
+  ssl: ${REDIS_SSL:false}
 
 google:
   returnUrl: ${GOOGLE_RETURNURL}

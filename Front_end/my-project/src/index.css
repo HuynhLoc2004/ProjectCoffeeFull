@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+.font-serif {
+  font-family: "Playfair Display", "Lora", serif !important;
+}
+
+.font-sans {
+  font-family: "Plus Jakarta Sans", "Be Vietnam Pro", system-ui, -apple-system, sans-serif !important;
+}
+
 :root {
   --page: #f8f7f4;
   --surface: #ffffff;
@@ -28,6 +36,7 @@ html { scroll-behavior: smooth; background: var(--page); }
 body {
   margin: 0;
   min-width: 320px;
+  font-family: "Plus Jakarta Sans", "Be Vietnam Pro", system-ui, -apple-system, sans-serif;
   color: var(--ink);
   background: var(--page);
   transition: color .3s ease, background-color .3s ease;
@@ -78,7 +87,7 @@ button, a, input, textarea { -webkit-tap-highlight-color: transparent; }
 
 /* Product collection */
 .product-page { background: var(--page); color: var(--ink); }
-.product-filter { top: 82px !important; background: color-mix(in srgb, var(--page) 92%, transparent); backdrop-filter: blur(20px); border-bottom: 1px solid var(--line); }
+.product-filter { position: relative; background: transparent; z-index: 10; }
 .product-filter-active { background:#1b1917; border-color:#1b1917; box-shadow:0 8px 24px rgba(0,0,0,.14); }
 .product-filter-idle { background:var(--surface); color:var(--ink); border-color:var(--line); }
 .product-filter-idle:hover { border-color:var(--accent); color:var(--accent); }
@@ -112,7 +121,7 @@ button, a, input, textarea { -webkit-tap-highlight-color: transparent; }
 .contact-page main > section img { filter:saturate(.72) contrast(.96); }
 
 .rank-page > section:first-of-type { padding-top:4rem; }
-.rank-page > section:first-of-type h1 { font-family:Georgia,serif;font-weight:500!important;letter-spacing:-.04em; }
+.rank-page > section:first-of-type h1 { font-family:"Playfair Display",serif;font-weight:500!important;letter-spacing:-.04em; }
 .rank-page .rounded-3xl,.rank-page .rounded-2xl { box-shadow:var(--elevation); }
 .rank-page .divide-\[\#dcd7cc\]\/50 > :not(:last-child) { border-color:var(--line)!important; }
 
@@ -133,6 +142,3 @@ button, a, input, textarea { -webkit-tap-highlight-color: transparent; }
 .cart-page { padding-top:24px!important; }
 .profile-page-container { background:var(--page)!important;color:var(--ink)!important;min-height:100vh; }
 
-@media (max-width: 767px) {
-  .product-filter { top: 82px !important; }
-}

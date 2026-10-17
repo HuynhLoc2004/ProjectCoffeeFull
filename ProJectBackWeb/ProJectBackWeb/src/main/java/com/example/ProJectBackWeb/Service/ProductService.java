@@ -185,10 +185,7 @@ public class ProductService {
         String value = redisTemplate.opsForValue().get(cacheKey);
         if (value == null) {
             List<ProductEntity> productEntities = this.productRepository
-                    .findByNameContainingIgnoreCaseAndActiveTrueOrderByIdDesc(
-                            normalizedSearch,
-                            PageRequest.of(0, safeTop)
-                    );
+                    .searchProductsFuzzy(normalizedSearch, safeTop);
             productEntities = productEntities.stream().map((item) -> {
                 item.setImg(item.getImg());
                 return item;
@@ -209,7 +206,11 @@ public class ProductService {
     }
 
     private String normalizeSearch(String searchName) {
-        String normalized = searchName == null ? "" : searchName.trim().toLowerCase(Locale.ROOT);
+        if (searchName == null) {
+            throw new Appexception(HttpStatusEnum.BAD_REQUEST.getCode(), "Từ khóa tìm kiếm không được để trống");
+        }
+        // Remove control characters to prevent header/log injection
+        String normalized = searchName.replaceAll("[\\p{Cntrl}]", "").trim();
         if (normalized.isBlank() || normalized.length() > 100) {
             throw new Appexception(HttpStatusEnum.BAD_REQUEST.getCode(), "Từ khóa tìm kiếm phải từ 1 đến 100 ký tự");
         }

@@ -1,0 +1,25 @@
+-- Insert orders
+INSERT INTO orders (order_id, type_order, address_order, created_at, expired_at, status, total_price, user_id)
+VALUES
+(260227114913521, 'TAKE_AWAY', 'Hồ Chí Minh', '2026-02-27 11:49:31', '2026-02-27 12:49:31', 'PAID', 1250000, 22),
+(260227114947226, 'TAKE_AWAY', 'Hồ Chí Minh', '2026-02-27 11:49:59', '2026-02-27 12:49:59', 'PAID', 950000, 22),
+(260228181650439, 'TAKE_AWAY', 'Quận 1, TP.HCM', '2026-02-28 18:17:07', '2026-02-28 19:17:07', 'PAID', 850000, 24),
+(260302105038389, 'TAKE_AWAY', 'Bình Thạnh, TP.HCM', '2026-03-02 10:51:01', '2026-03-02 11:51:01', 'PAID', 620000, 27),
+(260303204631852, 'TAKE_AWAY', 'Thủ Đức, TP.HCM', '2026-03-03 20:46:47', '2026-03-03 21:46:47', 'PAID', 450000, 28),
+(260305145904896, 'TAKE_AWAY', 'Quận 3, TP.HCM', '2026-03-05 14:59:15', '2026-03-05 15:59:15', 'PAID', 320000, 29),
+(260404215340617, 'TAKE_AWAY', 'Quận 7, TP.HCM', '2026-04-04 21:56:35', '2026-04-04 22:56:35', 'PAID', 210000, 30)
+ON CONFLICT (order_id) DO UPDATE 
+SET total_price = EXCLUDED.total_price, status = EXCLUDED.status;
+
+-- Insert orders_history
+INSERT INTO orders_history (order_history_id, total_price, order_entity_order_id, user_id, time_order_history, status)
+VALUES
+(1149, 1250000, 260227114913521, 22, '2026-02-27 11:49:31', 'PAID'),
+(1150, 950000, 260227114947226, 22, '2026-02-27 11:49:59', 'PAID'),
+(1160, 850000, 260228181650439, 24, '2026-02-28 18:17:07', 'PAID'),
+(1163, 620000, 260302105038389, 27, '2026-03-02 10:51:01', 'PAID'),
+(1167, 450000, 260303204631852, 28, '2026-03-03 20:46:47', 'PAID'),
+(1175, 320000, 260305145904896, 29, '2026-03-05 14:59:15', 'PAID'),
+(1193, 210000, 260404215340617, 30, '2026-04-04 21:56:35', 'PAID')
+ON CONFLICT (order_history_id) DO UPDATE 
+SET total_price = EXCLUDED.total_price, status = EXCLUDED.status;

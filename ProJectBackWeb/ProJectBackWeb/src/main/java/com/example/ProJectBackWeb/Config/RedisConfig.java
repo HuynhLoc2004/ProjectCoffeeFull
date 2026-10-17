@@ -21,12 +21,21 @@ public class RedisConfig {
     @Value("${redis.password:}")
     private String password;
 
+    @Value("${redis.ssl:false}")
+    private Boolean ssl;
+
     @Bean
-   public LettuceConnectionFactory lettuceConnectionFactory(){
-            RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration(host, port);
-            if (!username.isBlank()) configuration.setUsername(username);
-            if (!password.isBlank()) configuration.setPassword(password);
-            return new LettuceConnectionFactory(configuration);
+    public LettuceConnectionFactory lettuceConnectionFactory(){
+        RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration(host, port);
+        if (username != null && !username.isBlank()) configuration.setUsername(username);
+        if (password != null && !password.isBlank()) configuration.setPassword(password);
+
+        org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration.LettuceClientConfigurationBuilder builder = 
+            org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration.builder();
+        if (Boolean.TRUE.equals(ssl) || (host != null && host.contains("upstash.io"))) {
+            builder.useSsl();
+        }
+        return new LettuceConnectionFactory(configuration, builder.build());
     }
 
     @Bean

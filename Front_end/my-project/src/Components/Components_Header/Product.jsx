@@ -78,6 +78,10 @@ const Product = ({ ProductItem }) => {
       <div className="relative z-10 h-[265px] overflow-hidden m-3 rounded-[21px] bg-[#ece9e4]">
         <motion.img
           src={ProductItem.img}
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=500";
+          }}
           alt={ProductItem.name}
           className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
         />

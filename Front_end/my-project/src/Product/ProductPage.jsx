@@ -102,20 +102,39 @@ const ProductPage = () => {
   return (
     <>
       <Navbar userInfo={infoUser} />
-      <div className="product-page min-h-screen overflow-x-hidden">
-        {/* 🍂 FILTER - Made Sticky */}
-        <section className="product-filter sticky z-40 py-4 mb-10">
-          <div className="flex justify-center gap-4 md:gap-8 flex-wrap max-w-[1400px] mx-auto px-4">
+      <div className="product-page min-h-screen">
+        {/* ☕ Header Hero */}
+        <div className="pt-8 pb-4 text-center max-w-3xl mx-auto px-4">
+          <motion.h1
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-4xl md:text-5xl font-serif mb-3 text-[#3b2a20]"
+          >
+            Thực Đơn Đặc Biệt
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.1 }}
+            className="text-gray-500 italic text-sm md:text-base"
+          >
+            Hương vị đậm đà từ những hạt cà phê tuyển chọn, đánh thức mọi giác quan của bạn.
+          </motion.p>
+        </div>
+
+        {/* 🍂 FILTER - Non-sticky so it scrolls naturally */}
+        <section className="product-filter relative z-10 py-4 mb-8">
+          <div className="flex justify-center gap-2 md:gap-4 flex-wrap max-w-[1400px] mx-auto px-4">
             {categories.map((item, idx) => (
               <motion.button
                 key={item.key}
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 * idx }}
+                transition={{ delay: 0.05 * idx }}
                 onClick={() => setOption(item.key)}
                 className={`
-                  px-6 py-2.5 rounded-full text-sm font-bold tracking-wide
-                  transition-all duration-300 border
+                  px-5 py-2 rounded-full text-xs md:text-sm font-bold tracking-wide
+                  transition-all duration-300 border cursor-pointer
                   ${
                     option === item.key
                       ? "product-filter-active text-white scale-105"
@@ -188,17 +207,17 @@ const ProductPage = () => {
             {option !== "" && (
               <motion.div
                 key={option}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.5 }}
-                className="flex flex-col gap-16"
+                transition={{ duration: 0.35 }}
+                className="flex flex-col gap-10"
               >
                 <div className="flex flex-col items-center text-center">
-                  <h2 className="product-title text-5xl font-serif mb-4">
+                  <h2 className="product-title text-3xl md:text-4xl font-serif mb-2 text-[#3b2a20]">
                     {categories.find((c) => c.key === option)?.label}
                   </h2>
-                  <p className="text-gray-500 italic max-w-xl text-lg px-4">
+                  <p className="text-gray-500 italic max-w-xl text-sm md:text-base px-4">
                     {categories.find((c) => c.key === option)?.intro}
                   </p>
                 </div>

@@ -118,5 +118,28 @@ public class AppruntimeConfig {
 
         };
     }
+
+    @Bean
+    ApplicationRunner applicationRunner_SearchIndex(org.springframework.jdbc.core.JdbcTemplate jdbcTemplate) {
+        return args -> {
+            try {
+                jdbcTemplate.execute("CREATE EXTENSION IF NOT EXISTS pg_trgm;");
+                jdbcTemplate.execute("CREATE EXTENSION IF NOT EXISTS unaccent;");
+                jdbcTemplate.execute("""
+                    CREATE OR REPLACE FUNCTION immutable_unaccent(text)
+                      RETURNS text AS
+                    $$
+                    SELECT public.unaccent('public.unaccent', $1);
+                    $$ LANGUAGE sql IMMUTABLE PARALLEL SAFE STRICT;
+                """);
+                jdbcTemplate.execute("""
+                    CREATE INDEX IF NOT EXISTS idx_products_name_trgm 
+                    ON products USING gin (immutable_unaccent(lower(product_name)) gin_trgm_ops);
+                """);
+            } catch (Exception e) {
+                // Ignore if already initialized
+            }
+        };
+    }
 }
 

@@ -299,11 +299,28 @@ const Navbar = ({ userInfo }) => {
                     navIsLight ? "bg-white/95 border-black/5 text-gray-800" : "bg-black/95 border-white/5 text-white"
                   }`}
                 >
-                  <div className="p-3">
+                    <div className="p-2 space-y-1">
                     {itemSearch.map((item) => (
-                      <div key={item.id} className="flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-white/10" onMouseDown={() => navigate(`/order/?category=${item.category}&id=${item.id}`)}>
-                        <img src={item.img} className="w-9 h-9 rounded-lg object-cover" alt="" />
-                        <span className="text-sm font-bold">{item.name}</span>
+                      <div
+                        key={item.id}
+                        className="flex items-center gap-3 p-2.5 rounded-2xl cursor-pointer hover:bg-white/10 transition-colors"
+                        onMouseDown={() => navigate(`/order/?category=${item.category}&id=${item.id}`)}
+                      >
+                        <img
+                          src={item.img}
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=120";
+                          }}
+                          className="w-10 h-10 rounded-xl object-cover shrink-0 bg-[#d6a46c]/10 border border-white/5"
+                          alt={item.name}
+                        />
+                        <div className="flex flex-col min-w-0">
+                          <span className="text-sm font-bold truncate leading-tight">{item.name}</span>
+                          <span className="text-xs text-[#D4A373] font-semibold mt-0.5">
+                            {item.price?.toLocaleString("vi-VN")}đ
+                          </span>
+                        </div>
                       </div>
                     ))}
                   </div>

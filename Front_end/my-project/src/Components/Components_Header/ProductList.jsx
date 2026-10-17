@@ -43,6 +43,14 @@ const ProductList = ({ urlApi, products }) => {
     })();
   }, [urlApi, products]);
 
+  if (!listProduct || listProduct.length === 0) {
+    return (
+      <div className="w-full py-16 text-center">
+        <p className="text-gray-400 text-base">Hiện chưa có sản phẩm nào trong danh mục này.</p>
+      </div>
+    );
+  }
+
   return (
     <motion.div
       className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-16 place-items-center"

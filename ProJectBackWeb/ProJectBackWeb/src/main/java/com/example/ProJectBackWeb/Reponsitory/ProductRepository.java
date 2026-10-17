@@ -32,6 +32,26 @@ public interface ProductRepository extends JpaRepository<ProductEntity , Integer
 
     List<ProductEntity> findByNameContainingIgnoreCaseAndActiveTrueOrderByIdDesc(String searchName, Pageable pageable);
 
+    @Query(value = """
+        SELECT p.*
+        FROM products p
+        WHERE p.product_active = true
+          AND (
+            immutable_unaccent(lower(p.product_name)) LIKE '%' || immutable_unaccent(lower(:searchName)) || '%'
+            OR similarity(immutable_unaccent(lower(p.product_name)), immutable_unaccent(lower(:searchName))) > 0.15
+          )
+        ORDER BY
+          CASE 
+            WHEN immutable_unaccent(lower(p.product_name)) LIKE immutable_unaccent(lower(:searchName)) || '%' THEN 1
+            WHEN immutable_unaccent(lower(p.product_name)) LIKE '%' || immutable_unaccent(lower(:searchName)) || '%' THEN 2
+            ELSE 3 
+          END,
+          similarity(immutable_unaccent(lower(p.product_name)), immutable_unaccent(lower(:searchName))) DESC,
+          p.product_id DESC
+        LIMIT :limit
+    """, nativeQuery = true)
+    List<ProductEntity> searchProductsFuzzy(@Param("searchName") String searchName, @Param("limit") int limit);
+
     @Query(value = "SELECT p FROM ProductEntity p")
     public List<ProductEntity> get_products();
 
