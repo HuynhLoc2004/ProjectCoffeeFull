@@ -1,293 +1,105 @@
-import React, { useEffect, useState } from "react";
-import { FaTrash } from "react-icons/fa";
-import axiosClient from "../AxiosClient";
-import {
-  getAccessToken,
-  setAccessToken,
-} from "../ManagerAccessToken/ManagerAccessToken";
-import { useNavigate } from "react-router-dom";
-import { unlogout, getLogout } from "../ManagerLogout/ManagerLogout";
+import React, { useState } from "react";
+import { FaTrash, FaPlus, FaMinus } from "react-icons/fa";
+import { motion } from "framer-motion";
 
-const ProductCart = ({ cartProduct, setCheckUpdate }) => {
-  const navigate = useNavigate();
+const ProductCart = ({ cartProduct, onIncrease, onDecrease, onDelete }) => {
+  const [imgError, setImgError] = useState(false);
+  const fallbackImg = "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=200";
 
-  const handleIncrequantity = () => {
-    if (cartProduct != null && getAccessToken() != "") {
-      axiosClient
-        .put(
-          `/cartproduct/incrCartproduct/${cartProduct.id}`,
-          {
-            quantityUpdate: 1,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${getAccessToken()}`,
-            },
-          },
-        )
-        .then((res) => {
-          if (res.data.result == true) {
-            setCheckUpdate((prev) => prev + 1);
-          } else if (res.data.statusCode == 401) {
-            axiosClient
-              .get("/refresh_token", {
-                withCredentials: true,
-              })
-              .then((res) => {
-                setAccessToken(res.data.result.accessToken);
-                unlogout();
-              })
-              .catch((err) => {
-                if (err.status == 401) {
-                  navigate("/");
-                }
-              });
-          }
-        })
-        .catch((err) => {
-          axiosClient
-            .get("/auth/refresh_token", {
-              withCredentials: true,
-            })
-            .then((res) => {
-              if (res.data.statusCode == 401) {
-                navigate("/");
-              }
-              unlogout();
-              setAccessToken(res.data.result.accessToken);
-            })
-            .catch((err) => {
-              if (err.status == 401) {
-                navigate("/");
-              }
-            });
-        });
-    } else {
-      axiosClient
-        .get("/auth/refresh_token", {
-          withCredentials: true,
-        })
-        .then((res) => {
-          if (res.data.statusCode == 401) {
-            navigate("/");
-          }
-          unlogout();
-          setAccessToken(res.data.result.accessToken);
-        })
-        .catch((err) => {
-          if (err.status == 401) {
-            navigate("/");
-          }
-        });
-    }
-  };
+  if (!cartProduct) return null;
 
-  const handledescQuantity = () => {
-    if (cartProduct != null && getAccessToken() != "") {
-      axiosClient
-        .put(
-          `/cartproduct/descCartproduct/${cartProduct.id}`,
-          {
-            quantityUpdate: 1,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${getAccessToken()}`,
-            },
-          },
-        )
-        .then((res) => {
-          if (res.data.result == true) {
-            setCheckUpdate((prev) => prev + 1);
-          } else if (res.data.statusCode == 401) {
-            axiosClient
-              .get("/refresh_token", {
-                withCredentials: true,
-              })
-              .then((res) => {
-                setAccessToken(res.data.result.accessToken);
-                unlogout();
-              })
-              .catch((err) => {
-                if (err.status == 401) {
-                  navigate("/");
-                }
-              });
-          }
-        })
-        .catch((err) => {
-          axiosClient
-            .get("/auth/refresh_token", {
-              withCredentials: true,
-            })
-            .then((res) => {
-              if (res.data.statusCode == 401) {
-                navigate("/");
-              }
-              unlogout();
-              setAccessToken(res.data.result.accessToken);
-            })
-            .catch((err) => {
-              if (err.status == 401) {
-                navigate("/");
-              }
-            });
-        });
-    } else {
-      axiosClient
-        .get("/auth/refresh_token", {
-          withCredentials: true,
-        })
-        .then((res) => {
-          if (res.data.statusCode == 401) {
-            navigate("/");
-          }
-          unlogout();
-          setAccessToken(res.data.result.accessToken);
-        })
-        .catch((err) => {
-          if (err.status == 401) {
-            navigate("/");
-          }
-        });
-    }
-  };
+  const product = cartProduct.productEntity || {};
+  const imgSrc = (!imgError && product.img) ? product.img : fallbackImg;
 
-  const handleClearCartProduct = () => {
-    if (cartProduct != null && getAccessToken() != "") {
-      axiosClient
-        .delete(`/cartproduct/deleteCartproduct/${cartProduct.id}`, {
-          headers: {
-            Authorization: `Bearer ${getAccessToken()}`,
-          },
-        })
-        .then((res) => {
-          if (res.data.result == true) {
-            setCheckUpdate((prev) => prev + 1);
-          } else if (res.data.statusCode == 401) {
-            axiosClient
-              .get("/refresh_token", {
-                withCredentials: true,
-              })
-              .then((res) => {
-                setAccessToken(res.data.result.accessToken);
-                unlogout();
-              })
-              .catch((err) => {
-                if (err.status == 401) {
-                  navigate("/");
-                }
-              });
-          }
-        })
-        .catch((err) => {
-          axiosClient
-            .get("/auth/refresh_token", {
-              withCredentials: true,
-            })
-            .then((res) => {
-              if (res.data.statusCode == 401) {
-                navigate("/");
-              }
-              unlogout();
-              setAccessToken(res.data.result.accessToken);
-            })
-            .catch((err) => {
-              if (err.status == 401) {
-                navigate("/");
-              }
-            });
-        });
-    } else {
-      axiosClient
-        .get("/auth/refresh_token", {
-          withCredentials: true,
-        })
-        .then((res) => {
-          if (res.data.statusCode == 401) {
-            navigate("/");
-          }
-          unlogout();
-          setAccessToken(res.data.result.accessToken);
-        })
-        .catch((err) => {
-          if (err.status == 401) {
-            navigate("/");
-          }
-        });
-    }
-  };
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between p-4 mb-4 bg-white rounded-2xl shadow-sm border border-gray-100 transition-all hover:shadow-md hover:border-gray-200 group">
-      {/* Product Info Section */}
-      <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
-        <img
-          src={cartProduct.productEntity.img}
-          alt={cartProduct.productEntity.name}
-          className="w-24 h-24 sm:w-20 sm:h-20 object-cover rounded-xl shadow-sm group-hover:scale-105 transition-transform duration-300"
-        />
-        <div className="text-center sm:text-left flex-1">
-          <h2 className="text-lg font-bold text-gray-900 tracking-tight">
-            {cartProduct.productEntity.name}
-          </h2>
-          <div className="flex flex-wrap justify-center sm:justify-start gap-x-3 gap-y-1 mt-1">
-            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
-              Size: {cartProduct.size}
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.95, x: -30 }}
+      transition={{ duration: 0.2 }}
+      className="cart-item-card flex flex-col sm:flex-row items-center justify-between p-4 sm:p-5 rounded-2xl mb-3 gap-4"
+    >
+      {/* Product Information */}
+      <div className="flex items-center gap-4 w-full sm:w-auto">
+        <div className="relative w-20 h-20 sm:w-22 sm:h-22 shrink-0 rounded-2xl overflow-hidden border border-[var(--line,#d4a373)]/20 shadow-sm bg-black/5">
+          <img
+            src={imgSrc}
+            alt={product.name || "Sản phẩm"}
+            onError={() => setImgError(true)}
+            className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+          />
+        </div>
+        
+        <div className="flex-1 min-w-0">
+          <h3 className="text-base sm:text-lg font-black tracking-tight truncate leading-tight mb-1 text-[var(--ink,#fff)]">
+            {product.name || "Cà phê đặc sản"}
+          </h3>
+          
+          <div className="flex flex-wrap items-center gap-2 mt-1">
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#d4a373]/15 text-[#d4a373] border border-[#d4a373]/30">
+              Size {cartProduct.size || "M"}
             </span>
-            {cartProduct.toppingEntityList.length > 0 && (
-              <p className="text-xs text-gray-500 font-medium italic">
-                Toppings:{" "}
-                {cartProduct.toppingEntityList
-                  .map((topping) => topping.nameTopping)
-                  .join(", ")}
-              </p>
+
+            {cartProduct.toppingEntityList && cartProduct.toppingEntityList.length > 0 && (
+              <span className="text-xs text-gray-400 font-medium truncate max-w-[200px] sm:max-w-none">
+                + {cartProduct.toppingEntityList.map((t) => t.nameTopping).join(", ")}
+              </span>
             )}
           </div>
         </div>
       </div>
 
-      {/* Controls & Price Section */}
-      <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-8 mt-4 sm:mt-0 w-full sm:w-auto border-t sm:border-t-0 pt-4 sm:pt-0 border-gray-50">
-        {/* Quantity Selector */}
-        <div className="flex items-center bg-gray-50 rounded-xl p-1 border border-gray-100">
+      {/* Controls & Price */}
+      <div className="flex items-center justify-between sm:justify-end gap-5 w-full sm:w-auto pt-3 sm:pt-0 border-t sm:border-t-0 border-white/5">
+        {/* Quantity Controls */}
+        <div className="cart-qty-ctrl flex items-center rounded-xl p-1 gap-1">
           <button
-            className="w-8 h-8 flex items-center justify-center bg-white text-gray-600 rounded-lg shadow-sm hover:text-[#D4A373] transition-colors font-bold disabled:opacity-50"
-            onClick={handledescQuantity}
+            type="button"
+            className="cart-qty-btn w-8 h-8 flex items-center justify-center rounded-lg bg-white/10 hover:bg-[#d4a373] hover:text-white transition-colors cursor-pointer text-xs disabled:opacity-40 disabled:cursor-not-allowed"
+            onClick={() => onDecrease(cartProduct.id)}
             disabled={cartProduct.quantity <= 1}
+            title="Giảm số lượng"
+            aria-label="Giảm số lượng"
           >
-            -
+            <FaMinus size={10} />
           </button>
-          <span className="w-10 text-center font-mono font-bold text-gray-800">
+          
+          <span className="w-9 text-center font-mono font-bold text-sm text-[var(--ink,#fff)] select-none">
             {cartProduct.quantity}
           </span>
+          
           <button
-            className="w-8 h-8 flex items-center justify-center bg-white text-gray-600 rounded-lg shadow-sm hover:text-[#D4A373] transition-colors font-bold"
-            onClick={handleIncrequantity}
+            type="button"
+            className="cart-qty-btn w-8 h-8 flex items-center justify-center rounded-lg bg-white/10 hover:bg-[#d4a373] hover:text-white transition-colors cursor-pointer text-xs"
+            onClick={() => onIncrease(cartProduct.id)}
+            title="Tăng số lượng"
+            aria-label="Tăng số lượng"
           >
-            +
+            <FaPlus size={10} />
           </button>
         </div>
 
-        {/* Price & Delete */}
-        <div className="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto">
-          <p className="text-xl sm:text-lg font-black text-[#D4A373] sm:w-32 sm:text-right tracking-tighter">
-            {cartProduct.totalPrice.toLocaleString("vi-VN", {
-              style: "currency",
-              currency: "VND",
-            })}
+        {/* Item Total Price */}
+        <div className="text-right min-w-[100px] sm:min-w-[120px]">
+          <p className="text-lg sm:text-xl font-black text-[#d4a373] tracking-tight">
+            {Number(cartProduct.totalPrice || 0).toLocaleString("vi-VN")}đ
           </p>
-
-          <button
-            className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-full transition-all duration-300"
-            onClick={handleClearCartProduct}
-            title="Xóa sản phẩm"
-          >
-            <FaTrash size={18} />
-          </button>
         </div>
+
+        {/* Delete Item */}
+        <button
+          type="button"
+          onClick={() => onDelete(cartProduct.id)}
+          className="cart-del-btn p-2.5 rounded-xl text-gray-400 hover:text-red-500 cursor-pointer"
+          title="Xóa món khỏi giỏ hàng"
+          aria-label="Xóa món"
+        >
+          <FaTrash size={15} />
+        </button>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
-export default ProductCart;
+export default React.memo(ProductCart);
