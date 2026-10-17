@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { Plus } from "lucide-react";
 import axiosClient from "../../AxiosClient";
 import {
   getAccessToken,
@@ -65,17 +66,17 @@ const Product = ({ ProductItem }) => {
       viewport={{ once: true, margin: "-100px" }}
       transition={{ type: "spring", stiffness: 100, damping: 20 }}
       whileHover={{ y: -7 }}
-      className="product-card relative w-[280px] h-[410px] rounded-[28px] overflow-hidden group cursor-pointer"
+      className="product-card relative w-[280px] h-[415px] rounded-[28px] overflow-hidden group cursor-pointer flex flex-col justify-between select-none"
     >
-      {/* Hover Slide-in Effect */}
+      {/* Hover Slide-in Shimmer Effect */}
       <motion.div
-        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent z-40 translate-x-[-100%]"
+        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent z-40 translate-x-[-100%] pointer-events-none"
         whileHover={{ x: "100%" }}
         transition={{ duration: 0.6, ease: "easeInOut" }}
       />
       
       {/* Image Container */}
-      <div className="relative z-10 h-[265px] overflow-hidden m-3 rounded-[21px] bg-[#ece9e4]">
+      <div className="relative z-10 h-[225px] overflow-hidden m-3 rounded-[21px] bg-[#ece9e4] shrink-0">
         <motion.img
           src={ProductItem.img}
           onError={(e) => {
@@ -101,39 +102,42 @@ const Product = ({ ProductItem }) => {
       </div>
 
       {/* Content */}
-      <div className="relative z-20 px-6 pt-2 text-left">
-        <h3 className="product-card-title font-serif text-xl mb-2 group-hover:text-[#b88754] transition-colors duration-300 truncate">
-          {ProductItem.name}
-        </h3>
-        
-        <div className="flex items-baseline gap-2">
-          {ProductItem.sale != null ? (
-            <>
-              <span className="text-xs text-gray-400 line-through font-medium">
+      <div className="relative z-20 px-5 pt-1 text-left flex-1 flex flex-col justify-between">
+        <div>
+          <h3 className="product-card-title font-serif text-lg font-bold mb-1.5 group-hover:text-[#d4a373] transition-colors duration-300 truncate">
+            {ProductItem.name}
+          </h3>
+          
+          <div className="flex items-baseline gap-2">
+            {ProductItem.sale != null ? (
+              <>
+                <span className="text-xs text-gray-400 line-through font-medium">
+                  {ProductItem.price.toLocaleString("vi-VN")}đ
+                </span>
+                <span className="text-xl font-black text-[#d4a373]">
+                  {ProductItem.sale.toLocaleString("vi-VN")}đ
+                </span>
+              </>
+            ) : (
+              <span className="product-card-price text-lg font-black text-[#d4a373]">
                 {ProductItem.price.toLocaleString("vi-VN")}đ
               </span>
-              <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#3b2a20] to-[#d6a46c]">
-                {ProductItem.sale.toLocaleString("vi-VN")}đ
-              </span>
-            </>
-          ) : (
-            <span className="product-card-price text-xl font-bold">
-              {ProductItem.price.toLocaleString("vi-VN")}đ
-            </span>
-          )}
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Interactive Footer */}
-      <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-30">
+      {/* Interactive Footer - Sits safely below price */}
+      <div className="relative z-30 px-4 pb-3.5 pt-1">
         <motion.button
           onClick={(e) => {
             e.stopPropagation();
             handleOrder(e);
           }}
-          whileTap={{ scale: 0.95 }}
-          className="w-full py-3 rounded-2xl bg-[#171513] text-white text-sm font-bold hover:bg-[#b88754] transition-all duration-300 flex items-center justify-center gap-2"
+          whileTap={{ scale: 0.96 }}
+          className="w-full py-2.5 rounded-xl bg-[#b88754] hover:bg-[#a27343] text-white text-sm font-bold shadow-md shadow-[#b88754]/25 transition-all duration-300 flex items-center justify-center gap-2 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 pointer-events-none group-hover:pointer-events-auto cursor-pointer"
         >
+          <Plus size={16} className="stroke-[2.5]" />
           <span>Thêm ngay</span>
         </motion.button>
       </div>
