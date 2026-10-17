@@ -1,5 +1,5 @@
 import React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Logo from "../assets/BannerIMG/Logo.png";
 import { Link } from "react-router-dom";
@@ -125,6 +125,143 @@ const Navbar = ({ userInfo }) => {
   const [cartProductEntities, setcartProductEntities] = useState([]);
   const [accesstoken, setAccesstoken] = useState(getAccessToken());
 
+  // Self-managed user info: supports prop, localStorage cache, and autonomous fetch
+  const getInitialUser = () => {
+    if (userInfo && userInfo.fullname) return userInfo;
+    try {
+      const cached = localStorage.getItem("user_profile");
+      if (cached) return JSON.parse(cached);
+    } catch (e) {}
+    return null;
+  };
+
+  const [currentUser, setCurrentUser] = useState(getInitialUser);
+  const closeTimeoutRef = useRef(null);
+  const dropdownRef = useRef(null);
+
+  // Sync when prop updates
+  useEffect(() => {
+    if (userInfo && userInfo.fullname) {
+      setCurrentUser(userInfo);
+      try {
+        localStorage.setItem("user_profile", JSON.stringify(userInfo));
+      } catch (e) {}
+    }
+  }, [userInfo]);
+
+  // Self-sync user info if token exists and user is not loaded
+  const syncUserInfo = useCallback(async () => {
+    if (getLogout() === 1) {
+      setCurrentUser(null);
+      localStorage.removeItem("user_profile");
+      return;
+    }
+    const token = getAccessToken();
+    if (!token) {
+      setCurrentUser(null);
+      localStorage.removeItem("user_profile");
+      return;
+    }
+
+    try {
+      const res = await axiosClient.get("/auth/info", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.data?.result) {
+        const u = {
+          fullname: res.data.result.fullname,
+          picture: res.data.result.picture,
+        };
+        setCurrentUser(u);
+        try {
+          localStorage.setItem("user_profile", JSON.stringify(u));
+        } catch (e) {}
+      }
+    } catch (err) {
+      if (err?.response?.status === 401) {
+        try {
+          const refreshRes = await axiosClient.get("/auth/refresh_token", {
+            withCredentials: true,
+          });
+          if (refreshRes.data?.statusCode === 200 && refreshRes.data?.result?.accessToken) {
+            setAccessToken(refreshRes.data.result.accessToken);
+            unlogout();
+            setAccesstoken(refreshRes.data.result.accessToken);
+            const retryRes = await axiosClient.get("/auth/info", {
+              headers: { Authorization: `Bearer ${refreshRes.data.result.accessToken}` },
+            });
+            if (retryRes.data?.result) {
+              const u = {
+                fullname: retryRes.data.result.fullname,
+                picture: retryRes.data.result.picture,
+              };
+              setCurrentUser(u);
+              localStorage.setItem("user_profile", JSON.stringify(u));
+            }
+          }
+        } catch (refreshErr) {
+          // Token fully expired
+          setCurrentUser(null);
+          localStorage.removeItem("user_profile");
+        }
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!currentUser || !currentUser.fullname) {
+      syncUserInfo();
+    }
+  }, [pathname, syncUserInfo, currentUser]);
+
+  // Hover & Click buffer handlers
+  const handleMouseEnter = () => {
+    if (!currentUser) return;
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+    setShowAvatarMenu(true);
+  };
+
+  const handleMouseLeave = () => {
+    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+    closeTimeoutRef.current = setTimeout(() => {
+      setShowAvatarMenu(false);
+    }, 220); // 220ms buffer prevents accidental closing when traversing boundary
+  };
+
+  const handleToggleMenu = (e) => {
+    e.stopPropagation();
+    if (!currentUser) return;
+    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+    setShowAvatarMenu((prev) => !prev);
+  };
+
+  // Click outside to dismiss dropdown
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setShowAvatarMenu(false);
+      }
+    };
+    if (showAvatarMenu) {
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("touchstart", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+    };
+  }, [showAvatarMenu]);
+
+  // Clean timer on unmount
+  useEffect(() => {
+    return () => {
+      if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+    };
+  }, []);
+
   const springConfig = { type: "spring", stiffness: 200, damping: 25 };
 
   // Optimized Scroll logic to reduce lag
@@ -199,8 +336,11 @@ const Navbar = ({ userInfo }) => {
     } finally {
       clearAccessToken();
       logout();
+      localStorage.removeItem("user_profile");
       localStorage.removeItem("page_before");
+      setCurrentUser(null);
       setcartProductEntities([]);
+      setShowAvatarMenu(false);
       navigate("/login", { replace: true });
     }
   };
@@ -382,48 +522,66 @@ const Navbar = ({ userInfo }) => {
 
             {/* Profile Dropdown */}
             <div 
+              ref={dropdownRef}
               className="relative"
-              onMouseEnter={() => userInfo && setShowAvatarMenu(true)}
-              onMouseLeave={() => setShowAvatarMenu(false)}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
             >
               <motion.button 
-                onClick={() => userInfo && setShowAvatarMenu(!showAvatarMenu)} 
-                className="flex items-center gap-2 p-1 rounded-full hover:bg-white/5 transition-all"
+                type="button"
+                onClick={handleToggleMenu}
+                aria-expanded={showAvatarMenu}
+                className="flex items-center gap-2 p-1 rounded-full hover:bg-white/5 transition-all cursor-pointer"
               >
-                <div className={`w-8 h-8 rounded-full overflow-hidden flex items-center justify-center border ${navIsLight ? "bg-black/5 border-black/10" : "bg-white/5 border-white/10"}`}>
-                  <UserNavAvatar picture={userInfo?.picture} fullname={userInfo?.fullname} isLight={navIsLight} />
+                <div className={`w-8 h-8 rounded-full overflow-hidden flex items-center justify-center border transition-colors ${navIsLight ? "bg-black/5 border-black/10" : "bg-white/5 border-white/10"}`}>
+                  <UserNavAvatar picture={currentUser?.picture} fullname={currentUser?.fullname} isLight={navIsLight} />
                 </div>
-                {userInfo && <span className={`text-[10px] font-black hidden lg:block uppercase tracking-tighter pr-2 ${navIsLight ? "text-gray-700" : "text-gray-200"}`}>{userInfo.fullname}</span>}
+                {currentUser && (
+                  <span className={`text-[10px] font-black hidden lg:block uppercase tracking-tighter pr-2 select-none ${navIsLight ? "text-gray-700" : "text-gray-200"}`}>
+                    {currentUser.fullname}
+                  </span>
+                )}
               </motion.button>
 
               <AnimatePresence>
-                {userInfo && showAvatarMenu && (
+                {currentUser && showAvatarMenu && (
                   <motion.div 
-                    initial={{ opacity: 0, y: 8, scale: 0.95 }} 
+                    initial={{ opacity: 0, y: 4, scale: 0.98 }} 
                     animate={{ opacity: 1, y: 0, scale: 1 }} 
-                    exit={{ opacity: 0, y: 8, scale: 0.95 }} 
-                    className={`absolute right-0 top-full pt-2 w-64 z-[110]`}
+                    exit={{ opacity: 0, y: 4, scale: 0.98 }} 
+                    transition={{ duration: 0.15 }}
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
+                    className="absolute right-0 top-full pt-2 w-64 z-[9999] pointer-events-auto"
                   >
-                    <div className={`backdrop-blur-3xl rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] border overflow-hidden ${
-                      navIsLight ? "bg-white/98 border-black/5 text-gray-800" : "bg-black/98 border-white/10 text-white"
+                    <div className={`backdrop-blur-3xl rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.35)] border overflow-hidden ${
+                      navIsLight ? "bg-white/98 border-black/10 text-gray-800" : "bg-[#141210]/98 border-white/10 text-white"
                     }`}>
-                      <div className="p-6 border-b border-white/5 bg-white/5">
+                      <div className={`p-5 border-b ${navIsLight ? "border-black/5 bg-black/[0.02]" : "border-white/5 bg-white/[0.02]"}`}>
                         <p className="text-[8px] text-[#D4A373] font-black uppercase tracking-widest mb-1">Elite Member</p>
-                        <p className="text-sm font-black truncate">{userInfo.fullname}</p>
+                        <p className="text-sm font-black truncate">{currentUser.fullname}</p>
                       </div>
                       <div className="p-2 space-y-1">
                         <Link to="/profile" onClick={() => setShowAvatarMenu(false)}>
-                          <div className="flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-2xl transition-all hover:bg-white/5 text-gray-400 hover:text-[#D4A373]">
-                            <FaRegUser size={14} /> Hồ sơ cá nhân
+                          <div className={`flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-2xl transition-all ${
+                            navIsLight ? "text-gray-700 hover:bg-black/5 hover:text-[#b88754]" : "text-gray-300 hover:bg-white/10 hover:text-[#D4A373]"
+                          }`}>
+                            <FaRegUser size={14} className="text-[#D4A373]" /> Hồ sơ cá nhân
                           </div>
                         </Link>
                         <Link to="/change-password" onClick={() => setShowAvatarMenu(false)}>
-                          <div className="flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-2xl transition-all hover:bg-white/5 text-gray-400 hover:text-[#D4A373]">
-                            <FaLock size={14} /> Đổi mật khẩu
+                          <div className={`flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-2xl transition-all ${
+                            navIsLight ? "text-gray-700 hover:bg-black/5 hover:text-[#b88754]" : "text-gray-300 hover:bg-white/10 hover:text-[#D4A373]"
+                          }`}>
+                            <FaLock size={14} className="text-[#D4A373]" /> Đổi mật khẩu
                           </div>
                         </Link>
-                        <div className="h-px bg-white/5 mx-3 my-1" />
-                        <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 text-sm font-black text-red-400 hover:bg-red-500/10 rounded-2xl transition-all text-left">
+                        <div className={`h-px mx-3 my-1 ${navIsLight ? "bg-black/5" : "bg-white/5"}`} />
+                        <button 
+                          type="button"
+                          onClick={handleLogout} 
+                          className="w-full flex items-center gap-3 px-4 py-3 text-sm font-black text-red-500 hover:bg-red-500/10 rounded-2xl transition-all text-left cursor-pointer"
+                        >
                           <TfiClose size={14} /> Đăng xuất
                         </button>
                       </div>
@@ -433,7 +591,11 @@ const Navbar = ({ userInfo }) => {
               </AnimatePresence>
             </div>
 
-            {!userInfo && <Link to="/login" className={`text-xs font-black px-4 py-2 rounded-full border transition-all ${navIsLight ? "border-black/10 text-gray-800 hover:bg-black/5" : "border-white/10 text-white hover:bg-white/5"}`}>LOGIN</Link>}
+            {!currentUser && (
+              <Link to="/login" className={`text-xs font-black px-4 py-2 rounded-full border transition-all ${navIsLight ? "border-black/10 text-gray-800 hover:bg-black/5" : "border-white/10 text-white hover:bg-white/5"}`}>
+                LOGIN
+              </Link>
+            )}
 
             {/* Mobile Burger */}
             <motion.button
@@ -476,13 +638,13 @@ const Navbar = ({ userInfo }) => {
               
               <div className="p-6 flex-1 overflow-y-auto">
                 <div className="mb-10 p-6 bg-white/5 rounded-[2rem] border border-white/5 text-center">
-                  {userInfo ? (
+                  {currentUser ? (
                     <>
                       <div className="relative w-20 h-20 mx-auto mb-4 border-2 border-[#D4A373] rounded-full p-1 overflow-hidden">
-                        <UserNavAvatar picture={userInfo.picture} fullname={userInfo.fullname} isLight={false} textClass="text-2xl" />
+                        <UserNavAvatar picture={currentUser.picture} fullname={currentUser.fullname} isLight={false} textClass="text-2xl" />
                         <div className="absolute bottom-0 right-0 w-5 h-5 bg-green-500 border-2 border-[#0a0a0a] rounded-full"></div>
                       </div>
-                      <p className="font-black text-xl text-white tracking-tight">{userInfo.fullname}</p>
+                      <p className="font-black text-xl text-white tracking-tight">{currentUser.fullname}</p>
                       <p className="text-[9px] text-[#D4A373] font-black uppercase tracking-[0.2em] mt-2">Elite Member</p>
                     </>
                   ) : (
@@ -507,9 +669,15 @@ const Navbar = ({ userInfo }) => {
                     </Link>
                   ))}
                   
-                  {userInfo && (
+                  {currentUser && (
                     <>
                       <div className="h-px bg-white/5 my-6 mx-4" />
+                      <Link to="/profile" onClick={() => setOpenbarMenu(false)}>
+                        <div className="flex items-center gap-5 p-5 rounded-2xl hover:bg-white/5 text-gray-300 font-bold transition-all">
+                          <FaRegUser className="text-[#D4A373] text-2xl" />
+                          <span className="text-base tracking-tight uppercase">Hồ sơ cá nhân</span>
+                        </div>
+                      </Link>
                       <Link to="/change-password" onClick={() => setOpenbarMenu(false)}>
                         <div className="flex items-center gap-5 p-5 rounded-2xl hover:bg-white/5 text-gray-300 font-bold transition-all">
                           <FaLock className="text-[#D4A373] text-2xl" />
