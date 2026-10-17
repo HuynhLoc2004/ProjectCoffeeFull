@@ -71,6 +71,34 @@ const SearchInput = ({ isPastBanner, valuesearch, HandlevalueInput, setFocus }) 
   );
 };
 
+const UserNavAvatar = ({ picture, fullname, isLight, textClass = "text-xs" }) => {
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    setHasError(false);
+  }, [picture]);
+
+  if (picture && !hasError) {
+    return (
+      <img
+        src={picture}
+        alt={fullname || "User avatar"}
+        referrerPolicy="no-referrer"
+        onError={() => setHasError(true)}
+        className="w-full h-full object-cover rounded-full"
+      />
+    );
+  }
+
+  const initial = fullname ? fullname.trim().charAt(0).toUpperCase() : null;
+
+  return (
+    <div className={`w-full h-full rounded-full flex items-center justify-center font-black bg-[#d4a373] text-white ${textClass} select-none shadow-sm`}>
+      {initial || <FaRegUser size={12} />}
+    </div>
+  );
+};
+
 const Navbar = ({ userInfo }) => {
   const { theme, toggleTheme } = useTheme();
   const menuLinks = [
@@ -363,7 +391,7 @@ const Navbar = ({ userInfo }) => {
                 className="flex items-center gap-2 p-1 rounded-full hover:bg-white/5 transition-all"
               >
                 <div className={`w-8 h-8 rounded-full overflow-hidden flex items-center justify-center border ${navIsLight ? "bg-black/5 border-black/10" : "bg-white/5 border-white/10"}`}>
-                  {userInfo?.picture ? <img src={userInfo.picture} className="w-full h-full object-cover" /> : <FaRegUser className={navIsLight ? "text-gray-400" : "text-white/40"} />}
+                  <UserNavAvatar picture={userInfo?.picture} fullname={userInfo?.fullname} isLight={navIsLight} />
                 </div>
                 {userInfo && <span className={`text-[10px] font-black hidden lg:block uppercase tracking-tighter pr-2 ${navIsLight ? "text-gray-700" : "text-gray-200"}`}>{userInfo.fullname}</span>}
               </motion.button>
@@ -450,8 +478,8 @@ const Navbar = ({ userInfo }) => {
                 <div className="mb-10 p-6 bg-white/5 rounded-[2rem] border border-white/5 text-center">
                   {userInfo ? (
                     <>
-                      <div className="relative w-20 h-20 mx-auto mb-4">
-                        <img src={userInfo.picture || "https://via.placeholder.com/150"} className="w-full h-full rounded-full object-cover border-2 border-[#D4A373] p-1" alt="" />
+                      <div className="relative w-20 h-20 mx-auto mb-4 border-2 border-[#D4A373] rounded-full p-1 overflow-hidden">
+                        <UserNavAvatar picture={userInfo.picture} fullname={userInfo.fullname} isLight={false} textClass="text-2xl" />
                         <div className="absolute bottom-0 right-0 w-5 h-5 bg-green-500 border-2 border-[#0a0a0a] rounded-full"></div>
                       </div>
                       <p className="font-black text-xl text-white tracking-tight">{userInfo.fullname}</p>

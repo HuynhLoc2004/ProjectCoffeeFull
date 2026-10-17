@@ -241,11 +241,16 @@ const Profile = () => {
                   src={userEntity.picture}
                   alt="Avatar"
                   className="profile-main-avatar"
+                  referrerPolicy="no-referrer"
                   onError={() => setImgError(true)}
                 />
               ) : (
-                <div className="profile-default-avatar">
-                  <CiUser className="default-user-icon" />
+                <div className="profile-default-avatar font-black text-3xl select-none text-white">
+                  {userEntity?.fullname ? (
+                    userEntity.fullname.trim().charAt(0).toUpperCase()
+                  ) : (
+                    <CiUser className="default-user-icon" />
+                  )}
                 </div>
               )}
 
