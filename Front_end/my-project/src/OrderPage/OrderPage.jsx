@@ -1,27 +1,47 @@
-import React, { useState, useMemo, useEffect, useCallback } from "react";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { motion } from "framer-motion";
+import React, { useState, useMemo, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  Coffee, 
+  ShoppingBag, 
+  CreditCard, 
+  ArrowLeft, 
+  Check, 
+  Plus, 
+  Minus, 
+  Sparkles, 
+  ShieldCheck, 
+  Clock, 
+  Flame
+} from "lucide-react";
+import "./OrderPage.css";
 import "../src/Animation.css";
-import SizeSelector from "../Components/ComponentOrder/SizeSelector";
-import ToppingSelector from "../Components/ComponentOrder/ToppingSelector";
-import QuantitySelector from "../Components/ComponentOrder/QuantitySelector";
 import axiosClient from "../AxiosClient";
 import Navbar from "../Components/Navbar";
-import { unlogout, logout, getLogout } from "../ManagerLogout/ManagerLogout";
+import { unlogout, getLogout } from "../ManagerLogout/ManagerLogout";
 import {
   getAccessToken,
   setAccessToken,
 } from "../ManagerAccessToken/ManagerAccessToken";
-const NAV_HEIGHT = 80;
-
 import {
   setCheckAddProduct,
   getCheckAddProduct,
 } from "../ManagerAddCartProduct/ManagerAddCartProduct";
+
+const NAV_HEIGHT = 80;
+
 const SIZE_PRICE = {
   S: 0,
   M: 5000,
   L: 8000,
+};
+
+const CATEGORY_FALLBACKS = {
+  coffee: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&q=80&w=800",
+  "milk-tea": "https://images.unsplash.com/photo-1558857563-b37cf537b0d7?auto=format&fit=crop&q=80&w=800",
+  cake: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&q=80&w=800",
+  americano: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&q=80&w=800",
+  default: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=800",
 };
 
 const OrderPage = () => {
@@ -36,20 +56,27 @@ const OrderPage = () => {
   const [accessToken, setAccesstoken] = useState(getAccessToken());
   const [showSuccess, setShowSuccess] = useState(false);
   const [availableToppings, setAvailableToppings] = useState(null);
-  const [checkaddcartProduct, setCheckaddcartProduct] =
-    useState(getCheckAddProduct());
-  // Reset quantity to 1 when size changes
-  console.log(getCheckAddProduct());
+  const [imgSrc, setImgSrc] = useState(null);
+
   const handleSizeChange = (newSize) => {
     setSize(newSize);
-    setQuantity(1); // Reset quantity to 1
+    setQuantity(1);
   };
-  const flyToCartAnimation = (imageSrc) => {
+
+  const toggleTopping = (topping) => {
+    const isSelected = toppings.some((t) => t.id === topping.id);
+    if (isSelected) {
+      setToppings(toppings.filter((t) => t.id !== topping.id));
+    } else {
+      setToppings([...toppings, topping]);
+    }
+  };
+
+  const flyToCartAnimation = (imageSource) => {
     const cartIcon = document.getElementById("cart-icon");
-    const startElement = document.getElementById("product-image"); // Add an ID to the product image container
+    const startElement = document.getElementById("product-image");
 
     if (!cartIcon || !startElement) {
-      console.error("Cart icon or start element not found!");
       return;
     }
 
@@ -57,10 +84,9 @@ const OrderPage = () => {
     const cartRect = cartIcon.getBoundingClientRect();
 
     const flyingImage = document.createElement("img");
-    flyingImage.src = imageSrc;
+    flyingImage.src = imageSource || CATEGORY_FALLBACKS.default;
     flyingImage.className = "flying-image";
 
-    // Set initial position
     flyingImage.style.left = `${startRect.left + startRect.width / 2 - 25}px`;
     flyingImage.style.top = `${startRect.top + startRect.height / 2 - 25}px`;
     flyingImage.style.width = "50px";
@@ -68,7 +94,6 @@ const OrderPage = () => {
 
     document.body.appendChild(flyingImage);
 
-    // Animate to cart
     setTimeout(() => {
       const startCenter = {
         x: startRect.left + startRect.width / 2,
@@ -86,12 +111,10 @@ const OrderPage = () => {
       flyingImage.style.width = "20px";
       flyingImage.style.height = "20px";
       flyingImage.style.opacity = "0.5";
-    }, 10); // Small delay to ensure transition triggers
+    }, 10);
 
-    // Remove the element after animation
     flyingImage.addEventListener("transitionend", () => {
       flyingImage.remove();
-      // Optional: Add a little jiggle to the cart icon
       cartIcon.style.transform = "scale(1.2)";
       setTimeout(() => {
         cartIcon.style.transform = "scale(1)";
@@ -99,7 +122,7 @@ const OrderPage = () => {
     });
   };
 
-  const handleCheckout = (e) => {
+  const handleCheckout = () => {
     navigate("/checkout", {
       state: {
         product: product,
@@ -107,13 +130,13 @@ const OrderPage = () => {
         toppings: toppings,
         quantity: quantity,
         totalPrice: totalPrice,
-        type: "ORDER_NOW"
-      }
+        type: "ORDER_NOW",
+      },
     });
   };
 
-  const handleAddToCart = (e) => {
-    flyToCartAnimation(product.img);
+  const handleAddToCart = () => {
+    flyToCartAnimation(imgSrc || product.img);
     const cartRequest = {
       productId: product.id,
       size: _size,
@@ -129,67 +152,53 @@ const OrderPage = () => {
         },
       })
       .then((res) => {
-        if (res.data.statusCode == 201) {
-          console.log(res);
+        if (res.data.statusCode === 201) {
           setCheckAddProduct(1);
-          setCheckaddcartProduct((prev) => prev + 1);
           setShowSuccess(true);
-          setTimeout(() => setShowSuccess(false), 2000);
+          setTimeout(() => setShowSuccess(false), 2400);
         }
       })
       .catch((err) => {
-        if (err.status == 401) {
-          console.log(err);
-        }
+        console.error("Add to cart error:", err);
       });
   };
+
   useEffect(() => {
     localStorage.setItem(
       "page_before",
       window.location.pathname + window.location.search,
     );
-  });
+  }, []);
+
   useEffect(() => {
     axiosClient
       .get("/auth/info", {
         headers: {
           Authorization: `Bearer ${getAccessToken()}`,
-          withCredentials: getLogout() == 1 ? true : false,
         },
       })
       .then((res) => {
-        setInfoUser({
-          fullname: res.data.result.fullname,
-          picture: res.data.result.picture,
-        });
+        if (res.data?.result) {
+          setInfoUser({
+            fullname: res.data.result.fullname,
+            picture: res.data.result.picture,
+          });
+        }
       })
       .catch((err) => {
-        if (err.status == 401) {
+        if (err.status === 401) {
           axiosClient
             .get("/auth/refresh_token", {
               withCredentials: true,
             })
             .then((res) => {
-              if (res.data.statusCode == 401) {
-                localStorage.setItem(
-                  "page_before",
-                  window.location.pathname + window.location.search,
-                );
-                navigate("/login");
+              if (res.data.statusCode === 200) {
+                unlogout();
+                setAccessToken(res.data.result.accessToken);
+                setAccesstoken(res.data.result.accessToken);
               }
-              unlogout();
-              setAccessToken(res.data.result.accessToken);
-              setAccesstoken(res.data.result.accessToken);
             })
-            .catch((err) => {
-              if (err.status == 401) {
-                localStorage.setItem(
-                  "page_before",
-                  window.location.pathname + window.location.search,
-                );
-                navigate("/login");
-              }
-            });
+            .catch(() => {});
         }
       });
   }, [accessToken]);
@@ -198,13 +207,15 @@ const OrderPage = () => {
     axiosClient
       .get(`product/getProductById?id=${product_id}`)
       .then((res) => {
-        if (res.data.statusCode == 200) {
-          setAvailableToppings(res.data.result.toppingEntities || []);
-          setProduct(res.data.result);
+        if (res.data.statusCode === 200 && res.data.result) {
+          const item = res.data.result;
+          setAvailableToppings(item.toppingEntities || []);
+          setProduct(item);
+          setImgSrc(item.img || CATEGORY_FALLBACKS[item.category] || CATEGORY_FALLBACKS.default);
         }
       })
       .catch((err) => {
-        console.error(err);
+        console.error("Failed to fetch product:", err);
       });
   }, [product_id]);
 
@@ -222,219 +233,289 @@ const OrderPage = () => {
       ? product.price
       : product.sale
     : 0;
-  const totalPrice = product
-    ? (basePrice + (SIZE_PRICE[_size] || 0) + toppingExtra) * quantity
-    : -1;
+
+  const unitPrice = product ? basePrice + (SIZE_PRICE[_size] || 0) + toppingExtra : 0;
+  const totalPrice = unitPrice * quantity;
 
   if (!product) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-gray-500">
-        Đang tải sản phẩm...
+      <div className="min-h-screen flex items-center justify-center bg-[var(--page)] text-[var(--muted)]">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-3 border-[#d4a373] border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm font-semibold">Đang tải hương vị cà phê...</p>
+        </div>
       </div>
     );
   }
+
+  const fallbackImage = CATEGORY_FALLBACKS[product.category] || CATEGORY_FALLBACKS.default;
 
   return (
     <>
       <Navbar userInfo={infoUser} />
       <div
-        className="order-page page-shell min-h-screen"
-        style={{ paddingTop: NAV_HEIGHT }}
+        className="order-page-wrapper page-shell min-h-screen"
+        style={{ paddingTop: NAV_HEIGHT + 16, paddingBottom: 60 }}
       >
-        <div className="container mx-auto px-4 py-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="w-full max-w-6xl mx-auto"
-          >
-            {/* MAIN GRID */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16 items-start">
-              {/* LEFT - PRODUCT IMAGE AND DETAILS */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1, duration: 0.5 }}
-                className="flex flex-col lg:sticky lg:top-32 h-fit w-full"
-              >
-                <div
-                  id="product-image"
-                  className="relative w-full aspect-square overflow-hidden rounded-[2.5rem] mb-8 bg-gradient-to-br from-gray-50 to-gray-200/50 shadow-inner border border-white/40"
-                >
-                  <motion.img
-                    animate={{ translateY: ["0%", "-2%", "0%"] }}
-                    transition={{
-                      duration: 5,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                    }}
-                    src={product.img}
+        <div className="container mx-auto px-4 max-w-6xl">
+          {/* Top Breadcrumb & Back */}
+          <div className="mb-6 flex items-center justify-between">
+            <button
+              onClick={() => navigate("/product")}
+              className="order-back-link"
+            >
+              <ArrowLeft size={16} />
+              <span>Quay lại thực đơn</span>
+            </button>
+            <span className="text-xs uppercase font-extrabold tracking-wider px-3 py-1 rounded-full bg-[var(--order-accent-soft)] text-[var(--order-accent)] border border-[var(--order-accent-border)]">
+              {product.category === "coffee" ? "Cà phê đặc sản" : product.category === "cake" ? "Bánh tươi mỗi ngày" : "Thức uống chọn lọc"}
+            </span>
+          </div>
+
+          {/* MAIN 2-COLUMN BALANCED GRID */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            {/* ================= LEFT: SHOWCASE (5 Cols) ================= */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.45 }}
+              className="lg:col-span-5 flex flex-col gap-6 lg:sticky lg:top-28"
+            >
+              <div className="order-glass-card p-5 sm:p-6 flex flex-col gap-5">
+                {/* Image Frame */}
+                <div id="product-image" className="order-image-frame shadow-md">
+                  <img
+                    src={imgSrc || fallbackImage}
                     alt={product.name}
-                    className="w-full h-full object-contain p-6 md:p-12 drop-shadow-2xl"
+                    onError={() => setImgSrc(fallbackImage)}
+                    className="select-none"
+                    loading="eager"
                   />
+                  {product.sale != null && (
+                    <div className="absolute top-4 left-4 z-10 flex items-center gap-1 bg-red-500 text-white text-[11px] font-black px-3 py-1 rounded-full uppercase tracking-wider shadow-lg">
+                      <Flame size={12} />
+                      <span>Sale</span>
+                    </div>
+                  )}
                 </div>
 
-                <div className="space-y-4 text-center lg:text-left px-2">
-                  <h1 className="text-4xl md:text-6xl font-black text-gray-900 tracking-tighter leading-[0.9]">
+                {/* Product Name & Description */}
+                <div>
+                  <h1 className="font-serif text-2xl sm:text-3xl font-extrabold text-[var(--order-text-title)] tracking-tight leading-tight">
                     {product.name}
                   </h1>
-                  <p className="text-sm md:text-lg text-gray-500 max-w-xl mx-auto lg:mx-0 leading-relaxed font-medium">
-                    {product.description}
+                  <p className="text-sm text-[var(--order-text-muted)] leading-relaxed mt-2 line-clamp-3">
+                    {product.description || "Hương vị cà phê nguyên bản được pha chế từ những hạt cà phê hảo hạng, đậm đà và thơm lừng."}
                   </p>
-                  <div className="pt-4 flex flex-col items-center lg:items-start">
-                    <span className="text-[10px] md:text-xs uppercase tracking-[0.3em] text-[#D4A373] font-black mb-1">
-                      Giá khởi điểm
+                </div>
+
+                {/* Price Tag */}
+                <div className="pt-3 border-t border-[var(--order-border)] flex items-baseline justify-between">
+                  <span className="text-xs font-bold uppercase tracking-wider text-[var(--order-text-muted)]">
+                    Giá khởi điểm
+                  </span>
+                  <div className="flex items-baseline gap-2">
+                    {product.sale != null && (
+                      <span className="text-sm text-gray-400 line-through font-medium">
+                        {product.price.toLocaleString("vi-VN")}đ
+                      </span>
+                    )}
+                    <span className="text-2xl sm:text-3xl font-black text-[var(--order-accent)]">
+                      {(product.sale != null ? product.sale : product.price).toLocaleString("vi-VN")}đ
                     </span>
-                    <p className="text-5xl md:text-7xl font-black text-[#1a1a1a] tracking-tighter">
-                      {product.sale == null
-                        ? product.price.toLocaleString()
-                        : product.sale.toLocaleString()}
-                      <span className="text-2xl md:text-3xl ml-1">đ</span>
+                  </div>
+                </div>
+
+                {/* Highlights */}
+                <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[var(--order-border)] text-center text-[11px] font-bold text-[var(--order-text-muted)]">
+                  <div className="flex flex-col items-center gap-1 p-2 rounded-xl bg-[var(--order-field-bg)]">
+                    <Coffee size={14} className="text-[var(--order-accent)]" />
+                    <span>Pha tươi</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1 p-2 rounded-xl bg-[var(--order-field-bg)]">
+                    <Clock size={14} className="text-[var(--order-accent)]" />
+                    <span>Giao 15-30p</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1 p-2 rounded-xl bg-[var(--order-field-bg)]">
+                    <ShieldCheck size={14} className="text-[var(--order-accent)]" />
+                    <span>Chuẩn vị</span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* ================= RIGHT: CONSOLE (7 Cols) ================= */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.45 }}
+              className="lg:col-span-7 flex flex-col gap-4"
+            >
+              <div className="order-glass-card p-6 sm:p-8 flex flex-col">
+                <div className="flex items-center justify-between pb-5 mb-5 border-b border-[var(--order-border)]">
+                  <div>
+                    <h2 className="text-xl sm:text-2xl font-black text-[var(--order-text-title)] tracking-tight">
+                      Tùy Chỉnh Đơn Hàng
+                    </h2>
+                    <p className="text-xs text-[var(--order-text-muted)] mt-0.5">
+                      Chọn size, topping và số lượng cho ly nước của bạn
                     </p>
                   </div>
-                </div>
-              </motion.div>
-
-              {/* RIGHT - CUSTOMIZATION & CHECKOUT */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2, duration: 0.5 }}
-                className="flex flex-col space-y-8 w-full items-center lg:items-stretch"
-              >
-                {/* Customization Card */}
-                <div className="bg-white rounded-[2rem] shadow-xl shadow-gray-200/50 border border-gray-100 p-6 md:p-10 space-y-8 w-full flex flex-col items-center lg:items-stretch">
-                  <h2 className="text-2xl md:text-3xl font-black text-gray-900 border-b border-gray-100 pb-6 tracking-tight w-full text-center lg:text-left">
-                    Tùy Chỉnh
-                  </h2>
-
-                  {product.category !== "cake" && (
-                    <div className="w-full flex flex-col items-center lg:items-start">
-                      <label className="block text-lg font-bold text-gray-900 mb-4 tracking-tight">
-                        📏 Chọn Size
-                      </label>
-                      <div className="flex justify-center lg:justify-start w-full">
-                        <SizeSelector
-                          _size={_size}
-                          setSize={handleSizeChange}
-                          listSize={product.sizeEntitySet}
-                        />
-                      </div>
-                    </div>
-                  )}
-
-                  {product.category !== "cake" && (
-                    <div className="w-full flex flex-col items-center lg:items-start">
-                      <label className="block text-lg font-bold text-gray-900 mb-4 tracking-tight">
-                        ✨ Thêm Topping
-                      </label>
-                      <div className="bg-slate-50 rounded-[1.5rem] p-4 h-56 overflow-y-auto border border-gray-100 w-full">
-                        <ToppingSelector
-                          availableToppings={availableToppings}
-                          selectedToppings={toppings}
-                          setSelectedToppings={setToppings}
-                        />
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="w-full flex flex-col items-center lg:items-start">
-                    <label className="block text-lg font-bold text-gray-900 mb-4 tracking-tight">
-                      🛒 Số lượng
-                    </label>
-                    <div className="flex justify-center lg:justify-start w-full">
-                      <QuantitySelector
-                        quantity={quantity}
-                        setQuantity={setQuantity}
-                      />
-                    </div>
+                  <div className="hidden sm:flex items-center gap-1 text-xs font-bold text-[var(--order-accent)] bg-[var(--order-accent-soft)] px-3 py-1.5 rounded-full border border-[var(--order-accent-border)]">
+                    <Sparkles size={13} />
+                    <span>Tùy chỉnh riêng</span>
                   </div>
                 </div>
 
-                {/* Summary Card */}
-                <div className="bg-white rounded-[2rem] shadow-xl shadow-gray-200/50 border border-gray-100 p-6 md:p-10 space-y-6 w-full">
-                  <h2 className="text-2xl md:text-3xl font-black text-gray-900 border-b border-gray-100 pb-6 tracking-tight text-center lg:text-left">
-                    Tóm Tắt Đơn Hàng
-                  </h2>
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center text-gray-600 font-medium">
-                      <span>Giá sản phẩm:</span>
-                      <span className="text-gray-900 font-bold">
-                        {(product.sale == null
-                          ? product.price * quantity
-                          : product.sale * quantity
-                        ).toLocaleString()}
-                        đ
-                      </span>
+                {/* SECTION 1: CHỌN SIZE */}
+                {product.category !== "cake" && (
+                  <div className="order-console-section">
+                    <div className="order-section-title">
+                      <Coffee size={16} />
+                      <span>Chọn Size</span>
                     </div>
-                    {toppings.length > 0 && (
-                      <div className="flex justify-between items-center text-gray-600 font-medium">
-                        <span>Topping:</span>
-                        <span className="text-gray-900 font-bold">
-                          {toppingExtra.toLocaleString()}đ
-                        </span>
-                      </div>
-                    )}
-                    {_size !== "S" && (
-                      <div className="flex justify-between items-center text-gray-600 font-medium">
-                        <span>
-                          Phụ thu Size ({_size}):
-                        </span>
-                        <span className="text-gray-900 font-bold">
-                          {(SIZE_PRICE[_size] * quantity).toLocaleString()}đ
-                        </span>
-                      </div>
-                    )}
+                    <div className="order-size-grid">
+                      {(product.sizeEntitySet && product.sizeEntitySet.length > 0
+                        ? product.sizeEntitySet
+                        : [
+                            { id: 1, size: "S", price_size: 0 },
+                            { id: 2, size: "M", price_size: 5000 },
+                            { id: 3, size: "L", price_size: 8000 },
+                          ]
+                      ).map((item) => {
+                        const active = _size === item.size;
+                        return (
+                          <button
+                            key={item.id}
+                            type="button"
+                            onClick={() => handleSizeChange(item.size)}
+                            className={`order-size-btn ${active ? "active" : ""}`}
+                          >
+                            <span className="order-size-name">{item.size}</span>
+                            <span className="order-size-price">
+                              {item.price_size > 0
+                                ? `+${(item.price_size / 1000).toFixed(0)}k`
+                                : "Cơ bản"}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
-                  <div className="flex justify-between items-center text-2xl md:text-3xl font-black pt-6 border-t-2 border-dashed border-gray-100">
-                    <span>Tổng cộng:</span>
-                    <span className="text-[#D4A373]">
-                      {totalPrice.toLocaleString()}đ
-                    </span>
-                  </div>
-                </div>
-
-                {/* Success Message */}
-                {showSuccess && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="bg-green-50 border-2 border-green-200 rounded-xl p-4 text-center text-base font-semibold text-green-700"
-                  >
-                    ✅ Thêm vào giỏ hàng thành công!
-                  </motion.div>
                 )}
 
-                {/* Action Buttons */}
-                <div className="space-y-3 pt-4">
+                {/* SECTION 2: CHỌN TOPPING */}
+                {product.category !== "cake" && availableToppings && availableToppings.length > 0 && (
+                  <div className="order-console-section">
+                    <div className="order-section-title">
+                      <Sparkles size={16} />
+                      <span>Thêm Topping ({toppings.length} đã chọn)</span>
+                    </div>
+                    <div className="order-topping-grid">
+                      {availableToppings.map((t) => {
+                        const selected = toppings.some((item) => item.id === t.id);
+                        return (
+                          <div
+                            key={t.id}
+                            onClick={() => toggleTopping(t)}
+                            className={`order-topping-card ${selected ? "active" : ""}`}
+                          >
+                            {selected && (
+                              <div className="order-topping-check">
+                                <Check size={12} strokeWidth={3} />
+                              </div>
+                            )}
+                            <span className="order-topping-name truncate w-full">
+                              {t.nameTopping}
+                            </span>
+                            <span className="order-topping-price">
+                              +{t.price_topping.toLocaleString("vi-VN")}đ
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* SECTION 3: SỐ LƯỢNG & TỔNG TIỀN TRỰC TIẾP */}
+                <div className="order-bottom-bar">
+                  <div className="flex flex-col gap-1.5">
+                    <span className="order-total-label">Số lượng</span>
+                    <div className="order-stepper">
+                      <button
+                        type="button"
+                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                        className="order-stepper-btn"
+                        aria-label="Giảm"
+                      >
+                        <Minus size={15} strokeWidth={2.5} />
+                      </button>
+                      <span className="order-stepper-value">{quantity}</span>
+                      <button
+                        type="button"
+                        onClick={() => setQuantity(quantity + 1)}
+                        className="order-stepper-btn"
+                        aria-label="Tăng"
+                      >
+                        <Plus size={15} strokeWidth={2.5} />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="order-total-block">
+                    <span className="order-total-label">Tổng cộng</span>
+                    <div className="order-total-price">
+                      {totalPrice.toLocaleString("vi-VN")}
+                      <span className="text-lg ml-0.5">đ</span>
+                    </div>
+                    {quantity > 1 && (
+                      <span className="text-[11px] font-semibold text-[var(--order-text-muted)] block">
+                        ({unitPrice.toLocaleString("vi-VN")}đ / ly)
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* SUCCESS NOTIFICATION */}
+                <AnimatePresence>
+                  {showSuccess && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -6 }}
+                      className="mb-4 p-3 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 font-bold text-sm flex items-center justify-center gap-2"
+                    >
+                      <Check size={16} strokeWidth={3} />
+                      <span>Đã thêm vào giỏ hàng thành công!</span>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* SECTION 4: ACTIONS */}
+                <div className="order-actions-grid">
                   <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={(e) => handleCheckout(e)}
-                    className="w-full py-4 text-lg rounded-xl bg-[#b88754] text-white font-bold shadow-lg hover:bg-[#a57648] hover:shadow-xl transition-all"
+                    whileTap={{ scale: 0.97 }}
+                    onClick={handleAddToCart}
+                    className="order-btn-secondary"
                   >
-                    💳 Thanh toán ngay
+                    <ShoppingBag size={18} />
+                    <span>Thêm vào giỏ</span>
                   </motion.button>
+
                   <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={(e) => handleAddToCart(e)}
-                    className="w-full py-3 rounded-xl bg-black text-white font-bold shadow-md hover:shadow-lg transition-all"
+                    whileTap={{ scale: 0.97 }}
+                    onClick={handleCheckout}
+                    className="order-btn-primary"
                   >
-                    🛒 Thêm vào giỏ
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ y: -2 }}
-                    whileTap={{ y: 1 }}
-                    onClick={() => navigate("/product")}
-                    className="w-full py-3 rounded-xl text-gray-600 font-semibold hover:bg-gray-100 transition-all"
-                  >
-                    ← Quay lại trang sản phẩm
+                    <CreditCard size={18} />
+                    <span>Thanh toán ngay</span>
                   </motion.button>
                 </div>
-              </motion.div>
-            </div>
-          </motion.div>
+              </div>
+            </motion.div>
+          </div>
         </div>
       </div>
     </>
