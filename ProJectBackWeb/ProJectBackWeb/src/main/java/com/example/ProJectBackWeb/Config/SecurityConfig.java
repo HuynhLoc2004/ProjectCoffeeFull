@@ -179,8 +179,8 @@ public class SecurityConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedMethods("GET" , "POST" , "DELETE" , "PUT")
-                .allowedOrigins(getAllowedOrigins().toArray(String[]::new))
+                .allowedMethods("GET" , "POST" , "DELETE" , "PUT", "OPTIONS", "PATCH")
+                .allowedOriginPatterns("https://*.vercel.app", "https://thecoffeechill.vercel.app", "http://localhost*", "http://127.0.0.1*")
                 .allowedHeaders("*")
                 .allowCredentials(true);
     }
@@ -188,7 +188,15 @@ public class SecurityConfig implements WebMvcConfigurer {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(getAllowedOrigins());
+        config.setAllowedOriginPatterns(List.of(
+                "https://*.vercel.app",
+                "https://thecoffeechill.vercel.app",
+                "http://localhost*",
+                "http://127.0.0.1*"
+        ));
+        for (String origin : getAllowedOrigins()) {
+            config.addAllowedOriginPattern(origin);
+        }
         config.setAllowCredentials(true);
         config.setAllowedHeaders(List.of("*"));
         config.setAllowedMethods(List.of("GET", "POST", "DELETE", "PUT", "OPTIONS", "PATCH"));
