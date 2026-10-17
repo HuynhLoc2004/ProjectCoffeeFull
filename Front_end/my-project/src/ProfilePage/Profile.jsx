@@ -230,12 +230,12 @@ const Profile = () => {
   };
 
   return (
-    <div>
+    <div className="min-h-screen">
       <Navbar userInfo={infoUser}></Navbar>
-      <div className="profile-page-container page-shell pt-8">
+      <div className="profile-page-container">
         <div className="profile-sidebar">
           <div className="profile-user-info">
-            <div className="avatar-container" onClick={handleUploadClick}>
+            <div className="avatar-container" onClick={handleUploadClick} title="Bấm để đổi ảnh đại diện">
               {userEntity?.picture && !imgError ? (
                 <img
                   src={userEntity.picture}
@@ -256,8 +256,9 @@ const Profile = () => {
                 </div>
               </div>
             </div>
-            <h2 className="profile-main-name">{userEntity.fullname}</h2>
+            <h2 className="profile-main-name">{userEntity.fullname || "Khách Hàng"}</h2>
             <p className="profile-main-email">{userEntity.email}</p>
+            <div className="profile-badge-pill">☕ Thành viên Thân Thiết</div>
             <input
               type="file"
               ref={fileInputRef}
@@ -271,19 +272,22 @@ const Profile = () => {
               className={`nav-button ${activeTab === "profile" ? "active" : ""}`}
               onClick={() => setActiveTab("profile")}
             >
-              Thông Tin Cá Nhân
+              <CiUser className="nav-button-icon" />
+              <span>Thông Tin Cá Nhân</span>
             </button>
             <button
               className={`nav-button ${activeTab === "history" ? "active" : ""}`}
               onClick={() => setActiveTab("history")}
             >
-              Lịch Sử Mua Hàng
+              <HiOutlineReceiptTax className="nav-button-icon" />
+              <span>Lịch Sử Mua Hàng</span>
             </button>
             <button
               className={`nav-button ${activeTab === "status" ? "active" : ""}`}
               onClick={() => setActiveTab("status")}
             >
-              Trạng Thái Đơn Hàng
+              <CiClock2 className="nav-button-icon" />
+              <span>Trạng Thái Đơn Hàng</span>
             </button>
           </nav>
         </div>
@@ -315,11 +319,11 @@ const ProfileInfo = ({
   return (
     <div className="content-section">
       <div className="section-header">
-        <h2>Hồ Sơ Của Tôi</h2>
-        <div
-          className="action-buttons-group"
-          style={{ display: "flex", gap: "10px" }}
-        >
+        <div className="section-header-left">
+          <h2>Hồ Sơ Của Tôi</h2>
+          <p className="section-subtitle">Quản lý thông tin hồ sơ và địa chỉ giao hàng</p>
+        </div>
+        <div className="action-buttons-group">
           {isEditing ? (
             <>
               <button
@@ -340,12 +344,8 @@ const ProfileInfo = ({
                       },
                     )
                     .then((res) => {
-                      if (res.data.statusCode == 204) {
-                        setIsEditing(!isEditing);
-                        setEmail("");
-                        setPhone("");
-                        setAddress("");
-                        setFullname("");
+                      if (res.data.statusCode == 204 || res.data.statusCode == 200) {
+                        setIsEditing(false);
                         localStorage.setItem(
                           "page_before",
                           window.location.pathname + window.location.search,
@@ -362,15 +362,11 @@ const ProfileInfo = ({
                 }}
                 className="action-button save-btn"
               >
-                Lưu
+                Lưu Thay Đổi
               </button>
               <button
                 onClick={() => {
-                  setIsEditing(!isEditing);
-                  setEmail("");
-                  setPhone("");
-                  setAddress("");
-                  setFullname("");
+                  setIsEditing(false);
                 }}
                 className="action-button cancel-btn"
               >
@@ -380,10 +376,10 @@ const ProfileInfo = ({
           ) : (
             <button
               onClick={() => {
-                setFullname("");
-                setEmail("");
-                setPhone("");
-                setAddress("");
+                setFullname(user.fullname || "");
+                setEmail(user.email || "");
+                setPhone(user.phone || "");
+                setAddress(user.address || "");
                 setIsEditing(true);
               }}
               className="action-button edit-btn"
@@ -400,13 +396,12 @@ const ProfileInfo = ({
             <input
               type="text"
               name="name"
+              placeholder="Nhập họ và tên..."
               value={fullname}
-              onChange={(e) => {
-                setFullname(e.target.value);
-              }}
+              onChange={(e) => setFullname(e.target.value)}
             />
           ) : (
-            <p>{user.fullname}</p>
+            <p className={!user.fullname ? "empty-val" : ""}>{user.fullname || "Chưa cập nhật"}</p>
           )}
         </div>
         <div className="info-item">
@@ -415,13 +410,12 @@ const ProfileInfo = ({
             <input
               type="email"
               name="email"
+              placeholder="Nhập email..."
               value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-              }}
+              onChange={(e) => setEmail(e.target.value)}
             />
           ) : (
-            <p>{user.email}</p>
+            <p className={!user.email ? "empty-val" : ""}>{user.email || "Chưa cập nhật"}</p>
           )}
         </div>
         <div className="info-item">
@@ -430,37 +424,31 @@ const ProfileInfo = ({
             <input
               type="text"
               name="phone"
+              placeholder="Nhập số điện thoại..."
               value={phone}
-              onChange={(e) => {
-                setPhone(e.target.value);
-              }}
+              onChange={(e) => setPhone(e.target.value)}
             />
           ) : (
-            <p>{user.phone}</p>
+            <p className={!user.phone ? "empty-val" : ""}>{user.phone || "Chưa cập nhật"}</p>
           )}
         </div>
         <div className="info-item">
-          <label>Địa chỉ</label>
+          <label>Địa chỉ nhận hàng</label>
           {isEditing ? (
             <input
               type="text"
               name="address"
+              placeholder="Nhập địa chỉ nhận hàng..."
               value={address}
-              onChange={(e) => {
-                setAddress(e.target.value);
-              }}
+              onChange={(e) => setAddress(e.target.value)}
             />
           ) : (
-            <p>{user.address}</p>
+            <p className={!user.address ? "empty-val" : ""}>{user.address || "Chưa cập nhật"}</p>
           )}
         </div>
         <div className="info-item full-width">
-          <label>Tiểu sử</label>
-          {isEditing ? (
-            <textarea name="bio" value={user.bio} rows="3"></textarea>
-          ) : (
-            <p>{user.bio}</p>
-          )}
+          <label>Hạng Thành Viên</label>
+          <p>Khách hàng VIP • Coffee Chill Diamond Club</p>
         </div>
       </div>
     </div>
@@ -483,54 +471,61 @@ const OrderHistory = ({ orders, onViewDetails }) => {
       <div className="compact-header">
         <div className="title-wrapper">
           <HiOutlineReceiptTax className="section-icon-small" />
-          <h2>Lịch Sử</h2>
+          <h2>Lịch Sử Đơn Hàng</h2>
         </div>
-        <div className="order-count-pill">{orders?.length || 0} Đơn</div>
+        <div className="order-count-pill">{orders?.length || 0} Đơn Hàng</div>
       </div>
-      <div className="order-grid-compact">
-        {orders?.map((order) => (
-          <div key={order.id} className="compact-card history">
-            <div className="compact-card-top">
-              <span className="compact-id">#{order.id}</span>
-              <div
-                className={`compact-status status-${getStatusClass(order.status)}`}
+      {!orders || orders.length === 0 ? (
+        <div className="profile-empty-orders">
+          <HiOutlineReceiptTax />
+          <p>Bạn chưa có lịch sử mua hàng nào</p>
+        </div>
+      ) : (
+        <div className="order-grid-compact">
+          {orders.map((order) => (
+            <div key={order.id} className="compact-card history">
+              <div className="compact-card-top">
+                <span className="compact-id">#{order.id}</span>
+                <div
+                  className={`compact-status status-${getStatusClass(order.status)}`}
+                >
+                  {order.status}
+                </div>
+              </div>
+              <div className="compact-card-mid">
+                <div className="compact-info">
+                  <CiCalendar />
+                  <span>{order.timeOrderHistory}</span>
+                </div>
+                <div className="compact-price">
+                  {order.totalPrice?.toLocaleString()}đ
+                </div>
+              </div>
+              <button
+                className="compact-btn"
+                onClick={() =>
+                  axiosClient
+                    .get(`/order/get-ordt/${order.order_id}`, {
+                      headers: {
+                        Authorization: `Bearer ${getAccessToken()}`,
+                      },
+                    })
+                    .then((res) => {
+                      if (res.data.statusCode == 200) {
+                        onViewDetails(res.data.result);
+                      }
+                    })
+                    .catch((err) => {
+                      console.log("không call được api");
+                    })
+                }
               >
-                {order.status}
-              </div>
+                Xem chi tiết
+              </button>
             </div>
-            <div className="compact-card-mid">
-              <div className="compact-info">
-                <CiCalendar />
-                <span>{order.timeOrderHistory}</span>
-              </div>
-              <div className="compact-price">
-                {order.totalPrice?.toLocaleString()}đ
-              </div>
-            </div>
-            <button
-              className="compact-btn"
-              onClick={() =>
-                axiosClient
-                  .get(`/order/get-ordt/${order.order_id}`, {
-                    headers: {
-                      Authorization: `Bearer ${getAccessToken()}`,
-                    },
-                  })
-                  .then((res) => {
-                    if (res.data.statusCode == 200) {
-                      onViewDetails(res.data.result);
-                    }
-                  })
-                  .catch((err) => {
-                    console.log("không call được api");
-                  })
-              }
-            >
-              Chi tiết
-            </button>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
@@ -559,45 +554,53 @@ const OrderStatus = ({ orders, onViewDetails }) => {
       <div className="compact-header">
         <div className="title-wrapper">
           <CiClock2 className="section-icon-small" />
-          <h2>Theo Dõi</h2>
+          <h2>Theo Dõi Tiến Trình</h2>
         </div>
+        <div className="order-count-pill">{orders?.length || 0} Đang Giao</div>
       </div>
-      <div className="order-grid-compact">
-        {orders?.map((order) => (
-          <div
-            key={order.id}
-            className="compact-card tracking"
-            style={{ cursor: "pointer" }}
-          >
-            <div className="compact-card-top">
-              <span className="compact-id">#{order.id}</span>
-              <span className="compact-icon-mini">
-                {getStatusIcon(order.status)}
-              </span>
+      {!orders || orders.length === 0 ? (
+        <div className="profile-empty-orders">
+          <CiClock2 />
+          <p>Hiện không có đơn hàng nào đang trong tiến trình xử lý</p>
+        </div>
+      ) : (
+        <div className="order-grid-compact">
+          {orders.map((order) => (
+            <div
+              key={order.id}
+              className="compact-card tracking"
+              style={{ cursor: "pointer" }}
+            >
+              <div className="compact-card-top">
+                <span className="compact-id">#{order.id}</span>
+                <span className="compact-icon-mini">
+                  {getStatusIcon(order.status)}
+                </span>
+              </div>
+              <div className="compact-status-row">
+                <span
+                  className={`status-text-tiny color-${getStatusClass(order.status)}`}
+                >
+                  {order.status}
+                </span>
+                <span className="percentage-tiny">{order.progress || 25}%</span>
+              </div>
+              <div className="compact-progress-track">
+                <div
+                  className={`compact-progress-fill fill-${getStatusClass(order.status)}`}
+                  style={{ width: `${order.progress || 25}%` }}
+                ></div>
+              </div>
+              <div className="compact-card-bot">
+                <span className="time-tiny">{order.createdAt}</span>
+                <span className="price-tiny">
+                  {order.totalPrice?.toLocaleString()}đ
+                </span>
+              </div>
             </div>
-            <div className="compact-status-row">
-              <span
-                className={`status-text-tiny color-${getStatusClass(order.status)}`}
-              >
-                {order.status}
-              </span>
-              <span className="percentage-tiny">{order.progress || 25}%</span>
-            </div>
-            <div className="compact-progress-track">
-              <div
-                className={`compact-progress-fill fill-${getStatusClass(order.status)}`}
-                style={{ width: `${order.progress || 25}%` }}
-              ></div>
-            </div>
-            <div className="compact-card-bot">
-              <span className="time-tiny">{order.createdAt}</span>
-              <span className="price-tiny">
-                {order.totalPrice?.toLocaleString()}đ
-              </span>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
