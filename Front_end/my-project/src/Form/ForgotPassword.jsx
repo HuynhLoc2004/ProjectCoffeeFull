@@ -1,32 +1,19 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { 
+  KeyRound, 
+  Mail, 
+  Lock, 
+  Eye, 
+  EyeOff, 
+  ArrowLeft, 
+  Check, 
+  AlertCircle, 
+  RotateCcw,
+  ShieldCheck
+} from "lucide-react";
 import "./ChangePassWordPage.css";
 import axiosClient from "../AxiosClient";
-import {
-  getAccessToken,
-  setAccessToken,
-} from "../ManagerAccessToken/ManagerAccessToken";
-import { useNavigate } from "react-router-dom";
-
-/* ================= Eye Icon ================= */
-const EyeIcon = ({ onClick, isVisible }) => (
-  <svg
-    onClick={onClick}
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="currentColor"
-    className="eye-icon"
-  >
-    {isVisible ? (
-      <path
-        fillRule="evenodd"
-        d="M1.323 11.447C2.811 6.976 7.028 3.75 12.001 3.75c4.974 0 9.19 3.226 10.678 7.697a.75.75 0 010 .606C21.19 16.774 16.974 20.25 12.001 20.25c-4.973 0-9.189-3.476-10.678-7.947a.75.75 0 010-.606zM12 15a3 3 0 100-6 3 3 0 000 6z"
-        clipRule="evenodd"
-      />
-    ) : (
-      <path d="M3.53 2.47a.75.75 0 00-1.06 1.06l18 18a.75.75 0 001.06-1.06l-18-18z" />
-    )}
-  </svg>
-);
 
 const ForgotPassword = () => {
   const [step, setStep] = useState(1);
@@ -42,31 +29,30 @@ const ForgotPassword = () => {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
   const [countdown, setCountdown] = useState(0);
-  const [animationKey, setAnimationKey] = useState(1);
-  const [accesstoken, setAccesstoken] = useState(getAccessToken());
+
   const navigate = useNavigate();
+
+  // OTP Countdown Timer
   useEffect(() => {
     if (countdown <= 0) return;
-    const timer = setTimeout(() => setCountdown((c) => c - 1), 1000);
-    return () => clearTimeout(timer);
+    const timer = setInterval(() => setCountdown((c) => c - 1), 1000);
+    return () => clearInterval(timer);
   }, [countdown]);
 
   const changeStep = (s) => {
     setError("");
     setMessage("");
-    setAnimationKey(s);
     setStep(s);
   };
 
   const sendOtp = async () => {
     if (!email || !email.trim()) {
-      setError("Vui lòng nhập email");
+      setError("Vui lòng nhập địa chỉ email của bạn");
       return;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-      setError("Email không đúng định dạng");
+      setError("Địa chỉ email không đúng định dạng");
       return;
     }
 
@@ -85,7 +71,7 @@ const ForgotPassword = () => {
         throw new Error(res.data?.message || "Không thể gửi OTP");
       }
 
-      setMessage("Mã OTP đã được gửi về email của bạn");
+      setMessage("Mã xác thực OTP đã được gửi đến email của bạn.");
       setCountdown(60);
       changeStep(2);
     } catch (err) {
@@ -93,7 +79,7 @@ const ForgotPassword = () => {
       const errorMsg =
         err.response?.data?.message ||
         err.message ||
-        "Không thể gửi OTP. Vui lòng thử lại sau.";
+        "Không thể gửi mã OTP khôi phục. Vui lòng kiểm tra lại email.";
       setError(errorMsg);
     } finally {
       setIsLoading(false);
@@ -102,7 +88,7 @@ const ForgotPassword = () => {
 
   const verifyOtp = async () => {
     if (otpEmail.length !== 6) {
-      setError("OTP phải đủ 6 chữ số");
+      setError("Mã OTP phải có đầy đủ 6 chữ số");
       return;
     }
 
@@ -112,28 +98,28 @@ const ForgotPassword = () => {
     try {
       const data = await axiosClient.post("/email/verify-OTP-forgotPassword", {
         otpEmail: otpEmail,
-        email: email,
+        email: email.trim(),
       });
 
       if (data.data?.statusCode !== 200 || !data.data?.result) {
-        throw new Error(data.data?.message || "OTP không đúng hoặc đã hết hạn");
+        throw new Error(data.data?.message || "Mã OTP không đúng hoặc đã hết hạn");
       }
       setResetToken(data.data.result);
       changeStep(3);
     } catch (err) {
-      setError(err.response?.data?.message || err.message || "OTP không đúng hoặc đã hết hạn");
+      setError(err.response?.data?.message || err.message || "Mã OTP không hợp lệ hoặc đã hết hạn");
     } finally {
       setIsLoading(false);
     }
   };
 
   const changePassword = async () => {
-    if (newPassword !== confirmPassword) {
-      setError("Mật khẩu xác nhận không khớp");
+    if (!newPassword || newPassword.length < 8) {
+      setError("Mật khẩu mới phải có ít nhất 8 ký tự");
       return;
     }
-    if (newPassword.length < 8) {
-      setError("Mật khẩu phải có ít nhất 8 ký tự");
+    if (newPassword !== confirmPassword) {
+      setError("Mật khẩu xác nhận không trùng khớp");
       return;
     }
 
@@ -142,21 +128,21 @@ const ForgotPassword = () => {
 
     try {
       const res = await axiosClient.post("/user/forgot-password", {
-        email: email,
-        newPassword: newPassword,
-        resetToken: resetToken,
+        email: email.trim(),
+        newPassword,
+        resetToken,
       });
 
       if (res.data?.statusCode !== 201 || res.data?.result !== true) {
-        throw new Error(res.data?.message || "Đổi mật khẩu thất bại");
+        throw new Error(res.data?.message || "Đặt lại mật khẩu thất bại");
       }
 
-      setMessage("Đổi mật khẩu thành công");
-       setTimeout(()=>{
-        navigate('/login')
-       },1500)
+      setMessage("Khôi phục mật khẩu thành công! Đang chuyển hướng đến đăng nhập...");
+      setTimeout(() => {
+        navigate("/login", { replace: true });
+      }, 1500);
     } catch (err) {
-      setError(err.response?.data?.message || err.message || "Đổi mật khẩu thất bại");
+      setError(err.response?.data?.message || err.message || "Đặt lại mật khẩu thất bại. Vui lòng thử lại.");
     } finally {
       setIsLoading(false);
     }
@@ -169,108 +155,200 @@ const ForgotPassword = () => {
     if (step === 3) changePassword();
   };
 
-  const getButtonText = () => {
-    if (step === 1) return "Nhận Mã OTP";
-    if (step === 2) return "Xác Nhận OTP";
-    if (step === 3) return "Đổi Mật Khẩu";
-  };
-
   return (
-    <div className="change-password-container">
-      <div className="change-password-card">
-        <div className="card-header">
-          <h2 className="form-title">
-            {step === 1 && "Quên Mật Khẩu"}
-            {step === 2 && "Xác Thực OTP"}
-            {step === 3 && "Tạo Mật Khẩu Mới"}
-          </h2>
+    <div className="auth-form-wrapper page-shell">
+      <div className="auth-form-card">
+        {/* Card Header */}
+        <div className="auth-card-header">
+          <div className="auth-badge-icon">
+            <KeyRound size={28} />
+          </div>
+          <h1 className="auth-card-title">Quên Mật Khẩu</h1>
+          <p className="auth-card-subtitle">
+            {step === 1 && "Nhập email đăng ký để nhận mã OTP lấy lại mật khẩu"}
+            {step === 2 && `Nhập mã OTP 6 số đã gửi đến ${email}`}
+            {step === 3 && "Thiết lập mật khẩu mới để đăng nhập tài khoản"}
+          </p>
         </div>
 
+        {/* 3-Step Wizard Indicator */}
+        <div className="auth-step-wizard">
+          <div className={`auth-wizard-item ${step === 1 ? "active" : "completed"}`}>
+            <div className="auth-wizard-circle">
+              {step > 1 ? <Check size={14} strokeWidth={3} /> : "1"}
+            </div>
+            <span className="auth-wizard-label">Email</span>
+          </div>
+
+          <div className={`auth-wizard-item ${step === 2 ? "active" : step > 2 ? "completed" : ""}`}>
+            <div className="auth-wizard-circle">
+              {step > 2 ? <Check size={14} strokeWidth={3} /> : "2"}
+            </div>
+            <span className="auth-wizard-label">Xác thực</span>
+          </div>
+
+          <div className={`auth-wizard-item ${step === 3 ? "active" : ""}`}>
+            <div className="auth-wizard-circle">
+              {step === 3 ? <ShieldCheck size={14} strokeWidth={2.5} /> : "3"}
+            </div>
+            <span className="auth-wizard-label">Mật khẩu mới</span>
+          </div>
+        </div>
+
+        {/* Feedback Alerts */}
+        {error && (
+          <div className="auth-alert auth-alert-error">
+            <AlertCircle size={18} className="shrink-0" />
+            <span>{error}</span>
+          </div>
+        )}
+        {message && (
+          <div className="auth-alert auth-alert-success">
+            <Check size={18} className="shrink-0" />
+            <span>{message}</span>
+          </div>
+        )}
+
+        {/* Form Body */}
         <form onSubmit={handleSubmit}>
-          <div key={animationKey} className="form-step-container">
-            {step === 1 && (
-              <div className="input-group">
+          {step === 1 && (
+            <div className="auth-field-group">
+              <label className="auth-label">Địa chỉ Email tài khoản</label>
+              <div className="auth-input-wrapper">
+                <Mail size={18} className="auth-input-icon" />
                 <input
                   type="email"
-                  placeholder=" "
+                  className="auth-input"
+                  placeholder="name@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={isLoading}
+                  autoFocus
                 />
-                <label>Email</label>
               </div>
-            )}
+            </div>
+          )}
 
-            {step === 2 && (
-              <div className="input-group">
+          {step === 2 && (
+            <div className="auth-field-group">
+              <label className="auth-label">Mã xác thực OTP (6 chữ số)</label>
+              <div className="auth-input-wrapper">
                 <input
                   type="text"
-                  placeholder=" "
+                  className="auth-input otp-input-large"
+                  placeholder="••••••"
                   value={otpEmail}
-                  onChange={(e) => setOtpEmail(e.target.value.replace(/\D/g, ""))}
+                  onChange={(e) => setOtpEmail(e.target.value.replace(/\D/g, "").slice(0, 6))}
                   maxLength="6"
                   disabled={isLoading}
+                  autoFocus
                 />
-                <label>OTP</label>
               </div>
-            )}
+            </div>
+          )}
 
-            {step === 3 && (
-              <>
-                <div className="input-group password-group">
+          {step === 3 && (
+            <>
+              <div className="auth-field-group">
+                <label className="auth-label">Mật khẩu mới (Tối thiểu 8 ký tự)</label>
+                <div className="auth-input-wrapper">
+                  <Lock size={18} className="auth-input-icon" />
                   <input
                     type={showNewPassword ? "text" : "password"}
-                    placeholder=" "
+                    className="auth-input"
+                    placeholder="Nhập mật khẩu mới"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     disabled={isLoading}
+                    autoFocus
                   />
-                  <label>Mật khẩu mới</label>
-                  <EyeIcon
-                    isVisible={showNewPassword}
+                  <button
+                    type="button"
                     onClick={() => setShowNewPassword(!showNewPassword)}
-                  />
+                    className="auth-eye-btn"
+                    tabIndex="-1"
+                  >
+                    {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
                 </div>
+              </div>
 
-                <div className="input-group password-group">
+              <div className="auth-field-group">
+                <label className="auth-label">Xác nhận mật khẩu mới</label>
+                <div className="auth-input-wrapper">
+                  <Lock size={18} className="auth-input-icon" />
                   <input
                     type={showConfirmPassword ? "text" : "password"}
-                    placeholder=" "
+                    className="auth-input"
+                    placeholder="Nhập lại mật khẩu mới"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     disabled={isLoading}
                   />
-                  <label>Xác nhận mật khẩu</label>
-                  <EyeIcon
-                    isVisible={showConfirmPassword}
+                  <button
+                    type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  />
+                    className="auth-eye-btn"
+                    tabIndex="-1"
+                  >
+                    {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
                 </div>
-              </>
-            )}
-          </div>
+              </div>
+            </>
+          )}
 
-          {error && <p className="form-error">{error}</p>}
-          {message && <p className="form-message">{message}</p>}
-
+          {/* Submit Button */}
           <button
             type="submit"
-            className="btn-submit"
-            disabled={isLoading || (step === 1 && countdown > 0)}
+            className="btn-auth-primary"
+            disabled={isLoading || (step === 2 && otpEmail.length !== 6)}
           >
-            {isLoading ? <div className="spinner"></div> : getButtonText()}
+            {isLoading ? (
+              <RotateCcw size={18} className="animate-spin" />
+            ) : step === 1 ? (
+              "Nhận mã OTP khôi phục"
+            ) : step === 2 ? (
+              "Xác nhận mã OTP"
+            ) : (
+              "Đặt lại mật khẩu"
+            )}
           </button>
 
+          {/* Resend OTP in Step 2 */}
           {step === 2 && (
             <button
               type="button"
-              className="btn-resend"
+              className="btn-auth-resend"
               onClick={sendOtp}
               disabled={countdown > 0 || isLoading}
             >
-              {countdown > 0 ? `Gửi lại sau (${countdown}s)` : "Gửi lại OTP"}
+              {countdown > 0 ? `Gửi lại mã OTP sau (${countdown}s)` : "Chưa nhận được? Gửi lại mã OTP"}
             </button>
           )}
+
+          {/* Footer Navigation */}
+          <div className="auth-footer-links">
+            {step > 1 ? (
+              <button
+                type="button"
+                onClick={() => changeStep(step - 1)}
+                className="auth-back-step-btn"
+              >
+                <ArrowLeft size={14} />
+                <span>Quay lại bước trước</span>
+              </button>
+            ) : (
+              <Link to="/login" className="auth-back-step-btn">
+                <ArrowLeft size={14} />
+                <span>Quay lại Đăng nhập</span>
+              </Link>
+            )}
+
+            <Link to="/" className="auth-link">
+              Trang chủ
+            </Link>
+          </div>
         </form>
       </div>
     </div>

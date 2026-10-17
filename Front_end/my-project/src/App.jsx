@@ -176,6 +176,7 @@ function App() {
         <Route path="/payment-cancel" element={<PaymentCancelPage />}></Route>
         <Route path="/change-password" element={<ChangePassWordPage />}></Route>
         <Route path="/ForgotPassword" element={<ForgotPassword />}></Route>
+        <Route path="/forgot-password" element={<ForgotPassword />}></Route>
         <Route path="/admin" element={<AdminPage></AdminPage>}></Route>
         <Route path="/admin/login" element={<LoginAdmin />}></Route>
         <Route path="/admin-login" element={<LoginAdmin></LoginAdmin>}></Route>
