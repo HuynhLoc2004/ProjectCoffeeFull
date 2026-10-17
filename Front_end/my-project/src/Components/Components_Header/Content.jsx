@@ -1,11 +1,13 @@
 import { motion } from "framer-motion";
 import { useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import ProductList from "./ProductList";
 import FloatingElements from "./FloatingElements";
-import { Coffee, Sparkles, MoveRight, Star, Heart } from "lucide-react";
+import { Coffee, Sparkles, MoveRight, MoveLeft, Star, Heart } from "lucide-react";
 
 const Content = () => {
   const containerRef = useRef(null);
+  const navigate = useNavigate();
   
   const urlApi = {
     coffee: "/product/getTopProductByCategory?size=6&category=coffee",
@@ -33,9 +35,14 @@ const Content = () => {
                 Cà Phê <br /> <span className="text-[#d6a46c]">Nguyên Bản</span>
               </h2>
             </div>
-            <motion.div whileHover={{ x: 10 }} className="flex items-center gap-3 text-[#3b2a20] font-bold cursor-pointer group">
-              <span>Khám phá bộ sưu tập</span>
-              <MoveRight className="group-hover:text-[#d6a46c] transition-colors" />
+            <motion.div 
+              onClick={() => navigate("/product?category=coffee")}
+              whileHover={{ x: 8 }} 
+              whileTap={{ scale: 0.96 }}
+              className="flex items-center gap-3 text-[#3b2a20] dark:text-[#d4a373] hover:text-[#d4a373] dark:hover:text-[#e5b986] font-bold cursor-pointer group select-none transition-colors"
+            >
+              <span className="text-base tracking-wide">Khám phá bộ sưu tập</span>
+              <MoveRight className="text-[#d4a373] group-hover:translate-x-1.5 transition-transform" />
             </motion.div>
           </div>
           <ProductList urlApi={urlApi.coffee} />
@@ -121,10 +128,19 @@ const Content = () => {
           <div className="flex flex-col md:flex-row-reverse justify-between items-end mb-16 gap-6">
             <div className="max-w-xl text-right">
               <div className="h-1 w-20 bg-[#6b8e4e] mb-6 ml-auto" />
-              <h2 className="text-5xl md:text-7xl font-serif text-[#3b2a20] leading-tight">
+              <h2 className="text-5xl md:text-7xl font-serif text-[#3b2a20] dark:text-white leading-tight">
                 Trà Sữa <br /> <span className="text-[#6b8e4e]">Thanh Khiết</span>
               </h2>
             </div>
+            <motion.div 
+              onClick={() => navigate("/product?category=milk-tea")}
+              whileHover={{ x: -8 }} 
+              whileTap={{ scale: 0.96 }}
+              className="flex items-center gap-3 text-[#3b2a20] dark:text-[#6b8e4e] hover:text-[#6b8e4e] font-bold cursor-pointer group select-none transition-colors"
+            >
+              <MoveLeft className="text-[#6b8e4e] group-hover:-translate-x-1.5 transition-transform" />
+              <span className="text-base tracking-wide">Khám phá các vị trà sữa</span>
+            </motion.div>
           </div>
           <ProductList urlApi={urlApi.milkTea} />
         </motion.section>

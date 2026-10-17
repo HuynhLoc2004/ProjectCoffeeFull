@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import ProductList from "../Components/Components_Header/ProductList";
 import MarqueeProductList from "../Components/Components_Header/MarqueeProductList";
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import Navbar from "../Components/Navbar";
 import axiosClient from "../AxiosClient";
 import {
@@ -27,10 +28,19 @@ const urlApi = {
 };
 
 const ProductPage = () => {
-  const [option, setOption] = useState("");
+  const [searchParams] = useSearchParams();
+  const categoryParam = searchParams.get("category");
+  const [option, setOption] = useState(categoryParam || "");
   const [infoUser, setInfoUser] = useState(null);
   const [accessToken, setAccesstoken] = useState(getAccessToken());
   const [publicProducts, setPublicProducts] = useState([]);
+
+  useEffect(() => {
+    const cat = searchParams.get("category");
+    if (cat !== null) {
+      setOption(cat);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     localStorage.setItem(
