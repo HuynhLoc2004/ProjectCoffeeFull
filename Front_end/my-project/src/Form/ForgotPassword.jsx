@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import "./ChangePassWordPage.css";
 import axiosClient from "../AxiosClient";
+import { localizeMessage } from "../localizeMessage";
 
 const ForgotPassword = () => {
   const [step, setStep] = useState(1);
@@ -78,9 +79,8 @@ const ForgotPassword = () => {
       console.error("Lỗi gửi OTP:", err);
       const errorMsg =
         err.response?.data?.message ||
-        err.message ||
-        "Không thể gửi mã OTP khôi phục. Vui lòng kiểm tra lại email.";
-      setError(errorMsg);
+        err.message;
+      setError(localizeMessage(errorMsg, "Không thể gửi mã OTP khôi phục. Vui lòng kiểm tra lại email."));
     } finally {
       setIsLoading(false);
     }
@@ -107,7 +107,8 @@ const ForgotPassword = () => {
       setResetToken(data.data.result);
       changeStep(3);
     } catch (err) {
-      setError(err.response?.data?.message || err.message || "Mã OTP không hợp lệ hoặc đã hết hạn");
+      const errorMsg = err.response?.data?.message || err.message;
+      setError(localizeMessage(errorMsg, "Mã OTP không hợp lệ hoặc đã hết hạn."));
     } finally {
       setIsLoading(false);
     }
@@ -142,7 +143,8 @@ const ForgotPassword = () => {
         navigate("/login", { replace: true });
       }, 1500);
     } catch (err) {
-      setError(err.response?.data?.message || err.message || "Đặt lại mật khẩu thất bại. Vui lòng thử lại.");
+      const errorMsg = err.response?.data?.message || err.message;
+      setError(localizeMessage(errorMsg, "Đặt lại mật khẩu thất bại. Vui lòng thử lại."));
     } finally {
       setIsLoading(false);
     }

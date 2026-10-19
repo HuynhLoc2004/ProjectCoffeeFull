@@ -9,6 +9,8 @@ import { motion } from "framer-motion";
 import { toast } from "react-toastify";
 import axiosClient from "../AxiosClient";
 
+import { localizeMessage } from "../localizeMessage";
+
 const FormRegister = () => {
   const [valueUseraccounnt, setValueUseraccount] = useState("");
   const [password, setPassword] = useState("");
@@ -47,19 +49,16 @@ const FormRegister = () => {
       .then((res) => {
         if (res.data.statusCode === 400) { 
           const msg = res.data.message || "";
-          if (msg.toLowerCase().includes("email") || msg.toLowerCase().includes("tồn tại")) {
-            toast.warn("Email này đã được sử dụng!");
-          } else {
-            toast.warn(msg);
-          }
+          toast.warn(localizeMessage(msg, "Đăng ký không thành công. Vui lòng kiểm tra lại thông tin!"));
           return; 
         }
-        toast.success("Đăng ký tài khoản thành công!");
+        toast.success("Đăng ký tài khoản thành công! Bạn có thể đăng nhập ngay.");
         navigate("/login");
       })
       .catch((err) => {
-        toast.error("Có lỗi xảy ra, vui lòng thử lại sau!");
-        console.error(err);
+        const errorMsg = err?.response?.data?.message;
+        toast.error(localizeMessage(errorMsg, "Có lỗi xảy ra khi đăng ký, vui lòng thử lại sau!"));
+        console.error("Lỗi đăng ký:", err);
       })
       .finally(() => setIsLoading(false));
   };

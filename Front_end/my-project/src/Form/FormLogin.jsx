@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import axiosClient, { getApiOrigin } from "../AxiosClient";
 import { setAccessToken } from "../ManagerAccessToken/ManagerAccessToken";
 import { unlogout } from "../ManagerLogout/ManagerLogout";
+import { localizeMessage } from "../localizeMessage";
 
 const FormLogin = () => {
   const [valueUseraccounnt, setValueUseraccount] = useState("");
@@ -18,7 +19,7 @@ const FormLogin = () => {
 
   useEffect(() => {
     if (params.message) {
-      toast.info(params.message);
+      toast.info(localizeMessage(params.message, params.message));
       navigate("/login", { replace: true });
     }
   }, [params.message, navigate]);
@@ -51,7 +52,7 @@ const FormLogin = () => {
       })
       .then((res) => {
         if (res.data.statusCode === 400 || res.data.statusCode === 404) {
-          toast.error(res.data.message || "Tài khoản hoặc mật khẩu không đúng!");
+          toast.error(localizeMessage(res.data.message, "Tài khoản hoặc mật khẩu không chính xác!"));
         } else {
           setAccessToken(res.data.result.accessToken);
           unlogout();
@@ -65,7 +66,8 @@ const FormLogin = () => {
       })
       .catch((err) => {
         console.error("Lỗi đăng nhập:", err);
-        toast.error("Không thể kết nối đến máy chủ. Vui lòng thử lại!");
+        const serverMsg = err?.response?.data?.message;
+        toast.error(localizeMessage(serverMsg, "Không thể kết nối đến máy chủ. Vui lòng thử lại!"));
       });
     setValueUseraccount("");
     setPassword("");

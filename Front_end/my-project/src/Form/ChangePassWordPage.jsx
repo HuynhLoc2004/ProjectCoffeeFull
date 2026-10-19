@@ -20,6 +20,7 @@ import {
   setAccessToken,
 } from "../ManagerAccessToken/ManagerAccessToken";
 import { logout } from "../ManagerLogout/ManagerLogout";
+import { localizeMessage } from "../localizeMessage";
 
 const ChangePassWordPage = () => {
   const [step, setStep] = useState(1);
@@ -146,9 +147,8 @@ const ChangePassWordPage = () => {
       }
       const errorMsg =
         err.response?.data?.message ||
-        err.message ||
-        "Không thể gửi mã OTP. Vui lòng thử lại sau.";
-      setError(errorMsg);
+        err.message;
+      setError(localizeMessage(errorMsg, "Không thể gửi mã OTP. Vui lòng thử lại sau."));
     } finally {
       setIsLoading(false);
     }
@@ -180,7 +180,8 @@ const ChangePassWordPage = () => {
       setVerificationToken(data.data.result);
       changeStep(3);
     } catch (err) {
-      setError(err.response?.data?.message || err.message || "Mã OTP không hợp lệ hoặc đã hết hạn");
+      const errorMsg = err.response?.data?.message || err.message;
+      setError(localizeMessage(errorMsg, "Mã OTP không hợp lệ hoặc đã hết hạn."));
     } finally {
       setIsLoading(false);
     }
@@ -222,7 +223,8 @@ const ChangePassWordPage = () => {
       logout();
       setTimeout(() => navigate("/login", { replace: true }), 1500);
     } catch (err) {
-      setError(err.response?.data?.message || err.message || "Đổi mật khẩu thất bại. Vui lòng thử lại.");
+      const errorMsg = err.response?.data?.message || err.message;
+      setError(localizeMessage(errorMsg, "Đổi mật khẩu thất bại. Vui lòng thử lại."));
     } finally {
       setIsLoading(false);
     }

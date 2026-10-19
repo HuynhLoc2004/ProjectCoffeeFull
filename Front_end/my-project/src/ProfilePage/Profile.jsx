@@ -19,6 +19,7 @@ import { data, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import OrderDetailModal from "./OrderDetailModal";
 import axios from "axios";
+import { localizeMessage } from "../localizeMessage";
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState("profile");
@@ -359,12 +360,13 @@ const ProfileInfo = ({
                         navigate("/loadingpage");
                       }
                       if (res.data.statusCode == 400) {
-                        toast.error(res.data.message || "Cập nhật hồ sơ thất bại!");
+                        toast.error(localizeMessage(res.data.message, "Cập nhật hồ sơ thất bại!"));
                       }
                     })
                     .catch((err) => {
                       console.error("Lỗi cập nhật hồ sơ:", err);
-                      toast.error("Không thể lưu thông tin lúc này. Vui lòng thử lại!");
+                      const serverMsg = err?.response?.data?.message;
+                      toast.error(localizeMessage(serverMsg, "Không thể lưu thông tin lúc này. Vui lòng thử lại!"));
                     });
                 }}
                 className="action-button save-btn"

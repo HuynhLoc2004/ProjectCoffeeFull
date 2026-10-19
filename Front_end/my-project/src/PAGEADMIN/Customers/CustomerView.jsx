@@ -88,7 +88,7 @@ const CustomerView = () => {
       )
       .then((res) => {
         if (res.data.statusCode == 200) {
-          toast.success(res.data.message || "Cập nhật trạng thái thành công!");
+          toast.success("Cập nhật trạng thái tài khoản thành công!");
 
           fetchCustomers();
           setUpdatingId(null);
