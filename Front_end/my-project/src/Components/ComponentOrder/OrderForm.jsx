@@ -1,4 +1,5 @@
 import React from "react";
+import { toast } from "react-toastify";
 import axiosClient from "../../AxiosClient";
 
 const OrderForm = ({ product, size, toppings, quantity }) => {
@@ -10,9 +11,14 @@ const OrderForm = ({ product, size, toppings, quantity }) => {
       quantity,
     };
 
-    // CALL API BACKEND
-    await axiosClient.post("/order/create", payload);
-    alert("Đặt hàng thành công ☕🧋");
+    try {
+      // CALL API BACKEND
+      await axiosClient.post("/order/create", payload);
+      toast.success("Đặt hàng thành công! Đang chuẩn bị món cho bạn ☕🧋");
+    } catch (err) {
+      console.error("Lỗi đặt hàng:", err);
+      toast.error("Không thể tạo đơn hàng. Vui lòng thử lại!");
+    }
   };
 
   return (

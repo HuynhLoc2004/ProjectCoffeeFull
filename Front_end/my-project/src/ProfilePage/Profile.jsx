@@ -16,6 +16,7 @@ import {
 import Navbar from "../Components/Navbar";
 import { getLogout, unlogout } from "../ManagerLogout/ManagerLogout";
 import { data, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import OrderDetailModal from "./OrderDetailModal";
 import axios from "axios";
 
@@ -358,11 +359,12 @@ const ProfileInfo = ({
                         navigate("/loadingpage");
                       }
                       if (res.data.statusCode == 400) {
-                        alert(res.data.message);
+                        toast.error(res.data.message || "Cập nhật hồ sơ thất bại!");
                       }
                     })
                     .catch((err) => {
-                      console.log(err);
+                      console.error("Lỗi cập nhật hồ sơ:", err);
+                      toast.error("Không thể lưu thông tin lúc này. Vui lòng thử lại!");
                     });
                 }}
                 className="action-button save-btn"

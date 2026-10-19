@@ -142,3 +142,113 @@ button, a, input, textarea { -webkit-tap-highlight-color: transparent; }
 .cart-page { padding-top:24px!important; }
 .profile-page-container { background:var(--page)!important;color:var(--ink)!important;min-height:100vh; }
 
+/* ==========================================================================
+   Luxury Coffee Toastify Styling
+   ========================================================================== */
+.Toastify__toast-container {
+  z-index: 99999 !important;
+  padding: 16px !important;
+  width: auto !important;
+  max-width: 420px !important;
+}
+
+.Toastify__toast {
+  border-radius: 20px !important;
+  padding: 16px 20px !important;
+  font-family: "Plus Jakarta Sans", "Be Vietnam Pro", system-ui, sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  line-height: 1.45 !important;
+  letter-spacing: -0.01em !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45), 0 0 30px -5px rgba(212, 163, 115, 0.18) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  margin-bottom: 12px !important;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease !important;
+}
+
+.Toastify__toast:hover {
+  transform: translateY(-2px) scale(1.01) !important;
+}
+
+/* Dark mode toast (default & data-theme="dark") */
+:root[data-theme="dark"] .Toastify__toast,
+.Toastify__toast[data-theme="dark"],
+.Toastify__toast--default {
+  background: rgba(22, 18, 15, 0.94) !important;
+  border: 1px solid rgba(212, 163, 115, 0.28) !important;
+  color: #f5efe6 !important;
+}
+
+/* Light mode toast */
+:root[data-theme="light"] .Toastify__toast,
+.Toastify__toast[data-theme="light"] {
+  background: rgba(255, 252, 248, 0.96) !important;
+  border: 1px solid rgba(212, 163, 115, 0.35) !important;
+  color: #2c1e16 !important;
+  box-shadow: 0 20px 40px -10px rgba(139, 69, 19, 0.18), 0 0 25px rgba(212, 163, 115, 0.12) !important;
+}
+
+.Toastify__toast-body {
+  padding: 0 4px !important;
+  margin: 0 !important;
+}
+
+.Toastify__close-button {
+  color: #d4a373 !important;
+  opacity: 0.6 !important;
+  transition: opacity 0.2s ease, transform 0.2s ease !important;
+  align-self: center !important;
+}
+
+.Toastify__close-button:hover {
+  opacity: 1 !important;
+  transform: scale(1.1) !important;
+}
+
+/* Status Icon Accents */
+.Toastify__toast-icon {
+  width: 22px !important;
+  margin-inline-end: 12px !important;
+}
+
+.Toastify__toast--success .Toastify__toast-icon svg {
+  fill: #10b981 !important;
+}
+
+.Toastify__toast--error .Toastify__toast-icon svg {
+  fill: #ef4444 !important;
+}
+
+.Toastify__toast--warning .Toastify__toast-icon svg {
+  fill: #f59e0b !important;
+}
+
+.Toastify__toast--info .Toastify__toast-icon svg {
+  fill: #d4a373 !important;
+}
+
+/* Luxury Coffee Progress Bars */
+.Toastify__progress-bar {
+  background: linear-gradient(90deg, #d4a373 0%, #b88754 100%) !important;
+  height: 3.5px !important;
+  border-radius: 0 0 20px 20px !important;
+}
+
+.Toastify__progress-bar--success {
+  background: linear-gradient(90deg, #10b981 0%, #059669 100%) !important;
+}
+
+.Toastify__progress-bar--error {
+  background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%) !important;
+}
+
+.Toastify__progress-bar--warning {
+  background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%) !important;
+}
+
+.Toastify__progress-bar--info {
+  background: linear-gradient(90deg, #d4a373 0%, #8b5a2b 100%) !important;
+}
+
+

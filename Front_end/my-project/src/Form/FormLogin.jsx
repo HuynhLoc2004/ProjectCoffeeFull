@@ -5,6 +5,7 @@ import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa6";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "react-toastify";
 import axiosClient, { getApiOrigin } from "../AxiosClient";
 import { setAccessToken } from "../ManagerAccessToken/ManagerAccessToken";
 import { unlogout } from "../ManagerLogout/ManagerLogout";
@@ -17,7 +18,7 @@ const FormLogin = () => {
 
   useEffect(() => {
     if (params.message) {
-      alert(params.message);
+      toast.info(params.message);
       navigate("/login", { replace: true });
     }
   }, [params.message, navigate]);
@@ -30,17 +31,17 @@ const FormLogin = () => {
   };
 
   const handleLogin = () => {
-    if (valueUseraccounnt === "") {
-      alert("vui lòng nhập tài khoản");
+    if (valueUseraccounnt.trim() === "") {
+      toast.warn("Vui lòng nhập tài khoản!");
       return;
     }
     if (password === "") {
-      alert("vui lòng nhập password");
+      toast.warn("Vui lòng nhập mật khẩu!");
       return;
     }
 
     const userLogin = {
-      account_user: valueUseraccounnt,
+      account_user: valueUseraccounnt.trim(),
       password: password,
     };
 
@@ -50,10 +51,11 @@ const FormLogin = () => {
       })
       .then((res) => {
         if (res.data.statusCode === 400 || res.data.statusCode === 404) {
-          alert(res.data.message);
+          toast.error(res.data.message || "Tài khoản hoặc mật khẩu không đúng!");
         } else {
           setAccessToken(res.data.result.accessToken);
           unlogout();
+          toast.success("Đăng nhập thành công! Chào mừng bạn quay trở lại ☕", { autoClose: 2000 });
           navigate(localStorage.getItem("page_before") || "/", {
             state: {
               statusCode: res.data.statusCode,
@@ -62,7 +64,8 @@ const FormLogin = () => {
         }
       })
       .catch((err) => {
-        console.log("không call api được");
+        console.error("Lỗi đăng nhập:", err);
+        toast.error("Không thể kết nối đến máy chủ. Vui lòng thử lại!");
       });
     setValueUseraccount("");
     setPassword("");

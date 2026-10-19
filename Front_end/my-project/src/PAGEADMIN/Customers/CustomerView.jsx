@@ -16,6 +16,7 @@ import {
   Unlock,
 } from "lucide-react";
 import axiosClient from "../../AxiosClient";
+import { toast } from "react-toastify";
 
 const CustomerView = () => {
   const [countCustomer, setCountCustomer] = useState(0);
@@ -87,7 +88,7 @@ const CustomerView = () => {
       )
       .then((res) => {
         if (res.data.statusCode == 200) {
-          alert(res.data.message);
+          toast.success(res.data.message || "Cập nhật trạng thái thành công!");
 
           fetchCustomers();
           setUpdatingId(null);
@@ -96,7 +97,7 @@ const CustomerView = () => {
       })
       .catch((err) => {
         console.error("Lỗi khi cập nhật trạng thái:", err);
-        alert(`Lỗi: Không thể ${actionText} tài khoản lúc này.`);
+        toast.error(`Lỗi: Không thể ${actionText} tài khoản lúc này.`);
         setUpdatingId(null);
       });
   };
