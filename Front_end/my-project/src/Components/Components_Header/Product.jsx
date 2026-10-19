@@ -1,61 +1,13 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Plus } from "lucide-react";
-import axiosClient from "../../AxiosClient";
-import {
-  getAccessToken,
-  setAccessToken,
-} from "../../ManagerAccessToken/ManagerAccessToken";
-import { getLogout } from "../../ManagerLogout/ManagerLogout";
 
 const Product = ({ ProductItem }) => {
   const navigate = useNavigate();
+
   const handleOrder = (e) => {
-    if (getLogout() == 1) {
-      navigate("/login");
-    } else {
-      axiosClient
-        .get("/auth/info", {
-          headers: {
-            Authorization: `Bearer ${getAccessToken()}`,
-          },
-        })
-        .then((res) => {
-          if (res.data.statusCode == 200) {
-            navigate(
-              `/order/?category=${ProductItem.category}&id=${ProductItem.id}`,
-            );
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-          if (err.status == 401) {
-            axiosClient
-              .get("/auth/refresh_token", {
-                withCredentials: true,
-              })
-              .then((res) => {
-                if (res.data.statusCode == 200) {
-                  setAccessToken(res.data.result.accessToken);
-                }
-                if (res.data.statusCode == 401) {
-                  navigate("/login");
-                  localStorage.setItem(
-                    "page_before",
-                    window.location.pathname + window.location.search,
-                  );
-                }
-              })
-              .catch((err) => {
-                navigate("/login");
-                localStorage.setItem(
-                  "page_before",
-                  window.location.pathname + window.location.search,
-                );
-              });
-          }
-        });
-    }
+    if (e && e.stopPropagation) e.stopPropagation();
+    navigate(`/order/?category=${ProductItem.category}&id=${ProductItem.id}`);
   };
 
   return (

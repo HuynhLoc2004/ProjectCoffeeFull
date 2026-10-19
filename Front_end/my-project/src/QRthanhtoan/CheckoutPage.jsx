@@ -61,6 +61,17 @@ const CheckoutPage = () => {
       return;
     }
 
+    const token = getAccessToken();
+    if (!token) {
+      toast.info("Vui lòng đăng nhập để tiến hành đặt hàng!");
+      localStorage.setItem(
+        "page_before",
+        window.location.pathname + window.location.search
+      );
+      navigate("/login");
+      return;
+    }
+
     setIsLoading(true);
 
     const now = new Date();

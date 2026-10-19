@@ -18,6 +18,7 @@ import "./OrderPage.css";
 import "../src/Animation.css";
 import axiosClient from "../AxiosClient";
 import Navbar from "../Components/Navbar";
+import { toast } from "react-toastify";
 import { unlogout, getLogout } from "../ManagerLogout/ManagerLogout";
 import {
   getAccessToken,
@@ -123,6 +124,17 @@ const OrderPage = () => {
   };
 
   const handleCheckout = () => {
+    const token = getAccessToken();
+    if (!token || getLogout() === 1) {
+      toast.info("Vui lòng đăng nhập để tiến hành đặt hàng bạn nhé! ☕");
+      localStorage.setItem(
+        "page_before",
+        window.location.pathname + window.location.search
+      );
+      navigate("/login");
+      return;
+    }
+
     navigate("/checkout", {
       state: {
         product: product,
@@ -136,6 +148,17 @@ const OrderPage = () => {
   };
 
   const handleAddToCart = () => {
+    const token = getAccessToken();
+    if (!token || getLogout() === 1) {
+      toast.info("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng nhé! ☕");
+      localStorage.setItem(
+        "page_before",
+        window.location.pathname + window.location.search
+      );
+      navigate("/login");
+      return;
+    }
+
     flyToCartAnimation(imgSrc || product.img);
     const cartRequest = {
       productId: product.id,

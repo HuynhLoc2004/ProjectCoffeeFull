@@ -20,6 +20,7 @@ import { TfiClose } from "react-icons/tfi";
 import axiosClient from "../AxiosClient";
 import { RxAvatar } from "react-icons/rx";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "react-toastify";
 import {
   clearAccessToken,
   getAccessToken,
@@ -361,18 +362,20 @@ const Navbar = ({ userInfo }) => {
     } else {
       axiosClient.get("/auth/refresh_token", { withCredentials: true })
         .then((res) => {
-          if (res.data.statusCode === 401) {
-            localStorage.setItem("page_before", window.location.pathname + window.location.search);
-            navigate("/login");
-          }
-          if (res.data.statusCode === 200) {
+          if (res.data.statusCode === 200 && res.data.result?.accessToken) {
             setAccessToken(res.data.result.accessToken);
             unlogout();
             setAccesstoken(res.data.result.accessToken);
+            navigate("/Cartpage");
+          } else {
+            toast.info("Vui lòng đăng nhập để xem giỏ hàng của bạn nhé! ☕");
+            localStorage.setItem("page_before", "/Cartpage");
+            navigate("/login");
           }
         })
         .catch(() => {
-          localStorage.setItem("page_before", window.location.pathname + window.location.search);
+          toast.info("Vui lòng đăng nhập để xem giỏ hàng của bạn nhé! ☕");
+          localStorage.setItem("page_before", "/Cartpage");
           navigate("/login");
         });
     }

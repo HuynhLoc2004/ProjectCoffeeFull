@@ -60,6 +60,7 @@ const Cartpage = () => {
   const fetchCart = useCallback(async () => {
     const token = getAccessToken();
     if (!token) {
+      toast.info("Vui lòng đăng nhập để xem giỏ hàng của bạn nhé! ☕");
       localStorage.setItem(
         "page_before",
         window.location.pathname + window.location.search
