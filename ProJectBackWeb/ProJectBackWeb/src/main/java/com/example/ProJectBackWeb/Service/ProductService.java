@@ -222,7 +222,7 @@ public class ProductService {
         String randomName = UUID.randomUUID().toString();
 
         Map<String , Object> params  = new HashMap<>();
-        params.put("folder" , "uploads");
+        params.put("folder" , "TheCoffeeChill/Products");
         params.put("use_filename" , true);
         params.put("unique_filename", false);
         params.put("public_id" , randomName);
@@ -302,22 +302,26 @@ public class ProductService {
             throw new Appexception(HttpStatusEnum.NOT_FOUND.getCode(),  "not found product by code");
         });
 
-        if (productRequest.getImgUpload() != null) {
+        if (productRequest.getImgUpload() != null && !productRequest.getImgUpload().isEmpty()) {
             String urlimg = this.downloadImgProduct(productRequest.getImgUpload());
             productEntity.setImg(urlimg);
+        } else if (productRequest.getImg() != null && !productRequest.getImg().isBlank()) {
+            productEntity.setImg(productRequest.getImg());
         }
-            productEntity.setSale(productRequest.getSale());
+        productEntity.setSale(productRequest.getSale());
         if (productRequest.getCategory() != null) {
             productEntity.setCategory(productRequest.getCategory());
         }
         if (productRequest.getCode() != null) {
             productEntity.setCode(productRequest.getCode());
         }
-        productEntity.setPrice(productRequest
-                .getPrice());
+        if (productRequest.getPrice() != null) {
+            productEntity.setPrice(productRequest.getPrice());
+        }
         if(productRequest.getName() != null){
             productEntity.setName(productRequest.getName());
         }
+        this.productRepository.save(productEntity);
         this.redisTemplate.delete(ADMIN_PRODUCTS_CACHE_KEY);
         this.redisTemplate.delete("products:public:all");
         this.redisTemplate.delete("productsby:" + productEntity.getCategory());

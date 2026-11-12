@@ -1,1 +1,1241 @@
-{"statusCode":200,"message":"OK","result":[{"id":115,"code":"cfc35","active":true,"name":"Cà phê muối","price":15000.0,"img":"https://res.cloudinary.com/djkif9ubs/image/upload/f_auto,q_auto/TraSua_3.png","sale":13000,"category":"coffee","sizeEntitySet":[{"id":1,"size":"S","price_size":0.0},{"id":2,"size":"M","price_size":5000.0},{"id":3,"size":"L","price_size":8000.0}],"toppingEntities":[{"id":1,"typeTopping":"A","nameTopping":"Trân châu đen","price_topping":5000.0},{"id":2,"typeTopping":"B","nameTopping":"Thạch cà phê","price_topping":7000.0},{"id":3,"typeTopping":"C","nameTopping":"Kem cheese","price_topping":10000.0}]},{"id":114,"code":"cfc29","active":true,"name":"Americano mật ong","price":35000.0,"img":"https://res.cloudinary.com/djkif9ubs/image/upload/f_auto,q_auto/AMERICANO_5.png","sale":33000,"category":"americano","sizeEntitySet":[{"id":1,"size":"S","price_size":0.0},{"id":2,"size":"M","price_size":5000.0},{"id":3,"size":"L","price_size":8000.0}],"toppingEntities":[{"id":1,"typeTopping":"A","nameTopping":"Trân châu đen","price_topping":5000.0},{"id":2,"typeTopping":"B","nameTopping":"Thạch cà phê","price_topping":7000.0},{"id":3,"typeTopping":"C","nameTopping":"Kem cheese","price_topping":10000.0}]},{"id":113,"code":"cfc28","active":true,"name":"Americano đậm vị","price":34000.0,"img":"https://res.cloudinary.com/djkif9ubs/image/upload/f_auto,q_auto/AMERICANO_4.png","sale":32000,"category":"americano","sizeEntitySet":[{"id":1,"size":"S","price_size":0.0},{"id":2,"size":"M","price_size":5000.0},{"id":3,"size":"L","price_size":8000.0}],"toppingEntities":[{"id":1,"typeTopping":"A","nameTopping":"Trân châu đen","price_topping":5000.0},{"id":2,"typeTopping":"B","nameTopping":"Thạch cà phê","price_topping":7000.0},{"id":3,"typeTopping":"C","nameTopping":"Kem cheese","price_topping":10000.0}]},{"id":111,"code":"cfc26","active":true,"name":"Americano đá","price":32000.0,"img":"https://res.cloudinary.com/djkif9ubs/image/upload/f_auto,q_auto/AMERICANO_2.png","sale":null,"category":"americano","sizeEntitySet":[{"id":1,"size":"S","price_size":0.0},{"id":2,"size":"M","price_size":5000.0},{"id":3,"size":"L","price_size":8000.0}],"toppingEntities":[{"id":1,"typeTopping":"A","nameTopping":"Trân châu đen","price_topping":5000.0},{"id":2,"typeTopping":"B","nameTopping":"Thạch cà phê","price_topping":7000.0},{"id":3,"typeTopping":"C","nameTopping":"Kem cheese","price_topping":10000.0}]},{"id":108,"code":"cfc23","active":true,"name":"Bánh tart trứng","price":30000.0,"img":"https://res.cloudinary.com/djkif9ubs/image/upload/f_auto,q_auto/Cake_9.png","sale":27000,"category":"cake","sizeEntitySet":[],"toppingEntities":[{"id":1,"typeTopping":"A","nameTopping":"Trân châu đen","price_topping":5000.0},{"id":2,"typeTopping":"B","nameTopping":"Thạch cà phê","price_topping":7000.0},{"id":3,"typeTopping":"C","nameTopping":"Kem cheese","price_topping":10000.0}]},{"id":107,"code":"cfc22","active":true,"name":"Bánh quy bơ","price":28000.0,"img":"https://res.cloudinary.com/djkif9ubs/image/upload/f_auto,q_auto/Cake_8.png","sale":null,"category":"cake","sizeEntitySet":[],"toppingEntities":[{"id":1,"typeTopping":"A","nameTopping":"Trân châu đen","price_topping":5000.0},{"id":2,"typeTopping":"B","nameTopping":"Thạch cà phê","price_topping":7000.0},{"id":3,"typeTopping":"C","nameTopping":"Kem cheese","price_topping":10000.0}]},{"id":106,"code":"cfc21","active":true,"name":"Bánh croissant","price":33000.0,"img":"https://res.cloudinary.com/djkif9ubs/image/upload/f_auto,q_auto/Cake_7.png","sale":null,"category":"cake","sizeEntitySet":[],"toppingEntities":[{"id":1,"typeTopping":"A","nameTopping":"Trân châu đen","price_topping":5000.0},{"id":2,"typeTopping":"B","nameTopping":"Thạch cà phê","price_topping":7000.0},{"id":3,"typeTopping":"C","nameTopping":"Kem cheese","price_topping":10000.0}]},{"id":104,"code":"cfc19","active":true,"name":"Bánh muffin","price":29000.0,"img":"https://res.cloudinary.com/djkif9ubs/image/upload/f_auto,q_auto/Cake_5.png","sale":null,"category":"cake","sizeEntitySet":[],"toppingEntities":[{"id":1,"typeTopping":"A","nameTopping":"Trân châu đen","price_topping":5000.0},{"id":2,"typeTopping":"B","nameTopping":"Thạch cà phê","price_topping":7000.0},{"id":3,"typeTopping":"C","nameTopping":"Kem cheese","price_topping":10000.0}]},{"id":103,"code":"cfc18","active":true,"name":"Bánh donut","price":32000.0,"img":"https://res.cloudinary.com/djkif9ubs/image/upload/f_auto,q_auto/Cake_4.png","sale":null,"category":"cake","sizeEntitySet":[],"toppingEntities":[{"id":1,"typeTopping":"A","nameTopping":"Trân châu đen","price_topping":5000.0},{"id":2,"typeTopping":"B","nameTopping":"Thạch cà phê","price_topping":7000.0},{"id":3,"typeTopping":"C","nameTopping":"Kem cheese","price_topping":10000.0}]},{"id":102,"code":"cfc17","active":true,"name":"Bánh su kem","price":30000.0,"img":"https://res.cloudinary.com/djkif9ubs/image/upload/f_auto,q_auto/Cake_3.png","sale":28000,"category":"cake","sizeEntitySet":[],"toppingEntities":[{"id":1,"typeTopping":"A","nameTopping":"Trân châu đen","price_topping":5000.0},{"id":2,"typeTopping":"B","nameTopping":"Thạch cà phê","price_topping":7000.0},{"id":3,"typeTopping":"C","nameTopping":"Kem cheese","price_topping":10000.0}]},{"id":101,"code":"cfc16","active":true,"name":"Bánh cupcake","price":27000.0,"img":"https://res.cloudinary.com/djkif9ubs/image/upload/f_auto,q_auto/Cake_2.png","sale":null,"category":"cake","sizeEntitySet":[],"toppingEntities":[{"id":1,"typeTopping":"A","nameTopping":"Trân châu đen","price_topping":5000.0},{"id":2,"typeTopping":"B","nameTopping":"Thạch cà phê","price_topping":7000.0},{"id":3,"typeTopping":"C","nameTopping":"Kem cheese","price_topping":10000.0}]},{"id":100,"code":"cfc15","active":true,"name":"Bánh bông lan","price":25000.0,"img":"https://res.cloudinary.com/djkif9ubs/image/upload/f_auto,q_auto/Cake_1.png","sale":null,"category":"cake","sizeEntitySet":[],"toppingEntities":[{"id":1,"typeTopping":"A","nameTopping":"Trân châu đen","price_topping":5000.0},{"id":2,"typeTopping":"B","nameTopping":"Thạch cà phê","price_topping":7000.0},{"id":3,"typeTopping":"C","nameTopping":"Kem cheese","price_topping":10000.0}]},{"id":99,"code":"cfc14","active":true,"name":"Trà sữa truyền thống","price":30000.0,"img":"https://res.cloudinary.com/djkif9ubs/image/upload/f_auto,q_auto/TraSua_6.png","sale":28000,"category":"milk-tea","sizeEntitySet":[{"id":1,"size":"S","price_size":0.0},{"id":2,"size":"M","price_size":5000.0},{"id":3,"size":"L","price_size":8000.0}],"toppingEntities":[{"id":1,"typeTopping":"A","nameTopping":"Trân châu đen","price_topping":5000.0},{"id":2,"typeTopping":"B","nameTopping":"Thạch cà phê","price_topping":7000.0},{"id":3,"typeTopping":"C","nameTopping":"Kem cheese","price_topping":10000.0}]},{"id":98,"code":"cfc13","active":true,"name":"Trà sữa siro","price":34000.0,"img":"https://res.cloudinary.com/djkif9ubs/image/upload/f_auto,q_auto/TraSua_5.png","sale":null,"category":"milk-tea","sizeEntitySet":[{"id":1,"size":"S","price_size":0.0},{"id":2,"size":"M","price_size":5000.0},{"id":3,"size":"L","price_size":8000.0}],"toppingEntities":[{"id":1,"typeTopping":"A","nameTopping":"Trân châu đen","price_topping":5000.0},{"id":2,"typeTopping":"B","nameTopping":"Thạch cà phê","price_topping":7000.0},{"id":3,"typeTopping":"C","nameTopping":"Kem cheese","price_topping":10000.0}]},{"id":97,"code":"cfc12","active":true,"name":"Trà sữa đá xay","price":38000.0,"img":"https://res.cloudinary.com/djkif9ubs/image/upload/f_auto,q_auto/TraSua_4.png","sale":36000,"category":"milk-tea","sizeEntitySet":[{"id":1,"size":"S","price_size":0.0},{"id":2,"size":"M","price_size":5000.0},{"id":3,"size":"L","price_size":8000.0}],"toppingEntities":[{"id":1,"typeTopping":"A","nameTopping":"Trân châu đen","price_topping":5000.0},{"id":2,"typeTopping":"B","nameTopping":"Thạch cà phê","price_topping":7000.0},{"id":3,"typeTopping":"C","nameTopping":"Kem cheese","price_topping":10000.0}]},{"id":96,"code":"cfc11","active":true,"name":"Trà sữa nóng đặc","price":35000.0,"img":"https://res.cloudinary.com/djkif9ubs/image/upload/f_auto,q_auto/TraSua_3.png","sale":33000,"category":"milk-tea","sizeEntitySet":[{"id":1,"size":"S","price_size":0.0},{"id":2,"size":"M","price_size":5000.0},{"id":3,"size":"L","price_size":8000.0}],"toppingEntities":[{"id":1,"typeTopping":"A","nameTopping":"Trân châu đen","price_topping":5000.0},{"id":2,"typeTopping":"B","nameTopping":"Thạch cà phê","price_topping":7000.0},{"id":3,"typeTopping":"C","nameTopping":"Kem cheese","price_topping":10000.0}]},{"id":95,"code":"cfc10","active":true,"name":"Trà sữa sương sáo nóng","price":32000.0,"img":"https://res.cloudinary.com/djkif9ubs/image/upload/f_auto,q_auto/TraSua_2.png","sale":null,"category":"milk-tea","sizeEntitySet":[{"id":1,"size":"S","price_size":0.0},{"id":2,"size":"M","price_size":5000.0},{"id":3,"size":"L","price_size":8000.0}],"toppingEntities":[{"id":1,"typeTopping":"A","nameTopping":"Trân châu đen","price_topping":5000.0},{"id":2,"typeTopping":"B","nameTopping":"Thạch cà phê","price_topping":7000.0},{"id":3,"typeTopping":"C","nameTopping":"Kem cheese","price_topping":10000.0}]},{"id":94,"code":"cfc9","active":true,"name":"Trà sữa sương sáo","price":30000.0,"img":"https://res.cloudinary.com/djkif9ubs/image/upload/f_auto,q_auto/TraSua_1.png","sale":null,"category":"milk-tea","sizeEntitySet":[{"id":1,"size":"S","price_size":0.0},{"id":2,"size":"M","price_size":5000.0},{"id":3,"size":"L","price_size":8000.0}],"toppingEntities":[{"id":1,"typeTopping":"A","nameTopping":"Trân châu đen","price_topping":5000.0},{"id":2,"typeTopping":"B","nameTopping":"Thạch cà phê","price_topping":7000.0},{"id":3,"typeTopping":"C","nameTopping":"Kem cheese","price_topping":10000.0}]},{"id":93,"code":"cfc8","active":true,"name":"Bạc xỉu trứng phô mai","price":25000.0,"img":"https://res.cloudinary.com/djkif9ubs/image/upload/f_auto,q_auto/Coffee_8.png","sale":23000,"category":"coffee","sizeEntitySet":[{"id":1,"size":"S","price_size":0.0},{"id":2,"size":"M","price_size":5000.0},{"id":3,"size":"L","price_size":8000.0}],"toppingEntities":[{"id":1,"typeTopping":"A","nameTopping":"Trân châu đen","price_topping":5000.0},{"id":2,"typeTopping":"B","nameTopping":"Thạch cà phê","price_topping":7000.0},{"id":3,"typeTopping":"C","nameTopping":"Kem cheese","price_topping":10000.0}]},{"id":92,"code":"cfc7","active":true,"name":"Bạc xỉu phô mai","price":30000.0,"img":"https://res.cloudinary.com/djkif9ubs/image/upload/f_auto,q_auto/Coffee_7.png","sale":27000,"category":"coffee","sizeEntitySet":[{"id":1,"size":"S","price_size":0.0},{"id":2,"size":"M","price_size":5000.0},{"id":3,"size":"L","price_size":8000.0}],"toppingEntities":[{"id":1,"typeTopping":"A","nameTopping":"Trân châu đen","price_topping":5000.0},{"id":2,"typeTopping":"B","nameTopping":"Thạch cà phê","price_topping":7000.0},{"id":3,"typeTopping":"C","nameTopping":"Kem cheese","price_topping":10000.0}]},{"id":91,"code":"cfc6","active":true,"name":"Bạc xỉu đá","price":22000.0,"img":"https://res.cloudinary.com/djkif9ubs/image/upload/f_auto,q_auto/Coffee_6.png","sale":null,"category":"coffee","sizeEntitySet":[{"id":1,"size":"S","price_size":0.0},{"id":2,"size":"M","price_size":5000.0},{"id":3,"size":"L","price_size":8000.0}],"toppingEntities":[{"id":1,"typeTopping":"A","nameTopping":"Trân châu đen","price_topping":5000.0},{"id":2,"typeTopping":"B","nameTopping":"Thạch cà phê","price_topping":7000.0},{"id":3,"typeTopping":"C","nameTopping":"Kem cheese","price_topping":10000.0}]},{"id":90,"code":"cfc5","active":true,"name":"Bạc xỉu sữa chua","price":20000.0,"img":"https://res.cloudinary.com/djkif9ubs/image/upload/f_auto,q_auto/Coffee_5.png","sale":18000,"category":"coffee","sizeEntitySet":[{"id":1,"size":"S","price_size":0.0},{"id":2,"size":"M","price_size":5000.0},{"id":3,"size":"L","price_size":8000.0}],"toppingEntities":[{"id":1,"typeTopping":"A","nameTopping":"Trân châu đen","price_topping":5000.0},{"id":2,"typeTopping":"B","nameTopping":"Thạch cà phê","price_topping":7000.0},{"id":3,"typeTopping":"C","nameTopping":"Kem cheese","price_topping":10000.0}]},{"id":89,"code":"cfc4","active":true,"name":"Bạc xỉu nóng","price":25000.0,"img":"https://res.cloudinary.com/djkif9ubs/image/upload/f_auto,q_auto/Coffee_4.png","sale":null,"category":"coffee","sizeEntitySet":[{"id":1,"size":"S","price_size":0.0},{"id":2,"size":"M","price_size":5000.0},{"id":3,"size":"L","price_size":8000.0}],"toppingEntities":[{"id":1,"typeTopping":"A","nameTopping":"Trân châu đen","price_topping":5000.0},{"id":2,"typeTopping":"B","nameTopping":"Thạch cà phê","price_topping":7000.0},{"id":3,"typeTopping":"C","nameTopping":"Kem cheese","price_topping":10000.0}]},{"id":88,"code":"cfc3","active":true,"name":"Cà phê đá xay","price":20000.0,"img":"https://res.cloudinary.com/djkif9ubs/image/upload/f_auto,q_auto/Coffee_3.png","sale":17000,"category":"coffee","sizeEntitySet":[{"id":1,"size":"S","price_size":0.0},{"id":2,"size":"M","price_size":5000.0},{"id":3,"size":"L","price_size":8000.0}],"toppingEntities":[{"id":1,"typeTopping":"A","nameTopping":"Trân châu đen","price_topping":5000.0},{"id":2,"typeTopping":"B","nameTopping":"Thạch cà phê","price_topping":7000.0},{"id":3,"typeTopping":"C","nameTopping":"Kem cheese","price_topping":10000.0}]},{"id":87,"code":"cfc2","active":true,"name":"Cà phê đá","price":20000.0,"img":"https://res.cloudinary.com/djkif9ubs/image/upload/f_auto,q_auto/Coffee_2.png","sale":18000,"category":"coffee","sizeEntitySet":[{"id":1,"size":"S","price_size":0.0},{"id":2,"size":"M","price_size":5000.0},{"id":3,"size":"L","price_size":8000.0}],"toppingEntities":[{"id":1,"typeTopping":"A","nameTopping":"Trân châu đen","price_topping":5000.0},{"id":2,"typeTopping":"B","nameTopping":"Thạch cà phê","price_topping":7000.0},{"id":3,"typeTopping":"C","nameTopping":"Kem cheese","price_topping":10000.0}]},{"id":86,"code":"cfc1","active":true,"name":"Cà phê nóng","price":15000.0,"img":"https://res.cloudinary.com/djkif9ubs/image/upload/f_auto,q_auto/Coffee_1.png","sale":null,"category":"coffee","sizeEntitySet":[{"id":1,"size":"S","price_size":0.0},{"id":2,"size":"M","price_size":5000.0},{"id":3,"size":"L","price_size":8000.0}],"toppingEntities":[{"id":1,"typeTopping":"A","nameTopping":"Trân châu đen","price_topping":5000.0},{"id":2,"typeTopping":"B","nameTopping":"Thạch cà phê","price_topping":7000.0},{"id":3,"typeTopping":"C","nameTopping":"Kem cheese","price_topping":10000.0}]},{"id":85,"code":"cfc34","active":true,"name":"Americano mật ong","price":35000.0,"img":"https://res.cloudinary.com/djkif9ubs/image/upload/f_auto,q_auto/AMERICANO_5.png","sale":33000,"category":"americano","sizeEntitySet":[{"id":1,"size":"S","price_size":0.0},{"id":2,"size":"M","price_size":5000.0},{"id":3,"size":"L","price_size":8000.0}],"toppingEntities":[{"id":1,"typeTopping":"A","nameTopping":"Trân châu đen","price_topping":5000.0},{"id":2,"typeTopping":"B","nameTopping":"Thạch cà phê","price_topping":7000.0},{"id":3,"typeTopping":"C","nameTopping":"Kem cheese","price_topping":10000.0}]},{"id":82,"code":"cfc31","active":true,"name":"Americano đá","price":32000.0,"img":"https://res.cloudinary.com/djkif9ubs/image/upload/f_auto,q_auto/AMERICANO_2.png","sale":null,"category":"americano","sizeEntitySet":[{"id":1,"size":"S","price_size":0.0},{"id":2,"size":"M","price_size":5000.0},{"id":3,"size":"L","price_size":8000.0}],"toppingEntities":[{"id":1,"typeTopping":"A","nameTopping":"Trân châu đen","price_topping":5000.0},{"id":2,"typeTopping":"B","nameTopping":"Thạch cà phê","price_topping":7000.0},{"id":3,"typeTopping":"C","nameTopping":"Kem cheese","price_topping":10000.0}]},{"id":81,"code":"cfc30","active":true,"name":"Americano truyền thống","price":30000.0,"img":"https://res.cloudinary.com/djkif9ubs/image/upload/f_auto,q_auto/AMERICANO_1.png","sale":13000,"category":"americano","sizeEntitySet":[{"id":1,"size":"S","price_size":0.0},{"id":2,"size":"M","price_size":5000.0},{"id":3,"size":"L","price_size":8000.0}],"toppingEntities":[{"id":1,"typeTopping":"A","nameTopping":"Trân châu đen","price_topping":5000.0},{"id":2,"typeTopping":"B","nameTopping":"Thạch cà phê","price_topping":7000.0},{"id":3,"typeTopping":"C","nameTopping":"Kem cheese","price_topping":10000.0}]}]}
+{
+  "statusCode": 200,
+  "message": "OK",
+  "result": [
+    {
+      "id": 115,
+      "code": "cfc35",
+      "active": true,
+      "name": "Cà phê muối",
+      "price": 15000,
+      "img": "https://res.cloudinary.com/djkif9ubs/image/upload/v1794491352/TheCoffeeChill/Products/ca_phe_muoi.jpg",
+      "sale": 13000,
+      "category": "coffee",
+      "sizeEntitySet": [
+        {
+          "id": 1,
+          "size": "S",
+          "price_size": 0
+        },
+        {
+          "id": 2,
+          "size": "M",
+          "price_size": 5000
+        },
+        {
+          "id": 3,
+          "size": "L",
+          "price_size": 8000
+        }
+      ],
+      "toppingEntities": [
+        {
+          "id": 1,
+          "typeTopping": "A",
+          "nameTopping": "Trân châu đen",
+          "price_topping": 5000
+        },
+        {
+          "id": 2,
+          "typeTopping": "B",
+          "nameTopping": "Thạch cà phê",
+          "price_topping": 7000
+        },
+        {
+          "id": 3,
+          "typeTopping": "C",
+          "nameTopping": "Kem cheese",
+          "price_topping": 10000
+        }
+      ]
+    },
+    {
+      "id": 114,
+      "code": "cfc29",
+      "active": true,
+      "name": "Americano mật ong",
+      "price": 35000,
+      "img": "https://res.cloudinary.com/djkif9ubs/image/upload/v1794491365/TheCoffeeChill/Products/americano_mat_ong_2.jpg",
+      "sale": 33000,
+      "category": "americano",
+      "sizeEntitySet": [
+        {
+          "id": 1,
+          "size": "S",
+          "price_size": 0
+        },
+        {
+          "id": 2,
+          "size": "M",
+          "price_size": 5000
+        },
+        {
+          "id": 3,
+          "size": "L",
+          "price_size": 8000
+        }
+      ],
+      "toppingEntities": [
+        {
+          "id": 1,
+          "typeTopping": "A",
+          "nameTopping": "Trân châu đen",
+          "price_topping": 5000
+        },
+        {
+          "id": 2,
+          "typeTopping": "B",
+          "nameTopping": "Thạch cà phê",
+          "price_topping": 7000
+        },
+        {
+          "id": 3,
+          "typeTopping": "C",
+          "nameTopping": "Kem cheese",
+          "price_topping": 10000
+        }
+      ]
+    },
+    {
+      "id": 113,
+      "code": "cfc28",
+      "active": true,
+      "name": "Americano đậm vị",
+      "price": 34000,
+      "img": "https://res.cloudinary.com/djkif9ubs/image/upload/v1794491366/TheCoffeeChill/Products/americano_dam_vi.jpg",
+      "sale": 32000,
+      "category": "americano",
+      "sizeEntitySet": [
+        {
+          "id": 1,
+          "size": "S",
+          "price_size": 0
+        },
+        {
+          "id": 2,
+          "size": "M",
+          "price_size": 5000
+        },
+        {
+          "id": 3,
+          "size": "L",
+          "price_size": 8000
+        }
+      ],
+      "toppingEntities": [
+        {
+          "id": 1,
+          "typeTopping": "A",
+          "nameTopping": "Trân châu đen",
+          "price_topping": 5000
+        },
+        {
+          "id": 2,
+          "typeTopping": "B",
+          "nameTopping": "Thạch cà phê",
+          "price_topping": 7000
+        },
+        {
+          "id": 3,
+          "typeTopping": "C",
+          "nameTopping": "Kem cheese",
+          "price_topping": 10000
+        }
+      ]
+    },
+    {
+      "id": 111,
+      "code": "cfc26",
+      "active": true,
+      "name": "Americano đá",
+      "price": 32000,
+      "img": "https://res.cloudinary.com/djkif9ubs/image/upload/v1794491368/TheCoffeeChill/Products/americano_da_2.jpg",
+      "sale": null,
+      "category": "americano",
+      "sizeEntitySet": [
+        {
+          "id": 1,
+          "size": "S",
+          "price_size": 0
+        },
+        {
+          "id": 2,
+          "size": "M",
+          "price_size": 5000
+        },
+        {
+          "id": 3,
+          "size": "L",
+          "price_size": 8000
+        }
+      ],
+      "toppingEntities": [
+        {
+          "id": 1,
+          "typeTopping": "A",
+          "nameTopping": "Trân châu đen",
+          "price_topping": 5000
+        },
+        {
+          "id": 2,
+          "typeTopping": "B",
+          "nameTopping": "Thạch cà phê",
+          "price_topping": 7000
+        },
+        {
+          "id": 3,
+          "typeTopping": "C",
+          "nameTopping": "Kem cheese",
+          "price_topping": 10000
+        }
+      ]
+    },
+    {
+      "id": 108,
+      "code": "cfc23",
+      "active": true,
+      "name": "Bánh tart trứng",
+      "price": 30000,
+      "img": "https://res.cloudinary.com/djkif9ubs/image/upload/v1794491377/TheCoffeeChill/Products/banh_tart_trung.jpg",
+      "sale": 27000,
+      "category": "cake",
+      "sizeEntitySet": [],
+      "toppingEntities": [
+        {
+          "id": 1,
+          "typeTopping": "A",
+          "nameTopping": "Trân châu đen",
+          "price_topping": 5000
+        },
+        {
+          "id": 2,
+          "typeTopping": "B",
+          "nameTopping": "Thạch cà phê",
+          "price_topping": 7000
+        },
+        {
+          "id": 3,
+          "typeTopping": "C",
+          "nameTopping": "Kem cheese",
+          "price_topping": 10000
+        }
+      ]
+    },
+    {
+      "id": 107,
+      "code": "cfc22",
+      "active": true,
+      "name": "Bánh quy bơ",
+      "price": 28000,
+      "img": "https://res.cloudinary.com/djkif9ubs/image/upload/v1794491378/TheCoffeeChill/Products/banh_quy_bo.jpg",
+      "sale": null,
+      "category": "cake",
+      "sizeEntitySet": [],
+      "toppingEntities": [
+        {
+          "id": 1,
+          "typeTopping": "A",
+          "nameTopping": "Trân châu đen",
+          "price_topping": 5000
+        },
+        {
+          "id": 2,
+          "typeTopping": "B",
+          "nameTopping": "Thạch cà phê",
+          "price_topping": 7000
+        },
+        {
+          "id": 3,
+          "typeTopping": "C",
+          "nameTopping": "Kem cheese",
+          "price_topping": 10000
+        }
+      ]
+    },
+    {
+      "id": 106,
+      "code": "cfc21",
+      "active": true,
+      "name": "Bánh croissant",
+      "price": 33000,
+      "img": "https://res.cloudinary.com/djkif9ubs/image/upload/v1794491380/TheCoffeeChill/Products/banh_croissant.jpg",
+      "sale": null,
+      "category": "cake",
+      "sizeEntitySet": [],
+      "toppingEntities": [
+        {
+          "id": 1,
+          "typeTopping": "A",
+          "nameTopping": "Trân châu đen",
+          "price_topping": 5000
+        },
+        {
+          "id": 2,
+          "typeTopping": "B",
+          "nameTopping": "Thạch cà phê",
+          "price_topping": 7000
+        },
+        {
+          "id": 3,
+          "typeTopping": "C",
+          "nameTopping": "Kem cheese",
+          "price_topping": 10000
+        }
+      ]
+    },
+    {
+      "id": 104,
+      "code": "cfc19",
+      "active": true,
+      "name": "Bánh muffin",
+      "price": 29000,
+      "img": "https://res.cloudinary.com/djkif9ubs/image/upload/v1794491381/TheCoffeeChill/Products/banh_muffin.jpg",
+      "sale": null,
+      "category": "cake",
+      "sizeEntitySet": [],
+      "toppingEntities": [
+        {
+          "id": 1,
+          "typeTopping": "A",
+          "nameTopping": "Trân châu đen",
+          "price_topping": 5000
+        },
+        {
+          "id": 2,
+          "typeTopping": "B",
+          "nameTopping": "Thạch cà phê",
+          "price_topping": 7000
+        },
+        {
+          "id": 3,
+          "typeTopping": "C",
+          "nameTopping": "Kem cheese",
+          "price_topping": 10000
+        }
+      ]
+    },
+    {
+      "id": 103,
+      "code": "cfc18",
+      "active": true,
+      "name": "Bánh donut",
+      "price": 32000,
+      "img": "https://res.cloudinary.com/djkif9ubs/image/upload/v1794491382/TheCoffeeChill/Products/banh_donut.jpg",
+      "sale": null,
+      "category": "cake",
+      "sizeEntitySet": [],
+      "toppingEntities": [
+        {
+          "id": 1,
+          "typeTopping": "A",
+          "nameTopping": "Trân châu đen",
+          "price_topping": 5000
+        },
+        {
+          "id": 2,
+          "typeTopping": "B",
+          "nameTopping": "Thạch cà phê",
+          "price_topping": 7000
+        },
+        {
+          "id": 3,
+          "typeTopping": "C",
+          "nameTopping": "Kem cheese",
+          "price_topping": 10000
+        }
+      ]
+    },
+    {
+      "id": 102,
+      "code": "cfc17",
+      "active": true,
+      "name": "Bánh su kem",
+      "price": 30000,
+      "img": "https://res.cloudinary.com/djkif9ubs/image/upload/v1794491383/TheCoffeeChill/Products/banh_su_kem.jpg",
+      "sale": 28000,
+      "category": "cake",
+      "sizeEntitySet": [],
+      "toppingEntities": [
+        {
+          "id": 1,
+          "typeTopping": "A",
+          "nameTopping": "Trân châu đen",
+          "price_topping": 5000
+        },
+        {
+          "id": 2,
+          "typeTopping": "B",
+          "nameTopping": "Thạch cà phê",
+          "price_topping": 7000
+        },
+        {
+          "id": 3,
+          "typeTopping": "C",
+          "nameTopping": "Kem cheese",
+          "price_topping": 10000
+        }
+      ]
+    },
+    {
+      "id": 101,
+      "code": "cfc16",
+      "active": true,
+      "name": "Bánh cupcake",
+      "price": 27000,
+      "img": "https://res.cloudinary.com/djkif9ubs/image/upload/v1794491385/TheCoffeeChill/Products/banh_cupcake.jpg",
+      "sale": null,
+      "category": "cake",
+      "sizeEntitySet": [],
+      "toppingEntities": [
+        {
+          "id": 1,
+          "typeTopping": "A",
+          "nameTopping": "Trân châu đen",
+          "price_topping": 5000
+        },
+        {
+          "id": 2,
+          "typeTopping": "B",
+          "nameTopping": "Thạch cà phê",
+          "price_topping": 7000
+        },
+        {
+          "id": 3,
+          "typeTopping": "C",
+          "nameTopping": "Kem cheese",
+          "price_topping": 10000
+        }
+      ]
+    },
+    {
+      "id": 100,
+      "code": "cfc15",
+      "active": true,
+      "name": "Bánh bông lan",
+      "price": 25000,
+      "img": "https://res.cloudinary.com/djkif9ubs/image/upload/v1794491386/TheCoffeeChill/Products/banh_bong_lan.jpg",
+      "sale": null,
+      "category": "cake",
+      "sizeEntitySet": [],
+      "toppingEntities": [
+        {
+          "id": 1,
+          "typeTopping": "A",
+          "nameTopping": "Trân châu đen",
+          "price_topping": 5000
+        },
+        {
+          "id": 2,
+          "typeTopping": "B",
+          "nameTopping": "Thạch cà phê",
+          "price_topping": 7000
+        },
+        {
+          "id": 3,
+          "typeTopping": "C",
+          "nameTopping": "Kem cheese",
+          "price_topping": 10000
+        }
+      ]
+    },
+    {
+      "id": 99,
+      "code": "cfc14",
+      "active": true,
+      "name": "Trà sữa truyền thống",
+      "price": 30000,
+      "img": "https://res.cloudinary.com/djkif9ubs/image/upload/v1794491413/TheCoffeeChill/Products/tra_sua_truyen_thong.jpg",
+      "sale": 28000,
+      "category": "milk-tea",
+      "sizeEntitySet": [
+        {
+          "id": 1,
+          "size": "S",
+          "price_size": 0
+        },
+        {
+          "id": 2,
+          "size": "M",
+          "price_size": 5000
+        },
+        {
+          "id": 3,
+          "size": "L",
+          "price_size": 8000
+        }
+      ],
+      "toppingEntities": [
+        {
+          "id": 1,
+          "typeTopping": "A",
+          "nameTopping": "Trân châu đen",
+          "price_topping": 5000
+        },
+        {
+          "id": 2,
+          "typeTopping": "B",
+          "nameTopping": "Thạch cà phê",
+          "price_topping": 7000
+        },
+        {
+          "id": 3,
+          "typeTopping": "C",
+          "nameTopping": "Kem cheese",
+          "price_topping": 10000
+        }
+      ]
+    },
+    {
+      "id": 98,
+      "code": "cfc13",
+      "active": true,
+      "name": "Trà sữa siro",
+      "price": 34000,
+      "img": "https://res.cloudinary.com/djkif9ubs/image/upload/v1794491372/TheCoffeeChill/Products/tra_sua_siro.jpg",
+      "sale": null,
+      "category": "milk-tea",
+      "sizeEntitySet": [
+        {
+          "id": 1,
+          "size": "S",
+          "price_size": 0
+        },
+        {
+          "id": 2,
+          "size": "M",
+          "price_size": 5000
+        },
+        {
+          "id": 3,
+          "size": "L",
+          "price_size": 8000
+        }
+      ],
+      "toppingEntities": [
+        {
+          "id": 1,
+          "typeTopping": "A",
+          "nameTopping": "Trân châu đen",
+          "price_topping": 5000
+        },
+        {
+          "id": 2,
+          "typeTopping": "B",
+          "nameTopping": "Thạch cà phê",
+          "price_topping": 7000
+        },
+        {
+          "id": 3,
+          "typeTopping": "C",
+          "nameTopping": "Kem cheese",
+          "price_topping": 10000
+        }
+      ]
+    },
+    {
+      "id": 97,
+      "code": "cfc12",
+      "active": true,
+      "name": "Trà sữa đá xay",
+      "price": 38000,
+      "img": "https://res.cloudinary.com/djkif9ubs/image/upload/v1794491373/TheCoffeeChill/Products/tra_sua_da_xay.jpg",
+      "sale": 36000,
+      "category": "milk-tea",
+      "sizeEntitySet": [
+        {
+          "id": 1,
+          "size": "S",
+          "price_size": 0
+        },
+        {
+          "id": 2,
+          "size": "M",
+          "price_size": 5000
+        },
+        {
+          "id": 3,
+          "size": "L",
+          "price_size": 8000
+        }
+      ],
+      "toppingEntities": [
+        {
+          "id": 1,
+          "typeTopping": "A",
+          "nameTopping": "Trân châu đen",
+          "price_topping": 5000
+        },
+        {
+          "id": 2,
+          "typeTopping": "B",
+          "nameTopping": "Thạch cà phê",
+          "price_topping": 7000
+        },
+        {
+          "id": 3,
+          "typeTopping": "C",
+          "nameTopping": "Kem cheese",
+          "price_topping": 10000
+        }
+      ]
+    },
+    {
+      "id": 96,
+      "code": "cfc11",
+      "active": true,
+      "name": "Trà sữa nóng đặc",
+      "price": 35000,
+      "img": "https://res.cloudinary.com/djkif9ubs/image/upload/v1794491374/TheCoffeeChill/Products/tra_sua_nong_dac.jpg",
+      "sale": 33000,
+      "category": "milk-tea",
+      "sizeEntitySet": [
+        {
+          "id": 1,
+          "size": "S",
+          "price_size": 0
+        },
+        {
+          "id": 2,
+          "size": "M",
+          "price_size": 5000
+        },
+        {
+          "id": 3,
+          "size": "L",
+          "price_size": 8000
+        }
+      ],
+      "toppingEntities": [
+        {
+          "id": 1,
+          "typeTopping": "A",
+          "nameTopping": "Trân châu đen",
+          "price_topping": 5000
+        },
+        {
+          "id": 2,
+          "typeTopping": "B",
+          "nameTopping": "Thạch cà phê",
+          "price_topping": 7000
+        },
+        {
+          "id": 3,
+          "typeTopping": "C",
+          "nameTopping": "Kem cheese",
+          "price_topping": 10000
+        }
+      ]
+    },
+    {
+      "id": 95,
+      "code": "cfc10",
+      "active": true,
+      "name": "Trà sữa sương sáo nóng",
+      "price": 32000,
+      "img": "https://res.cloudinary.com/djkif9ubs/image/upload/v1794491375/TheCoffeeChill/Products/tra_sua_suong_sao_nong.jpg",
+      "sale": null,
+      "category": "milk-tea",
+      "sizeEntitySet": [
+        {
+          "id": 1,
+          "size": "S",
+          "price_size": 0
+        },
+        {
+          "id": 2,
+          "size": "M",
+          "price_size": 5000
+        },
+        {
+          "id": 3,
+          "size": "L",
+          "price_size": 8000
+        }
+      ],
+      "toppingEntities": [
+        {
+          "id": 1,
+          "typeTopping": "A",
+          "nameTopping": "Trân châu đen",
+          "price_topping": 5000
+        },
+        {
+          "id": 2,
+          "typeTopping": "B",
+          "nameTopping": "Thạch cà phê",
+          "price_topping": 7000
+        },
+        {
+          "id": 3,
+          "typeTopping": "C",
+          "nameTopping": "Kem cheese",
+          "price_topping": 10000
+        }
+      ]
+    },
+    {
+      "id": 94,
+      "code": "cfc9",
+      "active": true,
+      "name": "Trà sữa sương sáo",
+      "price": 30000,
+      "img": "https://res.cloudinary.com/djkif9ubs/image/upload/v1794491376/TheCoffeeChill/Products/tra_sua_suong_sao.jpg",
+      "sale": null,
+      "category": "milk-tea",
+      "sizeEntitySet": [
+        {
+          "id": 1,
+          "size": "S",
+          "price_size": 0
+        },
+        {
+          "id": 2,
+          "size": "M",
+          "price_size": 5000
+        },
+        {
+          "id": 3,
+          "size": "L",
+          "price_size": 8000
+        }
+      ],
+      "toppingEntities": [
+        {
+          "id": 1,
+          "typeTopping": "A",
+          "nameTopping": "Trân châu đen",
+          "price_topping": 5000
+        },
+        {
+          "id": 2,
+          "typeTopping": "B",
+          "nameTopping": "Thạch cà phê",
+          "price_topping": 7000
+        },
+        {
+          "id": 3,
+          "typeTopping": "C",
+          "nameTopping": "Kem cheese",
+          "price_topping": 10000
+        }
+      ]
+    },
+    {
+      "id": 93,
+      "code": "cfc8",
+      "active": true,
+      "name": "Bạc xỉu trứng phô mai",
+      "price": 25000,
+      "img": "https://res.cloudinary.com/djkif9ubs/image/upload/v1794491354/TheCoffeeChill/Products/bac_xiu_trung_pho_mai.jpg",
+      "sale": 23000,
+      "category": "coffee",
+      "sizeEntitySet": [
+        {
+          "id": 1,
+          "size": "S",
+          "price_size": 0
+        },
+        {
+          "id": 2,
+          "size": "M",
+          "price_size": 5000
+        },
+        {
+          "id": 3,
+          "size": "L",
+          "price_size": 8000
+        }
+      ],
+      "toppingEntities": [
+        {
+          "id": 1,
+          "typeTopping": "A",
+          "nameTopping": "Trân châu đen",
+          "price_topping": 5000
+        },
+        {
+          "id": 2,
+          "typeTopping": "B",
+          "nameTopping": "Thạch cà phê",
+          "price_topping": 7000
+        },
+        {
+          "id": 3,
+          "typeTopping": "C",
+          "nameTopping": "Kem cheese",
+          "price_topping": 10000
+        }
+      ]
+    },
+    {
+      "id": 92,
+      "code": "cfc7",
+      "active": true,
+      "name": "Bạc xỉu phô mai",
+      "price": 30000,
+      "img": "https://res.cloudinary.com/djkif9ubs/image/upload/v1794491356/TheCoffeeChill/Products/bac_xiu_pho_mai.jpg",
+      "sale": 27000,
+      "category": "coffee",
+      "sizeEntitySet": [
+        {
+          "id": 1,
+          "size": "S",
+          "price_size": 0
+        },
+        {
+          "id": 2,
+          "size": "M",
+          "price_size": 5000
+        },
+        {
+          "id": 3,
+          "size": "L",
+          "price_size": 8000
+        }
+      ],
+      "toppingEntities": [
+        {
+          "id": 1,
+          "typeTopping": "A",
+          "nameTopping": "Trân châu đen",
+          "price_topping": 5000
+        },
+        {
+          "id": 2,
+          "typeTopping": "B",
+          "nameTopping": "Thạch cà phê",
+          "price_topping": 7000
+        },
+        {
+          "id": 3,
+          "typeTopping": "C",
+          "nameTopping": "Kem cheese",
+          "price_topping": 10000
+        }
+      ]
+    },
+    {
+      "id": 91,
+      "code": "cfc6",
+      "active": true,
+      "name": "Bạc xỉu đá",
+      "price": 22000,
+      "img": "https://res.cloudinary.com/djkif9ubs/image/upload/v1794491357/TheCoffeeChill/Products/bac_xiu_da.jpg",
+      "sale": null,
+      "category": "coffee",
+      "sizeEntitySet": [
+        {
+          "id": 1,
+          "size": "S",
+          "price_size": 0
+        },
+        {
+          "id": 2,
+          "size": "M",
+          "price_size": 5000
+        },
+        {
+          "id": 3,
+          "size": "L",
+          "price_size": 8000
+        }
+      ],
+      "toppingEntities": [
+        {
+          "id": 1,
+          "typeTopping": "A",
+          "nameTopping": "Trân châu đen",
+          "price_topping": 5000
+        },
+        {
+          "id": 2,
+          "typeTopping": "B",
+          "nameTopping": "Thạch cà phê",
+          "price_topping": 7000
+        },
+        {
+          "id": 3,
+          "typeTopping": "C",
+          "nameTopping": "Kem cheese",
+          "price_topping": 10000
+        }
+      ]
+    },
+    {
+      "id": 90,
+      "code": "cfc5",
+      "active": true,
+      "name": "Bạc xỉu sữa chua",
+      "price": 20000,
+      "img": "https://res.cloudinary.com/djkif9ubs/image/upload/v1794491358/TheCoffeeChill/Products/bac_xiu_sua_chua.jpg",
+      "sale": 18000,
+      "category": "coffee",
+      "sizeEntitySet": [
+        {
+          "id": 1,
+          "size": "S",
+          "price_size": 0
+        },
+        {
+          "id": 2,
+          "size": "M",
+          "price_size": 5000
+        },
+        {
+          "id": 3,
+          "size": "L",
+          "price_size": 8000
+        }
+      ],
+      "toppingEntities": [
+        {
+          "id": 1,
+          "typeTopping": "A",
+          "nameTopping": "Trân châu đen",
+          "price_topping": 5000
+        },
+        {
+          "id": 2,
+          "typeTopping": "B",
+          "nameTopping": "Thạch cà phê",
+          "price_topping": 7000
+        },
+        {
+          "id": 3,
+          "typeTopping": "C",
+          "nameTopping": "Kem cheese",
+          "price_topping": 10000
+        }
+      ]
+    },
+    {
+      "id": 89,
+      "code": "cfc4",
+      "active": true,
+      "name": "Bạc xỉu nóng",
+      "price": 25000,
+      "img": "https://res.cloudinary.com/djkif9ubs/image/upload/v1794491359/TheCoffeeChill/Products/bac_xiu_nong.jpg",
+      "sale": null,
+      "category": "coffee",
+      "sizeEntitySet": [
+        {
+          "id": 1,
+          "size": "S",
+          "price_size": 0
+        },
+        {
+          "id": 2,
+          "size": "M",
+          "price_size": 5000
+        },
+        {
+          "id": 3,
+          "size": "L",
+          "price_size": 8000
+        }
+      ],
+      "toppingEntities": [
+        {
+          "id": 1,
+          "typeTopping": "A",
+          "nameTopping": "Trân châu đen",
+          "price_topping": 5000
+        },
+        {
+          "id": 2,
+          "typeTopping": "B",
+          "nameTopping": "Thạch cà phê",
+          "price_topping": 7000
+        },
+        {
+          "id": 3,
+          "typeTopping": "C",
+          "nameTopping": "Kem cheese",
+          "price_topping": 10000
+        }
+      ]
+    },
+    {
+      "id": 88,
+      "code": "cfc3",
+      "active": true,
+      "name": "Cà phê đá xay",
+      "price": 20000,
+      "img": "https://res.cloudinary.com/djkif9ubs/image/upload/v1794491360/TheCoffeeChill/Products/ca_phe_da_xay.jpg",
+      "sale": 17000,
+      "category": "coffee",
+      "sizeEntitySet": [
+        {
+          "id": 1,
+          "size": "S",
+          "price_size": 0
+        },
+        {
+          "id": 2,
+          "size": "M",
+          "price_size": 5000
+        },
+        {
+          "id": 3,
+          "size": "L",
+          "price_size": 8000
+        }
+      ],
+      "toppingEntities": [
+        {
+          "id": 1,
+          "typeTopping": "A",
+          "nameTopping": "Trân châu đen",
+          "price_topping": 5000
+        },
+        {
+          "id": 2,
+          "typeTopping": "B",
+          "nameTopping": "Thạch cà phê",
+          "price_topping": 7000
+        },
+        {
+          "id": 3,
+          "typeTopping": "C",
+          "nameTopping": "Kem cheese",
+          "price_topping": 10000
+        }
+      ]
+    },
+    {
+      "id": 87,
+      "code": "cfc2",
+      "active": true,
+      "name": "Cà phê đá",
+      "price": 20000,
+      "img": "https://res.cloudinary.com/djkif9ubs/image/upload/v1794491361/TheCoffeeChill/Products/ca_phe_da.jpg",
+      "sale": 18000,
+      "category": "coffee",
+      "sizeEntitySet": [
+        {
+          "id": 1,
+          "size": "S",
+          "price_size": 0
+        },
+        {
+          "id": 2,
+          "size": "M",
+          "price_size": 5000
+        },
+        {
+          "id": 3,
+          "size": "L",
+          "price_size": 8000
+        }
+      ],
+      "toppingEntities": [
+        {
+          "id": 1,
+          "typeTopping": "A",
+          "nameTopping": "Trân châu đen",
+          "price_topping": 5000
+        },
+        {
+          "id": 2,
+          "typeTopping": "B",
+          "nameTopping": "Thạch cà phê",
+          "price_topping": 7000
+        },
+        {
+          "id": 3,
+          "typeTopping": "C",
+          "nameTopping": "Kem cheese",
+          "price_topping": 10000
+        }
+      ]
+    },
+    {
+      "id": 86,
+      "code": "cfc1",
+      "active": true,
+      "name": "Cà phê nóng",
+      "price": 15000,
+      "img": "https://res.cloudinary.com/djkif9ubs/image/upload/v1794491362/TheCoffeeChill/Products/ca_phe_nong.jpg",
+      "sale": null,
+      "category": "coffee",
+      "sizeEntitySet": [
+        {
+          "id": 1,
+          "size": "S",
+          "price_size": 0
+        },
+        {
+          "id": 2,
+          "size": "M",
+          "price_size": 5000
+        },
+        {
+          "id": 3,
+          "size": "L",
+          "price_size": 8000
+        }
+      ],
+      "toppingEntities": [
+        {
+          "id": 1,
+          "typeTopping": "A",
+          "nameTopping": "Trân châu đen",
+          "price_topping": 5000
+        },
+        {
+          "id": 2,
+          "typeTopping": "B",
+          "nameTopping": "Thạch cà phê",
+          "price_topping": 7000
+        },
+        {
+          "id": 3,
+          "typeTopping": "C",
+          "nameTopping": "Kem cheese",
+          "price_topping": 10000
+        }
+      ]
+    },
+    {
+      "id": 85,
+      "code": "cfc34",
+      "active": true,
+      "name": "Americano mật ong",
+      "price": 35000,
+      "img": "https://res.cloudinary.com/djkif9ubs/image/upload/v1794491363/TheCoffeeChill/Products/americano_mat_ong.jpg",
+      "sale": 33000,
+      "category": "americano",
+      "sizeEntitySet": [
+        {
+          "id": 1,
+          "size": "S",
+          "price_size": 0
+        },
+        {
+          "id": 2,
+          "size": "M",
+          "price_size": 5000
+        },
+        {
+          "id": 3,
+          "size": "L",
+          "price_size": 8000
+        }
+      ],
+      "toppingEntities": [
+        {
+          "id": 1,
+          "typeTopping": "A",
+          "nameTopping": "Trân châu đen",
+          "price_topping": 5000
+        },
+        {
+          "id": 2,
+          "typeTopping": "B",
+          "nameTopping": "Thạch cà phê",
+          "price_topping": 7000
+        },
+        {
+          "id": 3,
+          "typeTopping": "C",
+          "nameTopping": "Kem cheese",
+          "price_topping": 10000
+        }
+      ]
+    },
+    {
+      "id": 82,
+      "code": "cfc31",
+      "active": true,
+      "name": "Americano đá",
+      "price": 32000,
+      "img": "https://res.cloudinary.com/djkif9ubs/image/upload/v1794491367/TheCoffeeChill/Products/americano_da.jpg",
+      "sale": null,
+      "category": "americano",
+      "sizeEntitySet": [
+        {
+          "id": 1,
+          "size": "S",
+          "price_size": 0
+        },
+        {
+          "id": 2,
+          "size": "M",
+          "price_size": 5000
+        },
+        {
+          "id": 3,
+          "size": "L",
+          "price_size": 8000
+        }
+      ],
+      "toppingEntities": [
+        {
+          "id": 1,
+          "typeTopping": "A",
+          "nameTopping": "Trân châu đen",
+          "price_topping": 5000
+        },
+        {
+          "id": 2,
+          "typeTopping": "B",
+          "nameTopping": "Thạch cà phê",
+          "price_topping": 7000
+        },
+        {
+          "id": 3,
+          "typeTopping": "C",
+          "nameTopping": "Kem cheese",
+          "price_topping": 10000
+        }
+      ]
+    },
+    {
+      "id": 81,
+      "code": "cfc30",
+      "active": true,
+      "name": "Americano truyền thống",
+      "price": 30000,
+      "img": "https://res.cloudinary.com/djkif9ubs/image/upload/v1794491370/TheCoffeeChill/Products/americano_truyen_thong.jpg",
+      "sale": 13000,
+      "category": "americano",
+      "sizeEntitySet": [
+        {
+          "id": 1,
+          "size": "S",
+          "price_size": 0
+        },
+        {
+          "id": 2,
+          "size": "M",
+          "price_size": 5000
+        },
+        {
+          "id": 3,
+          "size": "L",
+          "price_size": 8000
+        }
+      ],
+      "toppingEntities": [
+        {
+          "id": 1,
+          "typeTopping": "A",
+          "nameTopping": "Trân châu đen",
+          "price_topping": 5000
+        },
+        {
+          "id": 2,
+          "typeTopping": "B",
+          "nameTopping": "Thạch cà phê",
+          "price_topping": 7000
+        },
+        {
+          "id": 3,
+          "typeTopping": "C",
+          "nameTopping": "Kem cheese",
+          "price_topping": 10000
+        }
+      ]
+    }
+  ]
+}
