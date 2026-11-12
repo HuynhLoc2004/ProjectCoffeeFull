@@ -34,6 +34,7 @@ const ProductPage = () => {
   const [infoUser, setInfoUser] = useState(null);
   const [accessToken, setAccesstoken] = useState(getAccessToken());
   const [publicProducts, setPublicProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const cat = searchParams.get("category");
@@ -51,11 +52,15 @@ const ProductPage = () => {
 
   useEffect(() => {
     let mounted = true;
+    setIsLoading(true);
     getCached("/product/public")
       .then((res) => {
         if (mounted) setPublicProducts(res.data?.result || []);
       })
-      .catch((error) => console.error("Không thể tải danh sách sản phẩm:", error));
+      .catch((error) => console.error("Không thể tải danh sách sản phẩm:", error))
+      .finally(() => {
+        if (mounted) setIsLoading(false);
+      });
     return () => {
       mounted = false;
     };
@@ -205,6 +210,7 @@ const ProductPage = () => {
                       
                       {/* Thay Marquee bằng ProductList Grid */}
                       <ProductList
+                        isLoading={isLoading}
                         products={publicProducts.filter((product) => product.category === key)}
                       />
                     </div>
@@ -233,6 +239,7 @@ const ProductPage = () => {
                 </div>
                 {/* Dạng lưới truyền thống cho tab riêng lẻ */}
                 <ProductList
+                  isLoading={isLoading}
                   products={publicProducts.filter((product) => product.category === option)}
                 />
               </motion.div>

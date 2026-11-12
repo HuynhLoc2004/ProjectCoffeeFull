@@ -1,4 +1,5 @@
 import axios from "axios";
+import { toast } from "react-toastify";
 import { getAccessToken } from "./ManagerAccessToken/ManagerAccessToken";
 
 export const getApiOrigin = () => {
@@ -9,10 +10,10 @@ export const getApiOrigin = () => {
 };
 
 const axiosClient = axios.create({
-  // Same-origin `/api` works locally and behind Nginx. Railway can override it
-  // with the public backend URL at build time (for example https://api.example.com/api).
+  // Same-origin `/api` works locally and behind Nginx. Railway/Vercel can override it
+  // with the public backend URL at build time (for example https://projectcoffeefull.onrender.com/api).
   baseURL: import.meta.env.VITE_API_URL || "/api",
-  timeout: 10000,
+  timeout: 120000, // 120s: Cho phép Render Free cold start (thức dậy khi có request)
   headers: {
     "Content-Type": "application/json",
   },
@@ -71,17 +72,44 @@ axiosClient.interceptors.request.use(
   },
 );
 
-// Response interceptor to handle 401 errors
+// Response interceptor to handle 401 errors and Render cold-start retry
 axiosClient.interceptors.response.use(
   (response) => {
     return response;
   },
-  (error) => {
+  async (error) => {
+    const config = error.config;
+
     if (error.response?.status === 401) {
       // Token might be expired, but don't auto-refresh here
       // Let individual components handle refresh if needed
       console.warn("401 Unauthorized - token might be expired");
+      return Promise.reject(error);
     }
+
+    // Nhận biết backend Render đang ngủ hoặc vừa thức dậy (timeout, network error, 502, 503, 504)
+    const isColdStart =
+      !error.response ||
+      error.code === "ECONNABORTED" ||
+      [502, 503, 504].includes(error.response?.status);
+
+    if (isColdStart && config && (!config._retryCount || config._retryCount < 2)) {
+      config._retryCount = (config._retryCount || 0) + 1;
+
+      toast.info(
+        "Máy chủ đang thức dậy sau thời gian nghỉ (khoảng 30-60s). Hệ thống đang tự động kết nối lại...",
+        {
+          toastId: "render-cold-start-toast",
+          autoClose: 10000,
+        }
+      );
+
+      console.warn(`Render server cold start: retrying request (attempt ${config._retryCount})...`);
+      // Đợi 4s trước khi retry
+      await new Promise((resolve) => setTimeout(resolve, 4000));
+      return axiosClient(config);
+    }
+
     return Promise.reject(error);
   },
 );

@@ -23,8 +23,9 @@ const item = {
   },
 };
 
-const ProductList = ({ urlApi, products }) => {
+const ProductList = ({ urlApi, products, isLoading: externalLoading }) => {
   const [listProduct, setListProduct] = useState(products || []);
+  const [internalLoading, setInternalLoading] = useState(products === undefined);
 
   useEffect(() => {
     if (products !== undefined) {
@@ -32,16 +33,44 @@ const ProductList = ({ urlApi, products }) => {
       return undefined;
     }
 
+    let isMounted = true;
+    setInternalLoading(true);
+
     (async () => {
       try {
         const res = await getCached(urlApi);
-        setListProduct(res.data?.result || []);
+        if (isMounted) {
+          setListProduct(res.data?.result || []);
+        }
       } catch (error) {
         console.error("Failed to fetch products:", error);
-        setListProduct([]); // Set empty array on error
+        if (isMounted) {
+          setListProduct([]);
+        }
+      } finally {
+        if (isMounted) {
+          setInternalLoading(false);
+        }
       }
     })();
+
+    return () => {
+      isMounted = false;
+    };
   }, [urlApi, products]);
+
+  const loading = externalLoading !== undefined ? externalLoading : internalLoading;
+
+  if (loading) {
+    return (
+      <div className="w-full py-16 text-center flex flex-col items-center justify-center space-y-4">
+        <div className="w-10 h-10 border-4 border-[#D4A373]/30 border-t-[#D4A373] rounded-full animate-spin"></div>
+        <p className="text-[#D4A373] text-sm font-medium tracking-wide animate-pulse">
+          Đang tải danh sách sản phẩm... (Vui lòng đợi giây lát nếu server đang khởi động)
+        </p>
+      </div>
+    );
+  }
 
   if (!listProduct || listProduct.length === 0) {
     return (
