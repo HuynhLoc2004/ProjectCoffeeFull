@@ -1,6 +1,49 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Plus } from "lucide-react";
+import fallbackProductsData from "../../fallbackProducts.json";
+
+const CATEGORY_FALLBACKS = {
+  coffee: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=500",
+  "milk-tea": "https://images.unsplash.com/photo-1558857563-b37cfb8cb831?auto=format&fit=crop&q=80&w=500",
+  americano: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&q=80&w=500",
+  cake: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&q=80&w=500",
+};
+
+export const resolveProductImage = (item) => {
+  if (!item) return CATEGORY_FALLBACKS.coffee;
+
+  // 1. Nếu ảnh đã là ảnh mới trong folder TheCoffeeChill/Products -> sử dụng ngay
+  if (item.img && item.img.includes("TheCoffeeChill/Products")) {
+    return item.img;
+  }
+
+  // 2. Tìm ảnh Cloudinary chuẩn trong fallbackProducts theo id, code hoặc name
+  const fallbackList = fallbackProductsData?.result || [];
+  const matched = fallbackList.find(
+    (p) =>
+      (item.id != null && String(p.id) === String(item.id)) ||
+      (item.code && p.code === item.code) ||
+      (item.name && p.name.trim().toLowerCase() === item.name.trim().toLowerCase())
+  );
+  if (matched?.img) {
+    return matched.img;
+  }
+
+  // 3. Nếu ảnh hiện tại không phải link lỗi Cloudinary cũ
+  if (
+    item.img &&
+    !item.img.includes("TraSua_") &&
+    !item.img.includes("AMERICANO_") &&
+    !item.img.includes("Cake_") &&
+    !item.img.includes("CF_")
+  ) {
+    return item.img;
+  }
+
+  // 4. Fallback theo danh mục
+  return CATEGORY_FALLBACKS[item.category] || CATEGORY_FALLBACKS.coffee;
+};
 
 const Product = ({ ProductItem }) => {
   const navigate = useNavigate();
@@ -9,6 +52,9 @@ const Product = ({ ProductItem }) => {
     if (e && e.stopPropagation) e.stopPropagation();
     navigate(`/order/?category=${ProductItem.category}&id=${ProductItem.id}`);
   };
+
+  const targetImg = resolveProductImage(ProductItem);
+  const categoryFallback = CATEGORY_FALLBACKS[ProductItem.category] || CATEGORY_FALLBACKS.coffee;
 
   return (
     <motion.div
@@ -30,10 +76,10 @@ const Product = ({ ProductItem }) => {
       {/* Image Container */}
       <div className="relative z-10 h-[225px] overflow-hidden m-3 rounded-[21px] bg-[#ece9e4] shrink-0">
         <motion.img
-          src={ProductItem.img}
+          src={targetImg}
           onError={(e) => {
             e.target.onerror = null;
-            e.target.src = "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=500";
+            e.target.src = categoryFallback;
           }}
           alt={ProductItem.name}
           className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"

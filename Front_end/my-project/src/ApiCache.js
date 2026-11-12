@@ -4,16 +4,65 @@ import fallbackData from "./fallbackProducts.json";
 const responseCache = new Map();
 const inFlightRequests = new Map();
 
+// Luôn bổ sung ảnh Cloudinary chuẩn trong folder TheCoffeeChill/Products cho mỗi sản phẩm
+export const enrichProductImage = (product) => {
+  if (!product) return product;
+  // Nếu ảnh đã là ảnh mới trong folder TheCoffeeChill/Products -> giữ nguyên
+  if (product.img && product.img.includes("TheCoffeeChill/Products")) {
+    return product;
+  }
+  // Tìm ảnh chuẩn theo id, code hoặc tên món trong fallbackProducts
+  const fallback = fallbackData?.result?.find(
+    (p) =>
+      (product.id != null && String(p.id) === String(product.id)) ||
+      (product.code && p.code === product.code) ||
+      (product.name && p.name.trim().toLowerCase() === product.name.trim().toLowerCase())
+  );
+  if (fallback?.img) {
+    return { ...product, img: fallback.img };
+  }
+  return product;
+};
+
+export const sanitizeAndEnrichResponse = (rawResponse) => {
+  if (!rawResponse || !rawResponse.data) return rawResponse;
+  const resData = rawResponse.data;
+  if (Array.isArray(resData.result)) {
+    return {
+      ...rawResponse,
+      data: {
+        ...resData,
+        result: resData.result.map(enrichProductImage),
+      },
+    };
+  } else if (resData.result && typeof resData.result === "object") {
+    return {
+      ...rawResponse,
+      data: {
+        ...resData,
+        result: enrichProductImage(resData.result),
+      },
+    };
+  }
+  return rawResponse;
+};
+
 // Trích xuất dữ liệu dự phòng (fallback) để hiển thị tức thì (0ms) khi server Render đang ngủ
 const getInitialFallback = (url) => {
-  const allProducts = fallbackData?.result || [];
+  const allProducts = (fallbackData?.result || []).map(enrichProductImage);
   if (url.includes("/product/public")) {
     return { data: { statusCode: 200, message: "OK", result: allProducts } };
   }
   if (url.includes("/product/getTopProductByCategory") || url.includes("/product/getProducts")) {
-    const urlObj = new URL(url, "http://dummy");
-    const category = urlObj.searchParams.get("category");
-    const size = parseInt(urlObj.searchParams.get("size")) || 6;
+    let category = null;
+    let size = null;
+    try {
+      const urlObj = new URL(url, "http://dummy");
+      category = urlObj.searchParams.get("category");
+      const sizeParam = urlObj.searchParams.get("size");
+      if (sizeParam) size = parseInt(sizeParam, 10);
+    } catch (e) {}
+
     let filtered = allProducts;
     if (category) {
       filtered = allProducts.filter((p) => p.category === category);
@@ -22,9 +71,26 @@ const getInitialFallback = (url) => {
       data: {
         statusCode: 200,
         message: "OK",
-        result: filtered.slice(0, size),
+        result: size ? filtered.slice(0, size) : filtered,
       },
     };
+  }
+  if (url.includes("/product/getProductById")) {
+    let id = null;
+    try {
+      const urlObj = new URL(url, "http://dummy");
+      id = urlObj.searchParams.get("id");
+    } catch (e) {}
+    const item = allProducts.find((p) => String(p.id) === String(id));
+    if (item) {
+      return {
+        data: {
+          statusCode: 200,
+          message: "get product succesfully",
+          result: item,
+        },
+      };
+    }
   }
   return null;
 };
@@ -37,7 +103,7 @@ const readLocalStorageCache = (key) => {
       const parsed = JSON.parse(raw);
       // Cache hợp lệ trong 60 phút
       if (Date.now() - parsed.timestamp < 60 * 60 * 1000) {
-        return parsed.data;
+        return sanitizeAndEnrichResponse(parsed.data);
       }
     }
   } catch (e) {
@@ -46,12 +112,17 @@ const readLocalStorageCache = (key) => {
   return null;
 };
 
-const saveLocalStorageCache = (key, data) => {
+const saveLocalStorageCache = (key, rawResponse) => {
   try {
+    if (!rawResponse || !rawResponse.data) return;
+    const cleanData = {
+      data: rawResponse.data,
+      status: rawResponse.status || 200,
+    };
     localStorage.setItem(
       `app_cache:${key}`,
       JSON.stringify({
-        data,
+        data: cleanData,
         timestamp: Date.now(),
       })
     );
@@ -80,9 +151,10 @@ export const getCached = async (url, config = {}, ttlMs = 15 * 60 * 1000) => {
       const bgRequest = axiosClient
         .get(url, config)
         .then((freshResponse) => {
-          responseCache.set(key, { response: freshResponse, expiresAt: Date.now() + ttlMs });
-          saveLocalStorageCache(key, freshResponse);
-          return freshResponse;
+          const enriched = sanitizeAndEnrichResponse(freshResponse);
+          responseCache.set(key, { response: enriched, expiresAt: Date.now() + ttlMs });
+          saveLocalStorageCache(key, enriched);
+          return enriched;
         })
         .catch(() => null)
         .finally(() => inFlightRequests.delete(key));
@@ -100,9 +172,10 @@ export const getCached = async (url, config = {}, ttlMs = 15 * 60 * 1000) => {
       const bgRequest = axiosClient
         .get(url, config)
         .then((freshResponse) => {
-          responseCache.set(key, { response: freshResponse, expiresAt: Date.now() + ttlMs });
-          saveLocalStorageCache(key, freshResponse);
-          return freshResponse;
+          const enriched = sanitizeAndEnrichResponse(freshResponse);
+          responseCache.set(key, { response: enriched, expiresAt: Date.now() + ttlMs });
+          saveLocalStorageCache(key, enriched);
+          return enriched;
         })
         .catch(() => null)
         .finally(() => inFlightRequests.delete(key));
@@ -117,9 +190,10 @@ export const getCached = async (url, config = {}, ttlMs = 15 * 60 * 1000) => {
   const request = axiosClient
     .get(url, config)
     .then((response) => {
-      responseCache.set(key, { response, expiresAt: Date.now() + ttlMs });
-      saveLocalStorageCache(key, response);
-      return response;
+      const enriched = sanitizeAndEnrichResponse(response);
+      responseCache.set(key, { response: enriched, expiresAt: Date.now() + ttlMs });
+      saveLocalStorageCache(key, enriched);
+      return enriched;
     })
     .finally(() => inFlightRequests.delete(key));
 
