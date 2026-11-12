@@ -19,6 +19,7 @@ import "../src/Animation.css";
 import axiosClient from "../AxiosClient";
 import Navbar from "../Components/Navbar";
 import { toast } from "react-toastify";
+import fallbackProductsData from "../fallbackProducts.json";
 import { unlogout, getLogout } from "../ManagerLogout/ManagerLogout";
 import {
   getAccessToken,
@@ -38,11 +39,11 @@ const SIZE_PRICE = {
 };
 
 const CATEGORY_FALLBACKS = {
-  coffee: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&q=80&w=800",
-  "milk-tea": "https://images.unsplash.com/photo-1558857563-b37cf537b0d7?auto=format&fit=crop&q=80&w=800",
-  cake: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&q=80&w=800",
-  americano: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&q=80&w=800",
-  default: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=800",
+  coffee: "https://res.cloudinary.com/djkif9ubs/image/upload/v1794491352/TheCoffeeChill/Products/ca_phe_muoi.jpg",
+  "milk-tea": "https://res.cloudinary.com/djkif9ubs/image/upload/v1794491413/TheCoffeeChill/Products/tra_sua_truyen_thong.jpg",
+  cake: "https://res.cloudinary.com/djkif9ubs/image/upload/v1794491380/TheCoffeeChill/Products/banh_croissant.jpg",
+  americano: "https://res.cloudinary.com/djkif9ubs/image/upload/v1794491367/TheCoffeeChill/Products/americano_da.jpg",
+  default: "https://res.cloudinary.com/djkif9ubs/image/upload/v1794491357/TheCoffeeChill/Products/bac_xiu_da.jpg",
 };
 
 const OrderPage = () => {
@@ -226,21 +227,40 @@ const OrderPage = () => {
       });
   }, [accessToken]);
 
+  const fallbackProduct = useMemo(() => {
+    return (fallbackProductsData?.result || []).find(
+      (p) => String(p.id) === String(product_id)
+    );
+  }, [product_id]);
+
   useEffect(() => {
+    // Hiển thị thông tin món và ảnh Cloudinary mới ngay tức thì (0ms) từ dữ liệu offline
+    if (fallbackProduct) {
+      setProduct((prev) => prev || fallbackProduct);
+      setAvailableToppings((prev) => prev || fallbackProduct.toppingEntities || []);
+      setImgSrc((prev) => prev || fallbackProduct.img);
+    }
+
     axiosClient
       .get(`product/getProductById?id=${product_id}`)
       .then((res) => {
         if (res.data.statusCode === 200 && res.data.result) {
           const item = res.data.result;
           setAvailableToppings(item.toppingEntities || []);
-          setProduct(item);
-          setImgSrc(item.img || CATEGORY_FALLBACKS[item.category] || CATEGORY_FALLBACKS.default);
+          // Ưu tiên ảnh chuẩn trong folder TheCoffeeChill/Products
+          const finalImg =
+            fallbackProduct?.img ||
+            item.img ||
+            CATEGORY_FALLBACKS[item.category] ||
+            CATEGORY_FALLBACKS.default;
+          setProduct({ ...item, img: finalImg });
+          setImgSrc(finalImg);
         }
       })
       .catch((err) => {
         console.error("Failed to fetch product:", err);
       });
-  }, [product_id]);
+  }, [product_id, fallbackProduct]);
 
   const toppingExtra = useMemo(
     () =>
@@ -271,7 +291,10 @@ const OrderPage = () => {
     );
   }
 
-  const fallbackImage = CATEGORY_FALLBACKS[product.category] || CATEGORY_FALLBACKS.default;
+  const fallbackImage =
+    fallbackProduct?.img ||
+    (product ? CATEGORY_FALLBACKS[product.category] : null) ||
+    CATEGORY_FALLBACKS.default;
 
   return (
     <>

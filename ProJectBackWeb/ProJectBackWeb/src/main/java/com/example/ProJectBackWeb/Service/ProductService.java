@@ -325,6 +325,7 @@ public class ProductService {
         this.redisTemplate.delete(ADMIN_PRODUCTS_CACHE_KEY);
         this.redisTemplate.delete("products:public:all");
         this.redisTemplate.delete("productsby:" + productEntity.getCategory());
+        this.redisTemplate.delete("productId" + productEntity.getId());
         return (long) productEntity.getId();
     }
 

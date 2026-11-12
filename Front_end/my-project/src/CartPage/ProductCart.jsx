@@ -1,15 +1,23 @@
 import React, { useState } from "react";
 import { FaTrash, FaPlus, FaMinus } from "react-icons/fa";
 import { motion } from "framer-motion";
+import fallbackProductsData from "../fallbackProducts.json";
 
 const ProductCart = ({ cartProduct, onIncrease, onDecrease, onDelete }) => {
   const [imgError, setImgError] = useState(false);
-  const fallbackImg = "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=200";
+  const fallbackImg = "https://res.cloudinary.com/djkif9ubs/image/upload/v1794491357/TheCoffeeChill/Products/bac_xiu_da.jpg";
 
   if (!cartProduct) return null;
 
   const product = cartProduct.productEntity || {};
-  const imgSrc = (!imgError && product.img) ? product.img : fallbackImg;
+  const fallbackMatched = (fallbackProductsData?.result || []).find(
+    (p) => p.id === product.id || p.code === product.code
+  );
+
+  const imgSrc =
+    !imgError && product.img && product.img.includes("TheCoffeeChill")
+      ? product.img
+      : fallbackMatched?.img || fallbackImg;
 
   return (
     <motion.div

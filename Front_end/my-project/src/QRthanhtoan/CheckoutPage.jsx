@@ -258,7 +258,11 @@ const CheckoutPage = () => {
                     >
                       <div className="w-16 h-16 bg-white/10 rounded-xl overflow-hidden flex-shrink-0 border border-white/5">
                         <img
-                          src={item.productEntity?.img || item.product?.image}
+                          src={item.productEntity?.img || item.product?.image || "https://res.cloudinary.com/djkif9ubs/image/upload/v1794491357/TheCoffeeChill/Products/bac_xiu_da.jpg"}
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = "https://res.cloudinary.com/djkif9ubs/image/upload/v1794491357/TheCoffeeChill/Products/bac_xiu_da.jpg";
+                          }}
                           className="w-full h-full object-cover"
                           alt={item.productEntity?.name || item.product?.name}
                         />
@@ -280,7 +284,11 @@ const CheckoutPage = () => {
                   <div className="flex gap-4 items-center py-3">
                     <div className="w-16 h-16 bg-white/10 rounded-xl overflow-hidden flex-shrink-0">
                       <img
-                        src={product.img || product.image}
+                        src={product.img || product.image || "https://res.cloudinary.com/djkif9ubs/image/upload/v1794491357/TheCoffeeChill/Products/bac_xiu_da.jpg"}
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "https://res.cloudinary.com/djkif9ubs/image/upload/v1794491357/TheCoffeeChill/Products/bac_xiu_da.jpg";
+                        }}
                         className="w-full h-full object-cover"
                         alt={product.name}
                       />
