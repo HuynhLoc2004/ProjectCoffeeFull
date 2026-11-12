@@ -54,7 +54,12 @@ axiosClient.interceptors.request.use(
     // Spring Security will try to validate any supplied token even when the
     // endpoint is permitAll, which can turn a public request into a 401/403.
     if (isPublicEndpoint) {
-      config.withCredentials = false;
+      // /auth/login cần withCredentials: true để trình duyệt nhận và lưu HttpOnly Refresh_Token cookie
+      if (config.url?.startsWith("/auth/login")) {
+        config.withCredentials = true;
+      } else {
+        config.withCredentials = false;
+      }
       if (config.headers) {
         delete config.headers.Authorization;
       }

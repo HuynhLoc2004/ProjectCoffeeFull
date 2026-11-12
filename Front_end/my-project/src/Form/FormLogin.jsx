@@ -4,7 +4,7 @@ import { TbLockPassword } from "react-icons/tb";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa6";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { toast } from "react-toastify";
 import axiosClient, { getApiOrigin } from "../AxiosClient";
 import { setAccessToken } from "../ManagerAccessToken/ManagerAccessToken";
@@ -14,6 +14,7 @@ import { localizeMessage } from "../localizeMessage";
 const FormLogin = () => {
   const [valueUseraccounnt, setValueUseraccount] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const params = useParams();
 
@@ -31,8 +32,13 @@ const FormLogin = () => {
     setPassword(e.target.value);
   };
 
-  const handleLogin = () => {
-    if (valueUseraccounnt.trim() === "") {
+  const handleLogin = (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    if (isLoading) return;
+
+    const trimmedAccount = valueUseraccounnt.trim();
+
+    if (trimmedAccount === "") {
       toast.warn("Vui lòng nhập tài khoản!");
       return;
     }
@@ -41,8 +47,16 @@ const FormLogin = () => {
       return;
     }
 
+    // Cảnh báo nếu người dùng vô tình nhập địa chỉ email
+    if (trimmedAccount.includes("@")) {
+      toast.warn("Vui lòng đăng nhập bằng Tên tài khoản (không dùng Email)!");
+      return;
+    }
+
+    setIsLoading(true);
+
     const userLogin = {
-      account_user: valueUseraccounnt.trim(),
+      account_user: trimmedAccount,
       password: password,
     };
 
@@ -57,6 +71,8 @@ const FormLogin = () => {
           setAccessToken(res.data.result.accessToken);
           unlogout();
           toast.success("Đăng nhập thành công! Chào mừng bạn quay trở lại ☕", { autoClose: 2000 });
+          setValueUseraccount("");
+          setPassword("");
           navigate(localStorage.getItem("page_before") || "/", {
             state: {
               statusCode: res.data.statusCode,
@@ -66,11 +82,12 @@ const FormLogin = () => {
       })
       .catch((err) => {
         console.error("Lỗi đăng nhập:", err);
-        const serverMsg = err?.response?.data?.message;
-        toast.error(localizeMessage(serverMsg, "Không thể kết nối đến máy chủ. Vui lòng thử lại!"));
+        const serverMsg = err?.response?.data?.message || err?.response?.data?.error;
+        toast.error(localizeMessage(serverMsg, "Tài khoản hoặc mật khẩu không chính xác!"));
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
-    setValueUseraccount("");
-    setPassword("");
   };
 
   const springConfig = { type: "spring", stiffness: 400, damping: 30 };
@@ -101,7 +118,7 @@ const FormLogin = () => {
             </p>
           </div>
 
-          <div className="space-y-6">
+          <form onSubmit={handleLogin} className="space-y-6">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -111,8 +128,9 @@ const FormLogin = () => {
               <VscAccount className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50 group-focus-within:text-[#D4A373] transition-colors text-xl" />
               <input
                 type="text"
-                className="w-full bg-white/5 border border-white/10 focus:border-[#D4A373]/50 focus:bg-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-white/30 outline-none transition-all duration-300"
-                placeholder="Tên tài khoản hoặc Email"
+                disabled={isLoading}
+                className="w-full bg-white/5 border border-white/10 focus:border-[#D4A373]/50 focus:bg-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-white/30 outline-none transition-all duration-300 disabled:opacity-50"
+                placeholder="Tên tài khoản"
                 value={valueUseraccounnt}
                 onChange={handleUserAccount}
               />
@@ -127,7 +145,8 @@ const FormLogin = () => {
               <TbLockPassword className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50 group-focus-within:text-[#D4A373] transition-colors text-xl" />
               <input
                 type="password"
-                className="w-full bg-white/5 border border-white/10 focus:border-[#D4A373]/50 focus:bg-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-white/30 outline-none transition-all duration-300"
+                disabled={isLoading}
+                className="w-full bg-white/5 border border-white/10 focus:border-[#D4A373]/50 focus:bg-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-white/30 outline-none transition-all duration-300 disabled:opacity-50"
                 placeholder="Mật khẩu"
                 value={password}
                 onChange={handlepassword}
@@ -150,15 +169,23 @@ const FormLogin = () => {
             </motion.div>
 
             <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              type="submit"
+              disabled={isLoading}
+              whileHover={{ scale: isLoading ? 1 : 1.02 }}
+              whileTap={{ scale: isLoading ? 1 : 0.98 }}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
-              className="w-full bg-[#D4A373] hover:bg-[#c29263] text-white font-black py-4 rounded-2xl shadow-[0_10px_20px_rgba(212,163,115,0.3)] transition-all"
-              onClick={handleLogin}
+              className="w-full bg-[#D4A373] hover:bg-[#c29263] text-white font-black py-4 rounded-2xl shadow-[0_10px_20px_rgba(212,163,115,0.3)] transition-all flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer"
             >
-              ĐĂNG NHẬP
+              {isLoading ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  <span>ĐANG ĐĂNG NHẬP...</span>
+                </>
+              ) : (
+                <span>ĐĂNG NHẬP</span>
+              )}
             </motion.button>
 
             <div className="relative my-8">
@@ -174,9 +201,10 @@ const FormLogin = () => {
 
             <div className="flex gap-4">
               <motion.button
+                type="button"
                 whileHover={{ y: -4 }}
                 whileTap={{ scale: 0.95 }}
-                className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl py-3 flex items-center justify-center gap-2 transition-all"
+                className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl py-3 flex items-center justify-center gap-2 transition-all cursor-pointer"
                 onClick={() => {
                   window.location.href = `${getApiOrigin()}/oauth2/authorization/google`;
                 }}
@@ -185,9 +213,10 @@ const FormLogin = () => {
                 <span className="text-sm font-bold text-white">Google</span>
               </motion.button>
               <motion.button
+                type="button"
                 whileHover={{ y: -4 }}
                 whileTap={{ scale: 0.95 }}
-                className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl py-3 flex items-center justify-center gap-2 transition-all"
+                className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl py-3 flex items-center justify-center gap-2 transition-all cursor-pointer"
               >
                 <FaFacebook className="text-xl text-blue-500" />
                 <span className="text-sm font-bold text-white">Facebook</span>
@@ -208,7 +237,7 @@ const FormLogin = () => {
                 Đăng kí ngay
               </Link>
             </motion.p>
-          </div>
+          </form>
         </div>
       </motion.div>
     </div>

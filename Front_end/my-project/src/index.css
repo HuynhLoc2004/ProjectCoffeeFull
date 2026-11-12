@@ -156,7 +156,7 @@ button, a, input, textarea { -webkit-tap-highlight-color: transparent; }
   position: relative !important;
   display: flex !important;
   align-items: center !important;
-  justify-content: space-between !important;
+  justify-content: flex-start !important;
   min-height: 56px !important;
   border-radius: 18px !important;
   overflow: hidden !important; /* Cắt góc chuẩn xác tuyệt đối cho thanh progress-bar */
@@ -194,19 +194,24 @@ button, a, input, textarea { -webkit-tap-highlight-color: transparent; }
   box-shadow: 0 20px 40px -10px rgba(139, 69, 19, 0.16), 0 0 25px rgba(212, 163, 115, 0.12) !important;
 }
 
-/* Căn chỉnh thân thông báo và văn bản thẳng hàng tuyệt đối */
+/* Căn chỉnh thân thông báo và văn bản thẳng hàng, liền kề icon */
 .Toastify__toast-body {
   display: flex !important;
   align-items: center !important;
+  justify-content: flex-start !important;
   flex: 1 1 auto !important;
   min-width: 0 !important;
   padding: 0 !important;
   margin: 0 !important;
+  gap: 12px !important;
+  text-align: left !important;
 }
 
 .Toastify__toast-body > div:last-child {
   display: flex !important;
   align-items: center !important;
+  justify-content: flex-start !important;
+  text-align: left !important;
   flex: 1 1 auto !important;
   line-height: 1.4 !important;
   word-break: break-word !important;
@@ -221,7 +226,7 @@ button, a, input, textarea { -webkit-tap-highlight-color: transparent; }
   width: 24px !important;
   height: 24px !important;
   min-width: 24px !important;
-  margin: 0 12px 0 0 !important;
+  margin: 0 !important;
   align-self: center !important;
 }
 
